@@ -1,0 +1,1 @@
+{"fill_in_the_blank":{"exercise":[{"topic":{"num":1,"content":"Java编译器可以将Java源程序编译成与机器无关的二进制代码文件，即字节码文件，它的扩展名是_____？"},"answer":["class"]},{"topic":{"num":2,"content":"当重载构造方法时，可以使用关键字_______来指代本类中的其他构造方法，而使用关键字_____来指代父类构造方法？"},"answer":["this","super"]}],"score":1},"Programming":[{"topic":{"num":1,"content":"编写一个求和的函数，如输入sum(1,2)，输出3"},"score":20}]}

@@ -5,3 +5,14 @@
 .runTest {
 	display: block;
 }
+
+.blankStyle {
+	display: inline-block;
+	margin: 20px;
+}
+
+.blankAnswer {
+	width: 200px;
+	border: none;
+	border-bottom: 1px solid;
+}

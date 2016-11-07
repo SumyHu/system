@@ -88,7 +88,6 @@ module.exports = function(app) {
 	});
 
 	app.post('/javaTest', function(req, res)  {
-		console.log(req.body.code);
 		if (!fs.existsSync(javaCodePath)) {
 	        fse.ensureFileSync(javaCodePath);
         }
@@ -98,7 +97,7 @@ module.exports = function(app) {
 
         var e = exec("javac javaCodeParser.java", {cwd: "./Test"}, function(err,stdout,stderr){
 		    if(err) {
-		    	console.log(11111,stderr);
+		    	// console.log(11111,stderr);
 		    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
 		    	// var str1 = iconv.decode(stderr, "gbk");
 
@@ -112,7 +111,12 @@ module.exports = function(app) {
 		        	if (err) {
 		        		res.send(stderr);
 		        	} else {
-		        		res.send(stdout);
+		        		if (stdout == 3) {
+		        			res.send("编译通过");
+		        		}
+		        		else {
+		        			res.send("编译不通过");
+		        		}
 		        	} 
 	        	});     
 		    }

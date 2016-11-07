@@ -2,33 +2,57 @@ var totalQuestion;
 var questionType = [];
 var currentTypeNum = 0;
 
+
+/**
+答案格式为{answer:["A","B","C"], score:5}
+{answer: "HELLO", score: 20}
+**/
 var correctAnswer = {};
 var userAnswer = {};
 
 function getUserAnswer() {
 	for(var i=0, len=questionType.length; i<len; i++) {
 		var quesType = questionType[i];
+		var blankQuesNum = 0;
 		var answerArr = $("." + quesType + " .answer");
 		userAnswer[quesType] = [];
 		for(let j=0, len1=answerArr.length; j<len1; j++) {
 			if (answerArr[j].nodeName.toLowerCase() == "input") {
-				if (answerArr[j].type != "checkbox") {
+				if (answerArr[j].type == "radio") {
 					if (answerArr[j].checked) {
-						userAnswer[quesType][userAnswer[quesType].length] = answerArr[j].value;
+						userAnswer[quesType][userAnswer[quesType].length] = {
+							answer: answerArr[j].value
+						};
 					}
 				}
-				else {
+				else if(answerArr[j].type == "checkbox") {
 					var userAnswerLen = userAnswer[quesType].length;
 					userAnswer[quesType][userAnswerLen] = [];
-					for(let t=0; t<4; t++,j++) {
+					for(let t=0; t<4; t++, j++) {
 						if (answerArr[j].checked) {
-							userAnswer[quesType][userAnswerLen][t] = answerArr[j].value;
+							userAnswer[quesType][userAnswerLen][t] = {
+								answer: answerArr[j].value
+							};
 						}
 					}
+					j--;
+				}
+				else if(answerArr[j].type == "text") {
+					var userAnswerLen = userAnswer[quesType].length;
+					userAnswer[quesType][userAnswerLen] = [];
+					for(let t=0; t<totalQuestion["fill_in_the_blank"].exercise[blankQuesNum].answer.length; t++, j++) {
+						userAnswer[quesType][userAnswerLen][t] = {
+							answer: answerArr[j].value
+						};
+					}
+					j--;
+					blankQuesNum++;
 				}
 			}
 			else {
-				userAnswer[quesType][userAnswer[quesType].length] = answerArr[j].value;
+				userAnswer[quesType][userAnswer[quesType].length] = {
+					answer: answerArr[j].value
+				};
 			}
 		}
 	}
@@ -86,6 +110,27 @@ function showChoiceQues(totalQues, inputType) {
 	return content;
 }
 
+function showBlankQues() {
+	var content = document.createElement("div");
+	content.className = "content";
+
+	var totalQues = totalQuestion["fill_in_the_blank"].exercise;
+	for(let i=0, len=totalQues.length; i<len; i++) {
+		var topic = totalQues[i].topic;
+
+		var div = document.createElement("div");
+		var topicDiv = "<div>" + topic.num + "." + topic.content + "</div>";
+		var answerDiv = "<div>";
+		for(let j=0, answerLen=totalQues[i].answer.length; j<answerLen; j++) {
+			answerDiv = answerDiv + "<span class='blankStyle'>" + j +".<input type='text' class='blankAnswer answer'/>" + "</span>";
+		}
+		answerDiv = answerDiv + "</div>";
+		div.innerHTML = topicDiv + answerDiv;
+		content.appendChild(div);
+	}
+	return content;
+}
+
 function showBigQues(quesType) {
 	var content = document.createElement("div");
 	content.className = "content";
@@ -114,10 +159,13 @@ function showQues() {
 	var content;
 	switch(questionType[currentTypeNum]) {
 		case "Multiple_Choice":
-			content = showChoiceQues(totalQuestion["Multiple_Choice"], "radio");
+			content = showChoiceQues(totalQuestion["Multiple_Choice"].exercise, "radio");
 			break;
 		case "Multiple_Choices":
-			content = showChoiceQues(totalQuestion["Multiple_Choices"], "checkbox");
+			content = showChoiceQues(totalQuestion["Multiple_Choices"].exercise, "checkbox");
+			break;
+		case "fill_in_the_blank":
+			content = showBlankQues();
 			break;
 		case "Short_Answer":
 			content = showBigQues("Short_Answer");
@@ -147,6 +195,7 @@ function jsCodeTest() {
 
 function javaCodeTest() {
 	var textarea = $(".Programming").find("textarea");
+	console.log(textarea.val());
 	$.ajax ({
 		url: "http://127.0.0.1:3000/javaTest",
 		type: "POST",
@@ -156,10 +205,12 @@ function javaCodeTest() {
 			code: textarea.val()
 		},
 		success: function(result) {
+			console.log(result);
 			$(".runResult")[0].innerHTML = "<pre>" + result + "</pre>";
 		},
 		error: function(error) {
 			console.log(error);
+		}
 	});
 }
 
@@ -178,8 +229,25 @@ $(function() {
 				for(var k in data) {
 					questionType[questionType.length] = k;
 					correctAnswer[k] = new Array();
-					for(let i=0, len=data[k].length; i<len; i++) {
-						correctAnswer[k][i] = data[k][i].answer;
+					let len, exer;
+					if (data[k].exercise) {
+						len = data[k].exercise.length;
+						exer = data[k].exercise;
+					}
+					else {
+						len = data[k].length;
+						exer = data[k];
+					}
+					for(let i=0; i<len; i++) {
+						correctAnswer[k][i] = {
+							answer: exer[i].answer
+						};
+						if (exer[i].score) {
+							correctAnswer[k][i].score = exer[i].score;
+						}
+						else {
+							correctAnswer[k][i].score = data[k].score;
+						}
 					}
 				}
 
@@ -219,6 +287,8 @@ $(function() {
 		if (currentTypeNum === questionType.length-1) {
 			getUserAnswer();
 			matchAnswer();
+			console.log(correctAnswer);
+			console.log(userAnswer);
 			return;
 		}
 
