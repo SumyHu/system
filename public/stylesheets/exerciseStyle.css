@@ -16,3 +16,17 @@
 	border: none;
 	border-bottom: 1px solid;
 }
+
+.showScoreBlock {
+	display: none;
+}
+
+.showTotalScore {
+	margin: 20px 0;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+.showAnswer {
+	font-weight: bold;
+}

@@ -2,6 +2,9 @@ var totalQuestion;
 var questionType = [];
 var currentTypeNum = 0;
 
+var score = 0;   // 记录总分情况
+var answerCanNotChange = false;
+
 
 /**
 答案格式为{answer:["A","B","C"], score:5}
@@ -27,23 +30,23 @@ function getUserAnswer() {
 				}
 				else if(answerArr[j].type == "checkbox") {
 					var userAnswerLen = userAnswer[quesType].length;
-					userAnswer[quesType][userAnswerLen] = [];
+					userAnswer[quesType][userAnswerLen] = {
+						answer: []
+					};
 					for(let t=0; t<4; t++, j++) {
 						if (answerArr[j].checked) {
-							userAnswer[quesType][userAnswerLen][t] = {
-								answer: answerArr[j].value
-							};
+							userAnswer[quesType][userAnswerLen].answer[t] = answerArr[j].value;
 						}
 					}
 					j--;
 				}
 				else if(answerArr[j].type == "text") {
 					var userAnswerLen = userAnswer[quesType].length;
-					userAnswer[quesType][userAnswerLen] = [];
+					userAnswer[quesType][userAnswerLen] = {
+						answer: []
+					};
 					for(let t=0; t<totalQuestion["fill_in_the_blank"].exercise[blankQuesNum].answer.length; t++, j++) {
-						userAnswer[quesType][userAnswerLen][t] = {
-							answer: answerArr[j].value
-						};
+						userAnswer[quesType][userAnswerLen].answer[t] = answerArr[j].value;
 					}
 					j--;
 					blankQuesNum++;
@@ -70,16 +73,17 @@ function showQuesComment(content) {
 	div.appendChild(content);
 	$(".totalQues").append(div);
 
-	$(".runTest").click(function() {
+	$(".runTest").click(function(e) {
 		var url = window.location.href;
 		var type = url.split("?")[1].split("=")[1];
+		var textarea = $(e.target).parent().find("textarea");
 
 		switch(type) {
 			case "javaScript":
-				jsCodeTest();
+				jsCodeTest(textarea);
 				break;
 			case "java":
-				javaCodeTest();
+				javaCodeTest(textarea);
 				break;
 			case "c_c++":
 				break;
@@ -104,7 +108,7 @@ function showChoiceQues(totalQues, inputType) {
 			+ "</li>";
 		}
 		choicesDiv = choicesDiv + "</ul></div>";
-		div.innerHTML = topicDiv + choicesDiv;
+		div.innerHTML = topicDiv + choicesDiv + "<div class='showAnswer'></div>";
 		content.appendChild(div);
 	}
 	return content;
@@ -125,7 +129,7 @@ function showBlankQues() {
 			answerDiv = answerDiv + "<span class='blankStyle'>" + j +".<input type='text' class='blankAnswer answer'/>" + "</span>";
 		}
 		answerDiv = answerDiv + "</div>";
-		div.innerHTML = topicDiv + answerDiv;
+		div.innerHTML = topicDiv + answerDiv + "<div class='showAnswer'></div>";
 		content.appendChild(div);
 	}
 	return content;
@@ -145,10 +149,10 @@ function showBigQues(quesType) {
 		if (quesType === "Programming") {
 			var testBtn = "<input type='button' value='调试' class='runTest'/>"
 			var runResult = "<div>显示测试结果：</div><div class='runResult'></div>"
-			div.innerHTML = topicDiv + textarea + testBtn + runResult;
+			div.innerHTML = topicDiv + textarea + testBtn + runResult + "<div class='showAnswer'></div>";
 		}
 		else {
-			div.innerHTML = topicDiv + textarea;
+			div.innerHTML = topicDiv + textarea + "<div class='showAnswer'></div>";
 		}
 		content.appendChild(div);
 	}
@@ -177,13 +181,13 @@ function showQues() {
 	showQuesComment(content);
 }
 
-function jsCodeTest() {
-	var textarea = $(".Programming").find("textarea");
+function jsCodeTest(textarea) {
 	var runResult = $(".runResult")[0];
 	try {
 		var n = eval("(" + textarea.val() + ")(2, 3)");
 		if (n === 5) {
 			runResult.innerHTML = "编译通过";
+			return true;
 		}
 		else {
 			runResult.innerHTML = "编译结果不正确";
@@ -193,8 +197,7 @@ function jsCodeTest() {
 	}
 }
 
-function javaCodeTest() {
-	var textarea = $(".Programming").find("textarea");
+function javaCodeTest(textarea) {
 	console.log(textarea.val());
 	$.ajax ({
 		url: "http://127.0.0.1:3000/javaTest",
@@ -205,8 +208,10 @@ function javaCodeTest() {
 			code: textarea.val()
 		},
 		success: function(result) {
-			console.log(result);
 			$(".runResult")[0].innerHTML = "<pre>" + result + "</pre>";
+			if (result == "编译通过") {
+				return true;
+			}
 		},
 		error: function(error) {
 			console.log(error);
@@ -214,7 +219,110 @@ function javaCodeTest() {
 	});
 }
 
-function matchAnswer() {}
+function showAnswer(k, i, className) {
+	if (userAnswer[k][i].answer) {
+		userAnswer[k][i].answer == "";
+	}
+
+	console.log($("." + className + " .showAnswer"));
+
+	$("." + className + " .showAnswer")[i].innerHTML = "正确答案为:" + correctAnswer[k][i].answer + ", 分数为：" + correctAnswer[k][i].score + "</br>" + "您的答案是：" + userAnswer[k][i].answer + ", 得分为：" + userAnswer[k][i].score;
+}
+
+function matchAnswer() {
+	$(".questionBlock").css("display", "none");
+	$(".next").val("查看分数");
+	for(var k in correctAnswer) {
+		switch(k) {
+			case "Multiple_Choice":
+				for(let i=0, len=correctAnswer[k].length; i<len; i++) {
+					if (!userAnswer[k][i]) {
+						userAnswer[k][i] = {
+							answer: "",
+							score: 0
+						}
+					} else {
+						if (correctAnswer[k][i].answer == userAnswer[k][i].answer) {
+							userAnswer[k][i].score = correctAnswer[k][i].score;
+							score = score + correctAnswer[k][i].score;
+						} else {
+							userAnswer[k][i].score = 0;
+						}
+					}
+
+					showAnswer(k, i, "Multiple_Choice");
+				}
+				break;
+			case "Multiple_Choices":
+				for(let i=0, len=correctAnswer[k].length; i<len; i++) {
+					if (userAnswer[k][i].answer.length === 0) {
+						userAnswer[k][i].score = 0;
+					} else {
+						var flag = true;
+						for(let j=0, len1=correctAnswer[k][i].answer.length; j<len1; j++) {
+							if (userAnswer[k][i].answer[j] != correctAnswer[k][i].answer[j]) {
+								flag = false;
+								userAnswer[k][i].score = 0;
+								break;
+							}
+						}
+						if (flag) {
+							userAnswer[k][i].score = correctAnswer[k][i].score;
+							score = score + correctAnswer[k][i].score;
+						}
+					}
+					showAnswer(k, i, "Multiple_Choices");
+				}
+				break;
+			case "fill_in_the_blank":
+				for(let i=0, len=correctAnswer[k].length; i<len; i++) {
+					var tempScore = 0;
+					for(let j=0, len1=correctAnswer[k][i].answer.length; j<len1; j++) {
+						if (userAnswer[k][i].answer[j] == correctAnswer[k][i].answer[j]) {
+							tempScore = tempScore + correctAnswer[k][i].score;
+							score = score + correctAnswer[k][i].score;
+						}
+					}
+					userAnswer[k][i].score = tempScore;
+					showAnswer(k, i, "fill_in_the_blank");
+				}
+				break;
+			case "Short_Answer":
+				for(let i=0, len=correctAnswer[k].length; i<len; i++) {
+					showAnswer(k, i, "Short_Answer");
+				}
+					break;
+			case "Programming":
+				var url = window.location.href;
+				var type = url.split("?")[1].split("=")[1];
+				var textarea = $(".Programming textarea");
+				var fn;
+
+				switch(type) {
+					case "javaScript":
+						fn = jsCodeTest;
+						break;
+					case "java":
+						fn = javaCodeTest;
+						break;
+					case "c_c++":
+						break;
+				}
+
+				for(let i=0, len=textarea.length; i<len; i++) {
+					if (fn($(textarea[i]))) {
+						score = score + correctAnswer[k][i].score;
+						userAnswer[k][i] = {score: correctAnswer[k][i].score};
+					}
+					else {
+						userAnswer[k][i] = {score: 0};
+					}
+					showAnswer(k, i, "Programming");
+				}
+				break;
+		}
+	}
+}
 
 $(function() {
 	$(".beginBtn").click(function() {
@@ -285,15 +393,27 @@ $(function() {
 
 	$(".next").click(function() {
 		if (currentTypeNum === questionType.length-1) {
-			getUserAnswer();
-			matchAnswer();
-			console.log(correctAnswer);
-			console.log(userAnswer);
+			if (!answerCanNotChange) {
+				getUserAnswer();
+				matchAnswer();
+				console.log(correctAnswer);
+				console.log(userAnswer);
+				answerCanNotChange = true;
+			}
+
+			$(".questionBlock").css("display", "none");
+			$(".showScoreBlock").css("display", "block");
+			$(".showTotalScore")[0].innerHTML = "您的分数是 ：" + score;
 			return;
 		}
 
 		if (currentTypeNum === questionType.length-2) {
-			$(".next").val("提交试卷");
+			if (answerCanNotChange) {
+				$(".next").val("查看总分");
+			}
+			else {
+				$(".next").val("提交试卷");
+			}
 		}
 
 		currentTypeNum ++;
@@ -306,5 +426,14 @@ $(function() {
 			showQues();
 		}
 		hideBlock.css("display", "none");
+	});
+
+	$(".showScoreDetail").click(function() {
+		$(".showScoreBlock").css("display", "none");
+		$(".questionBlock").css("display", "block");
+		$("." + questionType[questionType.length-1]).css("display", "none");
+		$("." + questionType[0]).css('display', "block");
+		currentTypeNum = 0;
+		$(".next").val("next");
 	});
 });
