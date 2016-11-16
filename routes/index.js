@@ -2,7 +2,15 @@ const fs = require("fs");
 const fse = require('fs-extra');
 const exec = require('child_process').exec;
 const path = require('path');
-var iconv = require('iconv-lite');
+const iconv = require('iconv-lite');
+
+// 中文分词模块，该模块以盘古分词组件中的词库为基础
+var Segment = require("segment");
+var segment = new Segment();
+segment.useDefault();
+
+var Primitive = require("./Primitive");
+var WordSimilary = require("./WordSimilary");
 
 const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
 
@@ -87,7 +95,7 @@ module.exports = function(app) {
 		});
 	});
 
-	app.post('/javaTest', function(req, res)  {
+	app.post("/javaTest", function(req, res)  {
 		if (!fs.existsSync(javaCodePath)) {
 	        fse.ensureFileSync(javaCodePath);
         }
@@ -122,5 +130,16 @@ module.exports = function(app) {
 		    }
 		});
 		e.stderr.setEncoding('utf8');
+	});
+
+	app.get("/shortAnswerCheck", function(req, res) {
+		// console.log(segment.doSegment("这是一个基于Node.js的中文分词模块。"));
+		// console.log(Primitive.readWhole());
+		res.render("wordSimilarTest");
+	});
+
+	app.post("/shortAnswerCheck", function(req, res) {
+		// console.log(segment.doSegment("这是一个基于Node.js的中文分词模块。"));
+		WordSimilary();
 	});
 }

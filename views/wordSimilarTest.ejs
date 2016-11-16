@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="javascripts/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			var button = document.getElementsByTagName("input")[0];
+
+			button.onclick = function() {
+				$.ajax({
+					url: "http://127.0.0.1:3000/shortAnswerCheck",
+					type: "POST",
+					success: function(data) {
+						console.log(data);
+					},
+					error: function(error) {
+						console.log("error: " + error);
+					}
+				});
+			}
+		});
+	</script>
+</head>
+<body>
+	<input type="button" value="test">
+</body>
+</html>
