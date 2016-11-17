@@ -9,7 +9,7 @@ var Segment = require("segment");
 var segment = new Segment();
 segment.useDefault();
 
-var Primitive = require("./Primitive");
+// var Primitive = require("./Primitive");
 var WordSimilary = require("./WordSimilary");
 
 const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
@@ -140,6 +140,9 @@ module.exports = function(app) {
 
 	app.post("/shortAnswerCheck", function(req, res) {
 		// console.log(segment.doSegment("这是一个基于Node.js的中文分词模块。"));
-		WordSimilary();
+		let wordSimilaryFn = WordSimilary();
+		var result = wordSimilaryFn.simWord(req.body.word1, req.body.word2);
+		res.send(result.toString());
+		// console.log(wordSimilaryFn.simWord);
 	});
 }

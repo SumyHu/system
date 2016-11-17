@@ -1,3 +1,7 @@
+/**
+ * 建立单个词语的基本信息结构
+*/
+
 module.exports = function() {
 	var Word = {
 		word: "",

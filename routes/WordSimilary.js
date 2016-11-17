@@ -1,10 +1,30 @@
+/**
+ * 词语相似度计算
+*/
+
 const fs = require("fs");
 const path = require("path");
 const glossaryPath = path.join(__dirname, "../dictionary/glossary.dat");
 
+var Primitive = require("./Primitive");
 var Word = require("./Word");
 
-var allWords = {};   // 词库中所有的具体词，或者义原
+/** 
+ * 词库中所有的具体词，或者义原
+ allWords = {
+    "啊": [{
+        word: "",
+        type: "",
+        firstPrimitive: "",   // 第一基本义原
+        otherPrimitives: [],   // 其他基本义原
+        structruralWords: [],   // 如果该数组非空，则该词是一个虚词。列表里存放的是该虚词的一个义原，部分虚词无中文虚词解释
+        relationalPrimitive: [],   // 关系义原
+        relationSimbolPrimitive: []   // 关系符号义原
+    }, {...}, {...}, ...],
+    "不": [{...}, {...}, ...]
+ }
+*/
+var allWords;
 
 const alpha = 1.6;
 const beta1 = 0.5;   // 计算实词的相似度，参数，基本义原权重
@@ -22,30 +42,25 @@ const SPECIAL_SYMBOL = "{";   // 知网中的特殊符号，虚词，或具体�
 
 // 加载glossary.dat文件
 function loadGlossary(callback) {
-	fs.readFile(glossaryPath, "utf-8", function(err, data) {
-		if (!err) {
-			var line = data.split("\n");
+    allWords = {};
+    var data = fs.readFileSync(glossaryPath, "utf-8");
+    var line = data.split("\n");
 
-			for(let i=0, len=line.length; i<len; i++) {
-				let wordFn = Word();
-				var lineTarget = line[i].trim().replace(/\s+/g, " ").split(" ");   // 去除收尾多余空格，并将多个空格合并成一个空格
-				wordFn.setWord(lineTarget[0]);
-				wordFn.setType(lineTarget[1]);
-				sortRelation(lineTarget[2], wordFn);
-				// allWords[i] = wordFn.getWord();
-				if (!allWords[lineTarget[0][0]]) {
-					allWords[lineTarget[0][0]] = [];
-				}
-				allWords[lineTarget[0][0]].push(wordFn.getWord());
-			}
-
-			console.log(allWords);
-
-			callback();
-		}
-	});
+    for(let i=0, len=line.length; i<len; i++) {
+        let wordFn = Word();
+        var lineTarget = line[i].trim().replace(/\s+/g, " ").split(" ");   // 去除收尾多余空格，并将多个空格合并成一个空格
+        wordFn.setWord(lineTarget[0]);
+        wordFn.setType(lineTarget[1]);
+        sortRelation(lineTarget[2], wordFn);
+        // allWords[i] = wordFn.getWord();
+        if (!allWords[lineTarget[0][0]]) {
+            allWords[lineTarget[0][0]] = [];
+        }
+        allWords[lineTarget[0][0]].push(wordFn.getWord());
+    }
 }
 
+// 将词语具体信息进行分类
 function sortRelation(relateStr, wordFn) {
 	var parts = relateStr.split(",")
 	var isFirst = true;
@@ -143,74 +158,159 @@ function getPrimitiveType(str) {
 	return 0;
 }
 
-// 计算两个词语的相似度
-function calSimWord(wordstr1, wordstr2) {
-	var word1, word2;
-	var wordFirst1 = wordstr1[0];
-	var wordFirst2 = wordstr2[0];
-	if (allWords[wordFirst1]) {
-		for(let i=0, len=allWords[wordFirst1].length; i<len; i++) {
-			if (allWords[wordFirst1][i].word == wordstr1) {
-				word1 = allWords[wordFirst1][i];
-				break;
-			}
-		}
-	}
-
-	if (allWords[wordFirst2]) {
-		for(let i=0, len=allWords[wordFirst2].length; i<len; i++) {
-			if (allWords[wordFirst2][i].word == wordstr2) {
-				word2 = allWords[wordFirst2][i];
-				break;
-			}
-		}
-	}
-
-	if (word1 && word2) {
-		// 虚词和实词的相似度为零
-		if ((word1.structruralWords.length != 0) != (word2.structruralWords.length != 0)) {
-			return 0;
-		}
-
-		// 虚词
-        if (word1.structruralWords.length && word2.structruralWords.length) {
-            return simList(word1.structruralWords, word2.structruralWords);
+/**
+ * 在allWords数组里查找匹配某个词
+ * @param wordstr1 String 词语1
+ * @param wordstr2 String 词语2
+*/
+function findWord(wordstr) {
+    /**
+        存储词语名相同的数组
+        word = [{
+            word: "",
+            type: "",
+            firstPrimitive: "",   // 第一基本义原
+            otherPrimitives: [],   // 其他基本义原
+            structruralWords: [],   // 如果该数组非空，则该词是一个虚词。列表里存放的是该虚词的一个义原，部分虚词无中文虚词解释
+            relationalPrimitive: [],   // 关系义原
+            relationSimbolPrimitive: []   // 关系符号义原
+        }, {...}, {...}]
+    */
+    var word = [];
+    var wordFirst = wordstr[0];
+    if (allWords[wordFirst]) {
+        // 遍历词典寻找该词语时，应该充分考虑同一个词具有不同的词性，即词语名相同，类型不同
+        for(let i=0, len=allWords[wordFirst].length; i<len; i++) {
+            if (allWords[wordFirst][i].word == wordstr) {
+                word.push(allWords[wordFirst][i]);
+            }
         }
-
-        // 实词
-        if (!word1.structruralWords.length && !word2.structruralWords.length) {
-            // 实词的相似度分为4个部分
-            // 基本义原相似度
-            var sim1 = simPrimitive(word1.firstPrimitive, word2.firstPrimitive);
-
-            // 其他基本义原相似度
-            var sim2 = simList(word1.otherPrimitives, word2.otherPrimitives);
-
-            // 关系义原相似度
-            var sim3 = simMap(word1.relationalPrimitive, word2.relationalPrimitive);
-
-            // 关系符号相似度
-            var sim4 = simMap(word1.relationSimbolPrimitive, word2.relationSimbolPrimitive);
-
-            var product = sim1;
-            int sum = beta1 * product;
-            product *= sim2;
-            sum += beta2 * product;
-            product *= sim3;
-            sum += beta3 * product;
-            product *= sim4;
-            sum += beta4 * product;
-            return sum;
-        }
-        return 0;
-	}
-	else {
-		console.log("其中有词没有被收录");
-		return 0;
-	}
+    }
+    return word;
 }
 
-// map的相似度
+/** 
+ * 计算两个词语对象的相似度
+ * @param word1 Object 词语对象
+ * @param word2 Object 词语对象
+ word = {
+    word: "",
+    type: "",
+    firstPrimitive: "",   // 第一基本义原
+    otherPrimitives: [],   // 其他基本义原
+    structruralWords: [],   // 如果该数组非空，则该词是一个虚词。列表里存放的是该虚词的一个义原，部分虚词无中文虚词解释
+    relationalPrimitive: [],   // 关系义原
+    relationSimbolPrimitive: []   // 关系符号义原
+ }
+*/
+function calSimWord(word1, word2) {
+    /**
+        word = {
+            word: "",
+            type: "",
+            firstPrimitive: "",   // 第一基本义原
+            otherPrimitives: [],   // 其他基本义原
+            structruralWords: [],   // 如果该数组非空，则该词是一个虚词。列表里存放的是该虚词的一个义原，部分虚词无中文虚词解释
+            relationalPrimitive: [],   // 关系义原
+            relationSimbolPrimitive: []   // 关系符号义原
+        }
+    */
+
+    console.log(word1);
+    console.log(word2);
+
+    if ((word1.structruralWords.length != 0) != (word2.structruralWords.length != 0)) {
+        return 0;
+    }
+
+    // 虚词
+    if (word1.structruralWords.length && word2.structruralWords.length) {
+        return simList(word1.structruralWords, word2.structruralWords);
+    }
+
+    // 实词
+    if (!word1.structruralWords.length && !word2.structruralWords.length) {
+        // 实词的相似度分为4个部分
+        // 基本义原相似度
+        var sim1 = simPrimitive(word1.firstPrimitive, word2.firstPrimitive);
+        console.log("sim1: " + sim1);
+
+        // 其他基本义原相似度
+        var sim2 = simList(word1.otherPrimitives, word2.otherPrimitives);
+        console.log("sim2: " + sim2);
+
+        // 关系义原相似度
+        var sim3 = simMap(word1.relationalPrimitive, word2.relationalPrimitive);
+        console.log("sim3: " + sim3);
+
+        // 关系符号相似度
+        var sim4 = simMap(word1.relationSimbolPrimitive, word2.relationSimbolPrimitive);
+        console.log("sim4: " + sim4);
+
+        var product = sim1;
+        var sum = beta1 * product;
+        product *= sim2;
+        sum += beta2 * product;
+        product *= sim3;
+        sum += beta3 * product;
+        product *= sim4;
+        sum += beta4 * product;
+        return sum;
+    }
+    return 0;
+}
+
+/**
+ * 计算两个词语的相似度
+ * @param wordstr1 String 词语1
+ * @param wordstr2 String 词语2
+*/
+function calSimWordStr(wordstr1, wordstr2) {
+    /**
+         word = [{
+            word: "",
+            type: "",
+            firstPrimitive: "",   // 第一基本义原
+            otherPrimitives: [],   // 其他基本义原
+            structruralWords: [],   // 如果该数组非空，则该词是一个虚词。列表里存放的是该虚词的一个义原，部分虚词无中文虚词解释
+            relationalPrimitive: [],   // 关系义原
+            relationSimbolPrimitive: []   // 关系符号义原
+        }, {...}, {...}]
+    */
+    var word1 = findWord(wordstr1);
+    var word2 = findWord(wordstr2);
+
+    if (word1.length && word2.length) {
+        var max = 0;
+        // for(let i=0, len1=word1.length; i<len1; i++) {
+        //     for(let j=0, len2=word2.length; j<len2; j++) {
+        //         if (word1[i].type == word2[j].type) {
+        //             return calSimWord(word1[i], word2[j]);
+        //         }
+        //     }
+        // }
+        for(let i=0, len1=word1.length; i<len1; i++) {
+            for(let j=0, len2=word2.length; j<len2; j++) {
+                var result = calSimWord(word1[i], word2[j]);
+                if (result > max) {
+                    max = result;
+                }
+            }
+        }
+        return max;
+    }
+    else {
+        console.log("其中有词没有被收录");
+        return 0;
+    }
+}
+
+/** 
+ * map的相似度
+ * @param arr1 Array 内含键值对的数组
+ * @param arr2 Array 内含键值对的数组
+ * arr = [{key: key, value: value}, {...}, ...]
+*/
 function simMap(arr1, arr2) {
 	if ((arr1.length == 0) && (arr2.length == 0)) {
         return 1;
@@ -220,7 +320,7 @@ function simMap(arr1, arr2) {
     var sim = 0;
     var count = 0;
     
-    for(let i=0, len1=arrl.length; i<len1; i++) {
+    for(let i=0, len1=arr1.length; i<len1; i++) {
     	for(let j=0, len2=arr2.length; j<len2; j++) {
     		if (arr1[i].key == arr2[j].key) {
     			sim += simList(arr1[i].value, arr2[j].value);
@@ -232,8 +332,15 @@ function simMap(arr1, arr2) {
     return (sim + delta * (total-2*count)) / (total-count);
 }
 
-// 比较两个集合的相似度
+/** 
+ * 比较两个集合的相似度
+ * @param value1 Array 其他义原集合
+ * @param value2 Array 其他义原集合
+ * value = [val1, val2, ...]
+*/
 function simList(value1, value2) {
+    console.log(value1);
+    console.log(value2);
 	if ((value1.length == 0) && (value2.length == 0)) return 1;
 
     var m = value1.length;
@@ -244,11 +351,20 @@ function simList(value1, value2) {
     var index1 = 0, index2 = 0;
     var sum = 0;
     var max = 0;
+
+    var valueTemp1 = [], valueTemp2 = [];
+    for(let i=0, len=value1.length; i<len; i++) {
+        valueTemp1[i] = value1[i];
+    }
+    for(let i=0, len=value2.length; i<len; i++) {
+        valueTemp2[i] = value2[i];
+    }
+
     while (count < N) {
         max = 0;
-        for (let i = 0; i < value1.length; i++) {
-            for (let j = 0; j < value2.length; j++) {
-                var sim = innerSimWord(value1[i], value2[j]);
+        for (let i = 0, len1=valueTemp1.length; i < len1; i++) {
+            for (let j = 0, len2=valueTemp2.length; j < len2; j++) {
+                var sim = innerSimWord(valueTemp1[i], valueTemp2[j]);
                 if (sim > max) {
                     index1 = i;
                     index2 = j;
@@ -257,26 +373,33 @@ function simList(value1, value2) {
             }
         }
         sum += max;
-        // list1.remove(index1);
-        // list2.remove(index2);
-        value1.splice(index1, 1);
-        value2.splice(index2, 1);
+        valueTemp1.splice(index1, 1);
+        valueTemp2.splice(index2, 1);
         count++;
     }
     return (sum + delta * (big - N)) / big;
 }
 
-// 内部比较两个词，可能是为具体词，也可能是义原
+/** 
+ * 内部比较两个词，可能是为具体词，也可能是义原
+ * @param wordTarget1 String 基本义原
+ * @param wordTarget2 String 基本义原
+*/
 function innerSimWord(wordTarget1, wordTarget2) {
-	var word1 = Primitive.isPrimitive(word1);
-    var word2 = Primitive.isPrimitive(word2);
+    var word1, word2;
+	Primitive.isPrimitive(wordTarget1, function(result) {
+        word1 = result;
+    });
+    Primitive.isPrimitive(wordTarget2, function(result) {
+        word2 = result;
+    });
     // 两个义原
     if (word1 && word2)
         return simPrimitive(word1, word2);
 
     // 具体词
     if (!word1 && !word2) {
-        if (wordTarget1.equals(wordTarget2))
+        if (wordTarget1 == wordTarget2)
             return 1;
         else
             return 0;
@@ -285,21 +408,104 @@ function innerSimWord(wordTarget1, wordTarget2) {
     return gamma;
 }
 
-function simPrimitive(word1, word2) {}
+/** 
+ * @param word1 Object 词语对象
+ * @param word2 Object 词语对象
+ * word = {
+    id: 0,
+    english: "evetn",
+    chinese: "事件",
+    parentId: 0
+ }
+*/
+function simPrimitive(word1, word2) {
+    var dis = disPrimitive(word1, word2);
+    return alpha / (dis + alpha);
+}
+
+/** 
+ * 计算两个义原之间的距离，如果两个义原层次没有共同节点，则设置他们的距离为20
+ * @param word1 Object 词语对象
+ * @param word2 Object 词语对象
+ * word = {
+    id: 0,
+    english: "evetn",
+    chinese: "事件",
+    parentId: 0
+ }
+*/
+function disPrimitive(word1, word2) {
+    if (typeof word1 == "string") {
+        Primitive.isPrimitive(word1, function(result) {
+            word1 = result;
+        });
+    }
+    if (typeof word2 == "string") {
+        Primitive.isPrimitive(word2, function(result) {
+            word2 = result;
+        });
+    }
+
+    var wordParents1, wordParents2;
+    Primitive.getAllParents(word1, function(parentsArray) {
+        wordParents1 = parentsArray;
+    });
+    Primitive.getAllParents(word2, function(parentsArray) {
+        wordParents2 = parentsArray;
+    });
+
+
+    for(let i=0, len1=wordParents1.length; i<len1; i++) {
+        for(let j=0, len2=wordParents2.length; j<len2; j++) {
+            if (wordParents1[i].id == wordParents2[j].id) {
+                // 单纯地计算两个词汇的距离，没有考虑到层次结构的不同以及词汇密度不同所造成的相似度的影响
+                return i+j;
+            }
+        }
+    }
+
+    return DEFAULT_PRIMITIVE_DIS;
+}
+
+/** 
+ * 加入或更新一个词语
+ * @param word Object 词语对象
+ * word = {
+        word: "",
+        type: "",
+        firstPrimitive: "",   // 第一基本义原
+        otherPrimitives: [],   // 其他基本义原
+        structruralWords: [],   // 如果该数组非空，则该词是一个虚词。列表里存放的是该虚词的一个义原，部分虚词无中文虚词解释
+        relationalPrimitive: [],   // 关系义原
+        relationSimbolPrimitive: []   // 关系符号义原
+    }
+*/
+function addWord(word) {
+    var firstChar = word[0];
+    if (allWords[firstChar]) {   // 该词语索引存在
+        for(let i=0, len=allWords[firstChar].length; i<len; i++) {
+            if (allWords[firstChar][i].word == word.word && allWords[firstChar][i].type == word.type) {   // 如果该词语存在，则更新
+                allWords[firstChar][i] = word;
+                return;
+            }
+        }
+    }
+    else {
+        allWords[firstChar] = [];
+    }
+    allWords[firstChar].push(word);   // 若该词语不存在，则在该索引下添加该词语
+}
 
 module.exports = function() {
 	return {
 		//提供计算两个词语之间的相似度的接口
 		simWord: function(wordstr1, wordstr2) {
-			if (allWords.length == 0) {
-				loadGlossary(function() {
-					calSimWord(wordstr1, wordstr2);
-				});
+			if (!allWords) {
+				loadGlossary();
 			}
-			else {
-				calSimWord(wordstr1, wordstr2);
-			}
-		}
+			return calSimWordStr(wordstr1, wordstr2);
+		},
+        addWord: addWord
 	}
 	// loadGlossary();
 };

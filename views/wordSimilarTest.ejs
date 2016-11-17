@@ -4,24 +4,30 @@
 	<script src="javascripts/jquery.min.js"></script>
 	<script type="text/javascript">
 		$(function() {
-			var button = document.getElementsByTagName("input")[0];
-
-			button.onclick = function() {
+			$(".button").click(function() {
 				$.ajax({
 					url: "http://127.0.0.1:3000/shortAnswerCheck",
 					type: "POST",
+					crossDomain: true,
+					defaultType: "json",
+					data: {
+						word1: $(".word1").val(),
+						word2: $(".word2").val()
+					},
 					success: function(data) {
-						console.log(data);
+						console.log($(".word1").val() + "与" + $(".word2").val() + "的相似度为: " + data);
 					},
 					error: function(error) {
 						console.log("error: " + error);
 					}
 				});
-			}
+			});
 		});
 	</script>
 </head>
 <body>
-	<input type="button" value="test">
+	<input type="text" class="word1"><br/>
+	<input type="text" class="word2"><br/>
+	<input type="button" value="test" class="button">
 </body>
 </html>
