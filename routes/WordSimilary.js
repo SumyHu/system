@@ -41,7 +41,7 @@ const RELATIONAL_SYMBOL = "#%$*+&@?!";   // 知网中的关系符号
 const SPECIAL_SYMBOL = "{";   // 知网中的特殊符号，虚词，或具体词
 
 // 加载glossary.dat文件
-function loadGlossary(callback) {
+function loadGlossary() {
     allWords = {};
     var data = fs.readFileSync(glossaryPath, "utf-8");
     var line = data.split("\n");

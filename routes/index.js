@@ -4,10 +4,8 @@ const exec = require('child_process').exec;
 const path = require('path');
 const iconv = require('iconv-lite');
 
-// 中文分词模块，该模块以盘古分词组件中的词库为基础
-var Segment = require("segment");
-var segment = new Segment();
-segment.useDefault();
+// 调用文本计算相似度算法
+var textSimilaryCal = require("./textSimilaryCal");
 
 // var Primitive = require("./Primitive");
 var WordSimilary = require("./WordSimilary");
@@ -139,10 +137,18 @@ module.exports = function(app) {
 	});
 
 	app.post("/shortAnswerCheck", function(req, res) {
-		// console.log(segment.doSegment("这是一个基于Node.js的中文分词模块。"));
-		let wordSimilaryFn = WordSimilary();
-		var result = wordSimilaryFn.simWord(req.body.word1, req.body.word2);
-		res.send(result.toString());
+		// console.log(segment.doSegment("你好，你好，在做什么呢？我好想你呢，超级超级想你呢。"));
+		// let wordSimilaryFn = WordSimilary();
+		// var result = wordSimilaryFn.simWord(req.body.word1, req.body.word2);
+		// res.send(result.toString());
 		// console.log(wordSimilaryFn.simWord);
+
+		// jieba.analyse.set_idf_path("../dictionary/idf.txt");
+
+		// var result = jieba.extract("这是一个基于Node.js的中文分词hello world模块。", kTop=100);
+		// console.log(result);
+
+		var result = textSimilaryCal(req.body.word1, req.body.word2);
+		res.send(result.toString());
 	});
 }
