@@ -7,8 +7,13 @@ const iconv = require('iconv-lite');
 // 调用文本计算相似度算法
 var textSimilaryCal = require("./textSimilaryCal");
 
+// 调用句子相似度算法
+var sentenceSimilary = require("./sentenceSimilary");
+
 // var Primitive = require("./Primitive");
 var WordSimilary = require("./WordSimilary");
+
+var jieba = require("nodejieba");
 
 const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
 
@@ -138,17 +143,33 @@ module.exports = function(app) {
 
 	app.post("/shortAnswerCheck", function(req, res) {
 		// console.log(segment.doSegment("你好，你好，在做什么呢？我好想你呢，超级超级想你呢。"));
-		// let wordSimilaryFn = WordSimilary();
 		// var result = wordSimilaryFn.simWord(req.body.word1, req.body.word2);
 		// res.send(result.toString());
 		// console.log(wordSimilaryFn.simWord);
 
 		// jieba.analyse.set_idf_path("../dictionary/idf.txt");
 
-		// var result = jieba.extract("这是一个基于Node.js的中文分词hello world模块。", kTop=100);
+		// var result = jieba.tag("我拿着如意");
 		// console.log(result);
 
-		var result = textSimilaryCal(req.body.word1, req.body.word2);
-		res.send(result.toString());
+		var participle = require("./participle");
+		participle("县长派来的");
+
+		// var result;
+		// switch(req.body.btnId) {
+		// 	case "wordBtn":
+		// 		let wordSimilaryFn = WordSimilary();
+		// 		result = wordSimilaryFn.simWord(req.body.text1, req.body.text2);
+		// 		break;
+		// 	case "sentenceBtn":
+		// 		result = sentenceSimilary([{word: "我",count: 1}, {word: "好", count: 1}, {word: "喜欢", count: 2}], [{word: "喜欢", count: 2}, {word: "超级", count: 1}]);
+		// 		console.log(result);
+		// 		break;
+		// 	case "textBtn":
+		// 		result = textSimilaryCal(req.body.text1, req.body.text2);
+		// 		break;
+		// }
+
+		// res.send(result.toString());
 	});
 }

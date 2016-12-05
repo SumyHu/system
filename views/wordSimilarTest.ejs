@@ -5,17 +5,35 @@
 	<script type="text/javascript">
 		$(function() {
 			$(".button").click(function() {
+				var btnId = this.id;
+				var textVal1, textVal2;
+				switch(btnId) {
+					case "wordBtn":
+						textVal1 = $(".word1").val();
+						textVal2 = $(".word2").val();
+						break;
+					case "sentenceBtn":
+						textVal1 = $(".sentence1").val();
+						textVal2 = $(".sentence2").val();
+						break;
+					case "textBtn":
+						textVal1 = $(".text1").val();
+						textVal2 = $(".text2").val();
+						break;
+				}
+
 				$.ajax({
 					url: "http://127.0.0.1:3000/shortAnswerCheck",
 					type: "POST",
 					crossDomain: true,
 					defaultType: "json",
 					data: {
-						word1: $(".word1").val(),
-						word2: $(".word2").val()
+						text1: textVal1,
+						text2: textVal2,
+						btnId: btnId
 					},
 					success: function(data) {
-						console.log($(".word1").val() + "与" + $(".word2").val() + "的相似度为: " + data);
+						console.log("【" + textVal1 + "】与【" + textVal2 + "】的相似度为: " + data);
 					},
 					error: function(error) {
 						console.log("error: " + error);
@@ -26,8 +44,25 @@
 	</script>
 </head>
 <body>
-	<input type="text" class="word1"><br/>
-	<input type="text" class="word2"><br/>
-	<input type="button" value="test" class="button">
+	<div>
+		<h1>基于知网的词语相似度计算</h1>
+		<input type="text" class="word1"><br/>
+		<input type="text" class="word2"><br/>
+		<input type="button" value="test" id="wordBtn" class="button">
+	</div>
+
+	<div>
+		<h1>综合多特征的句子相似度计算</h1>
+		<input type="text" class="sentence1"><br>
+		<input type="text" class="sentence2"><br>
+		<input type="button" value="test" id="sentenceBtn" class="button">
+	</div>
+
+	<div>
+		<h1>文本相似度计算</h1>
+		<textarea class="text1"></textarea><br>
+		<textarea class="text2"></textarea><br>
+		<input type="button" value="test"  id="textBtn" class="button">
+	</div>
 </body>
 </html>
