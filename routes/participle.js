@@ -12,8 +12,8 @@ const maxLength = 9;   // 词语的最大长度
 /**
  * allWordsInGlossary = {
 	"啊": [{   // 词语的第一个索引
-		word: "词语名字",
-		type: []  // 词语的所有词性
+		word: String,
+		type: Array  // 词语的所有词性
 	}]
  }
 */
@@ -69,9 +69,9 @@ function participleSentence(sentence) {
 
 	/** 
 	 * initResult = [{
-			word: "切分的词语",
-			type: [],   // 词语类型数组
-			index: 0   // 该词语第一个字所在的下标，为之后排序分词结果提供依据
+			word: String,
+			type: Array,   // 词语类型数组
+			index: Number   // 该词语第一个字所在的下标，为之后排序分词结果提供依据
 	 }]
 	*/
 	var initResult = [];
@@ -122,10 +122,7 @@ function participleSentence(sentence) {
 		initResult.splice(minIndex, 1);
 	}
 
-	console.log(sortResult);
-	
-	var Syntac = require("./SyntacticSimilarity");
-	Syntac(sortResult);
+	return sortResult;
 }
 
 module.exports = participleSentence;

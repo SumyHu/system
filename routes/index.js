@@ -152,8 +152,8 @@ module.exports = function(app) {
 		// var result = jieba.tag("我拿着如意");
 		// console.log(result);
 
-		var participle = require("./participle");
-		participle("县长派来的");
+		var SyntacticSimilarity = require("./SyntacticSimilarity");
+		SyntacticSimilarity("我是县长派来的。");
 
 		// var result;
 		// switch(req.body.btnId) {
