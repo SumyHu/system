@@ -23,7 +23,17 @@ var allWordsInGlossary;
  * @return 返回一个以词语第一个字为索引、包含词语名字和词性的Object
 */
 function loadGlossary() {
+	/**
+	 * allWordsInGlossary = {
+		"啊": [{
+			word: String,
+			type: Array
+		}, {}, ...],
+		"..": [{}]
+	 }
+	*/
 	allWordsInGlossary = {};
+
     var data = fs.readFileSync(glossaryPath, "utf-8");
     var line = data.split("\n");
 
@@ -90,6 +100,11 @@ function participleSentence(sentence) {
 								type: allWordsInGlossary[firstChar][j].type,
 								index: sentence.indexOf(cutWord)
 							});
+
+							// 将“的”字词性统一化，减少句法树结果的数量
+							if (cutWord == "的" || cutWord == "地") {
+								initResult[initResult.length-1].type = ["STRU"];
+							}
 						}
 						// 将切分的词从句子中删除
 						sentenceStr = sentenceStr.substring(0, i) + sentenceStr.substring(i+cutWordLength);
