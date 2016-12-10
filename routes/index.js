@@ -152,8 +152,9 @@ module.exports = function(app) {
 		// var result = jieba.tag("我拿着如意");
 		// console.log(result);
 
-		var SyntacticSimilarity = require("./SyntacticSimilarity");
-		SyntacticSimilarity("我超级喜欢你", "我喜欢你");
+		// var SyntacticSimilarity = require("./SyntacticSimilarity");
+		// SyntacticSimilarity("我超级喜欢你", "我喜欢你");
+		console.log(sentenceSimilary("我喜欢你", "我喜欢你"));
 
 		// var result;
 		// switch(req.body.btnId) {

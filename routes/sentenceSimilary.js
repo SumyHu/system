@@ -10,8 +10,11 @@ const jieba = require("nodejieba");
 // 调用词语上下级结构库
 const primitive = require("./Primitive");
 
-// 调用词语计算库的计算两个词语相似度的方法
-const wordSimilary = require("./WordSimilary").simWord;
+// 调用词语计算库计算两个词语相似度的方法
+const wordSimilary = require("./WordSimilary")().simWord;
+
+// 句法相似度实现库
+const SyntacticSimilarity = require("./SyntacticSimilarity");
 
 // 结巴分词非关键词词性标注头
 const notKetwordTagFirstCharArr = ["p", "c", "u", "e", "y", "o", "h", "k", "x", "w"];
@@ -68,7 +71,7 @@ function semSim(keywordArr1, keywordArr2) {
 	for(let i=0; i<len1; i++) {
 		var max = 0;
 		for(let j=0; j<len2; j++) {
-			var simVal = wordSimilary(keywordArr1[i], keywordArr2[j]);
+			var simVal = wordSimilary(keywordArr1[i].word, keywordArr2[j].word);
 			if (simVal > max) {
 				max = simVal;
 			}
@@ -78,7 +81,7 @@ function semSim(keywordArr1, keywordArr2) {
 	for(let i=0; i<len2; i++) {
 		var max = 0;
 		for(let j=0; j<len1; j++) {
-			var simVal = wordSimilary(keywordArr2[i], keywordArr1[j]);
+			var simVal = wordSimilary(keywordArr2[i].word, keywordArr1[j].word);
 			if (simVal > max) {
 				max = simVal;
 			}
@@ -99,49 +102,11 @@ function semSim(keywordArr1, keywordArr2) {
 	return (sum1/count1 + sum2/count2)/2;
 }
 
-/** 获取抽取的所有关键词的父节点
- * @param keywordArr Array 抽取的关键词数组
- * @return Array 抽取的关键词的父节点集合（下标表示层数，0为最顶层）
-*/
-function getAllKeywordParent(keywordArr) {
-	var allKeywordParent=[];
-	for(let i=0, len=keywordArr.length; i<len; i++) {
-		primitive.isPrimitive(keywordArr[i].word, function(word) {
-			primitive.getAllParents(word, function(parentsArray) {
-				allKeywordParent[i] = parentsArray;
-			});
-		});
-	}
-
-	console.log("000000000000");
-	console.log(allKeywordParent);
-
-	var floorNum = 0;
-	for(let i=0, len=allKeywordParent.length; i<len; i++) {
-		if (allKeywordParent[i].length > floorNum) {
-			floorNum = allKeywordParent[i].length;
-		}
-	}
-
-	var allKeywordParentByFloor = [];
-	for(let i=floorNum-1; i>=0; i--) {
-		var tempLen = allKeywordParentByFloor.length;
-		allKeywordParentByFloor[tempLen] = [];
-		for(let j=0, len=allKeywordParent.length; j<len; j++) {
-			if (allKeywordParent[j][i]) {
-				allKeywordParentByFloor[tempLen].push(allKeywordParent[j][i]);
-			}
-		}
-	}
-	console.log("999999");
-	console.log(allKeywordParentByFloor);
-
-	return allKeywordParentByFloor;
-}
-
 /** 句法相似度计算
 */
-function treeSim(keywordArr1, keywordArr2) {}
+function treeSim(sentence1, sentence2) {
+	return SyntacticSimilarity(sentence1, sentence2);
+}
 
 /** 词形相似度计算
  * @param keywordArr Array 抽取的关键词数组
@@ -168,4 +133,19 @@ function wordSim(keywordArr1, keywordArr2) {
 	return 2*simCount/(count1+count2);
 }
 
-module.exports = wordSim;
+/** 句子相似度计算
+*/
+function sentenceSimilarity(sentence1, sentence2) {
+	let keywordArr1 = participle(sentence1);
+	let keywordArr2 = participle(sentence2);
+
+	let syn_sim = treeSim(sentence1, sentence2);   // 句法相似度计算
+	let sem_sim = semSim(keywordArr1, keywordArr2);   // 基于语义的句子相似度计算
+	let word_sim = wordSim(keywordArr1, keywordArr2);   // 词形相似度计算
+
+	console.log("syn_sim: " + syn_sim + ", sem_sim: " + sem_sim + ", word_sim: " + word_sim);
+
+	return alpha*syn_sim + beta*sem_sim + gama* word_sim;
+}
+
+module.exports = sentenceSimilarity;

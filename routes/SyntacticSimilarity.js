@@ -843,7 +843,7 @@ function synaticSimilaryCla(wordSyntaxTree1, wordSyntaxTree2) {
 /** 句法相似度计算
  * @param studentAnswer String 学生答案
  * @parma correctAnswer String 正确答案
- * @return Number 计算结果
+ * @return max Number 计算结果
 */
 function SyntacticSimilarity(studentAnswer, correctAnswer) {
 	let wordSyntaxTreeArr1 = allTreeOfOneSentence(studentAnswer);
