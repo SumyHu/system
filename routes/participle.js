@@ -103,7 +103,7 @@ function participleSentence(sentence) {
 
 							// 将“的”字词性统一化，减少句法树结果的数量
 							if (cutWord == "的" || cutWord == "地") {
-								initResult[initResult.length-1].type = ["STRU"];
+								initResult[initResult.length-1].type = ["SpecialSTRU"];
 							}
 						}
 						// 将切分的词从句子中删除

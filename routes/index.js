@@ -153,7 +153,7 @@ module.exports = function(app) {
 		// console.log(result);
 
 		var SyntacticSimilarity = require("./SyntacticSimilarity");
-		SyntacticSimilarity("我是县长派来的");
+		SyntacticSimilarity("我超级喜欢你", "我喜欢你");
 
 		// var result;
 		// switch(req.body.btnId) {
