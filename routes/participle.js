@@ -140,4 +140,50 @@ function participleSentence(sentence) {
 	return sortResult;
 }
 
-module.exports = participleSentence;
+function participle(sentence, professionalNounsArr) {
+	let initResult = [], result=[], spliceArr = [], sentenceStr = sentence;
+
+	if (professionalNounsArr) {
+		for(let i=0, len=professionalNounsArr.length; i<len; i++) {
+			var proIndex = sentenceStr.indexOf(professionalNounsArr[i]);
+			if (proIndex > -1) {
+				initResult.push({
+					word: professionalNounsArr[i],
+					type: ["N"],
+					index: proIndex
+				});
+				sentenceStr = sentenceStr.substring(0, proIndex) + "N" + sentenceStr.substring(proIndex+professionalNounsArr[i].length);
+			}
+		}
+
+		if (sentenceStr != sentence) {
+			let sentenceArr = sentenceStr.split("N");
+			for(let i=0, len1=sentenceArr.length; i<len1; i++) {
+				if (sentenceArr[i]) {
+					let sortResult = participleSentence(sentenceArr[i]);
+					for(let j=0, len2=sortResult.length; j<len2; j++) {
+						result.push({
+							word: sortResult[j].word,
+							type: sortResult[j].type
+						});
+					}
+					if (initResult[i]) {
+						result.push({
+							word: initResult[i].word,
+							type: initResult[i].type
+						});
+					}
+				}
+			}
+			return result;
+		}
+		else {
+			return participleSentence(sentence);
+		}
+	}
+	else {
+		return participleSentence(sentence);
+	}
+}
+
+module.exports = participle;

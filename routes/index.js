@@ -13,6 +13,8 @@ var sentenceSimilary = require("./sentenceSimilary");
 // var Primitive = require("./Primitive");
 var WordSimilary = require("./WordSimilary");
 
+var participle = require("./participle");
+
 var jieba = require("nodejieba");
 
 const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
@@ -152,9 +154,11 @@ module.exports = function(app) {
 		// var result = jieba.tag("我拿着如意");
 		// console.log(result);
 
-		// var SyntacticSimilarity = require("./SyntacticSimilarity");
-		// SyntacticSimilarity("我超级喜欢你", "我喜欢你");
-		console.log(sentenceSimilary("我喜欢你", "我喜欢你"));
+		var SyntacticSimilarity = require("./SyntacticSimilarity");
+		SyntacticSimilarity("数据的逻辑存储结构发生改变", ["逻辑存储结构"]);
+		// console.log(sentenceSimilary("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
+
+		// console.log(participle("数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 
 		// var result;
 		// switch(req.body.btnId) {

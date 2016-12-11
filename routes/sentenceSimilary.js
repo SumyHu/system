@@ -7,6 +7,9 @@
 // 结巴分词
 const jieba = require("nodejieba");
 
+// 自定义分词库
+const participleFn = require("./participle");
+
 // 调用词语上下级结构库
 const primitive = require("./Primitive");
 
@@ -25,36 +28,55 @@ const gama = 0.1;
 
 /**句子分词，抽取关键词（名词、动词、形容词、副词）
  * @param sentence String 句子
+ * @param professionalNounsArr Array 专业名词
  * @return result Array 抽取的关键词集合
 */
-function participle(sentence) {
-	var jiebaResult = jieba.tag(sentence);
-	var result = [];
-	for(let i=0, len1=jiebaResult.length; i<len1; i++) {
-		var flag = true;
-		for(let j=0, len2=notKetwordTagFirstCharArr.length; j<len2; j++) {
-			if (jiebaResult[i].tag != "eng" && jiebaResult[i].tag[0] == notKetwordTagFirstCharArr[j]) {
-				flag = false;
+function participle(sentence, professionalNounsArr) {
+	// var jiebaResult = jieba.tag(sentence);
+	// var result = [];
+	// for(let i=0, len1=jiebaResult.length; i<len1; i++) {
+	// 	var flag = true;
+	// 	for(let j=0, len2=notKetwordTagFirstCharArr.length; j<len2; j++) {
+	// 		if (jiebaResult[i].tag != "eng" && jiebaResult[i].tag[0] == notKetwordTagFirstCharArr[j]) {
+	// 			flag = false;
+	// 			break;
+	// 		}
+	// 	}
+
+	// 	if (flag) {
+	// 		var f = true;
+	// 		for(let t=0, len3=result.length; t<len3; t++) {
+	// 			if (result[t].word == jiebaResult[i].word) {
+	// 				result[t].count = result[t].count+1;
+	// 				f = false;
+	// 				break;
+	// 			}
+	// 		}
+	// 		if (f) {
+	// 			result[result.length] = {
+	// 				word: jiebaResult[i].word,
+	// 				tag: jiebaResult[i].tag,
+	// 				count: 1
+	// 			}
+	// 		}
+	// 	}
+	// }
+	var participleResult = participleFn(sentence, professionalNounsArr);
+	let result = [];
+	for(let i=0, len1=participleResult.length; i<len1; i++) {
+		let flag = false;
+		for(let j=0, len2=result.length; j<len2; j++) {
+			if (participleResult[i].word == result[j].word) {
+				flag = true;
+				result[j].count ++;
 				break;
 			}
 		}
-
-		if (flag) {
-			var f = true;
-			for(let t=0, len3=result.length; t<len3; t++) {
-				if (result[t].word == jiebaResult[i].word) {
-					result[t].count = result[t].count+1;
-					f = false;
-					break;
-				}
-			}
-			if (f) {
-				result[result.length] = {
-					word: jiebaResult[i].word,
-					tag: jiebaResult[i].tag,
-					count: 1
-				}
-			}
+		if (!flag) {
+			result.push({
+				word: participleResult[i].word,
+				count: 1
+			});
 		}
 	}
 
@@ -104,8 +126,8 @@ function semSim(keywordArr1, keywordArr2) {
 
 /** 句法相似度计算
 */
-function treeSim(sentence1, sentence2) {
-	return SyntacticSimilarity(sentence1, sentence2);
+function treeSim(sentence1, sentence2, professionalNounsArr) {
+	return SyntacticSimilarity(sentence1, sentence2, professionalNounsArr);
 }
 
 /** 词形相似度计算
@@ -134,12 +156,16 @@ function wordSim(keywordArr1, keywordArr2) {
 }
 
 /** 句子相似度计算
+ * @param sentence1 String 句子1（考生答案）
+ * @param sentence2 String 句子2（正确答案）
+ * @param professionalNounsArr Array 专业名词数组
+ * @return Number 句子相似度计算结果
 */
-function sentenceSimilarity(sentence1, sentence2) {
-	let keywordArr1 = participle(sentence1);
-	let keywordArr2 = participle(sentence2);
+function sentenceSimilarity(sentence1, sentence2, professionalNounsArr) {
+	let keywordArr1 = participle(sentence1, professionalNounsArr);
+	let keywordArr2 = participle(sentence2, professionalNounsArr);
 
-	let syn_sim = treeSim(sentence1, sentence2);   // 句法相似度计算
+	let syn_sim = treeSim(sentence1, sentence2, professionalNounsArr);   // 句法相似度计算
 	let sem_sim = semSim(keywordArr1, keywordArr2);   // 基于语义的句子相似度计算
 	let word_sim = wordSim(keywordArr1, keywordArr2);   // 词形相似度计算
 

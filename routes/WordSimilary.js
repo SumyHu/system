@@ -219,8 +219,8 @@ function calSimWord(word1, word2) {
         }
     */
 
-    console.log(word1);
-    console.log(word2);
+    // console.log(word1);
+    // console.log(word2);
 
     if ((word1.structruralWords.length != 0) != (word2.structruralWords.length != 0)) {
         return 0;
@@ -236,19 +236,19 @@ function calSimWord(word1, word2) {
         // 实词的相似度分为4个部分
         // 基本义原相似度
         var sim1 = simPrimitive(word1.firstPrimitive, word2.firstPrimitive);
-        console.log("sim1: " + sim1);
+        // console.log("sim1: " + sim1);
 
         // 其他基本义原相似度
         var sim2 = simList(word1.otherPrimitives, word2.otherPrimitives);
-        console.log("sim2: " + sim2);
+        // console.log("sim2: " + sim2);
 
         // 关系义原相似度
         var sim3 = simMap(word1.relationalPrimitive, word2.relationalPrimitive);
-        console.log("sim3: " + sim3);
+        // console.log("sim3: " + sim3);
 
         // 关系符号相似度
         var sim4 = simMap(word1.relationSimbolPrimitive, word2.relationSimbolPrimitive);
-        console.log("sim4: " + sim4);
+        // console.log("sim4: " + sim4);
 
         var product = sim1;
         var sum = beta1 * product;
@@ -342,8 +342,8 @@ function simMap(arr1, arr2) {
  * value = [val1, val2, ...]
 */
 function simList(value1, value2) {
-    console.log(value1);
-    console.log(value2);
+    // console.log(value1);
+    // console.log(value2);
 	if ((value1.length == 0) && (value2.length == 0)) return 1;
 
     var m = value1.length;
