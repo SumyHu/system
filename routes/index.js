@@ -155,7 +155,7 @@ module.exports = function(app) {
 		// console.log(result);
 
 		var SyntacticSimilarity = require("./SyntacticSimilarity");
-		SyntacticSimilarity("数据的逻辑存储结构发生改变", ["逻辑存储结构"]);
+		SyntacticSimilarity("我是县长派来的。");
 		// console.log(sentenceSimilary("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 
 		// console.log(participle("数据的逻辑存储结构发生改变", ["逻辑存储结构"]));

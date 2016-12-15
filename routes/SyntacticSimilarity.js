@@ -185,14 +185,31 @@ function judgeTheRulesIfHadPush(theRulesHadPush, stackListNode) {
 				}
 			}
 		}
-		if (hasPushFlag) break;
+		if (hasPushFlag) {
+			return i;
+		}
 	}
 
-	if (hasPushFlag) {
+	// if (hasPushFlag) {
 		// console.log("node: " + stackListNode.node + " index: " + stackListNode.index);
-	}
+	// }
 
-	return hasPushFlag;
+	return -1;
+}
+
+/** 将新的规则添加进theRulesHadPush
+ * @param theRulesHadPush Array 存储已经添加的规则的栈
+ * @param stackListNode Object 栈中的某个节点
+*/
+function addRuleInHadPush(theRulesHadPush, stackListNode) {
+	theRulesHadPush.push({
+		parent: stackListNode.node,
+		childNodes: []
+	});
+	let childNodesArr = SyntacticRules[stackListNode.node][stackListNode.index];
+	for(let j=0, len=childNodesArr.length; j<len; j++) {
+		theRulesHadPush[theRulesHadPush.length-1].childNodes.push(childNodesArr[j]);
+	}
 }
 
 /** 判断即将改变的当前节点下是否有找到的分词
@@ -218,11 +235,11 @@ function findTreeInCurrentList(stackList, wordSyntaxTree, stackListLastNodeIndex
 
 		for(let i=wordSyntaxTree.length-1; i>=0; i--) {
 			let flag = true;   // 判断相不相等的的标记
-			if (wordSyntaxTree[i].length < compareTree.length) {
+			if (wordSyntaxTree[i].tree.length < compareTree.length) {
 				flag = false;
 			}
-			for(let n=wordSyntaxTree[i].length-1, m=compareTree.length-1; m>=0;n--, m--) {
-				if (!(wordSyntaxTree[i][n].node == compareTree[m].node && wordSyntaxTree[i][n].index == compareTree[m].index)) {
+			for(let n=wordSyntaxTree[i].tree.length-1, m=compareTree.length-1; m>=0;n--, m--) {
+				if (!(wordSyntaxTree[i].tree[n].node == compareTree[m].node && wordSyntaxTree[i].tree[n].index == compareTree[m].index)) {
 					flag = false;
 					break;
 				}
@@ -235,6 +252,113 @@ function findTreeInCurrentList(stackList, wordSyntaxTree, stackListLastNodeIndex
 			}
 		}
 	}
+}
+
+/** 将某个句法树回退
+ * @param
+*/
+function wordTreeGoBack(wordSyntaxTreeTarget, stackList, theRulesHadPush) {
+	// console.log("---------");
+	// console.log(stackList);
+	// console.log(theRulesHadPush);
+	// console.log(wordSyntaxTreeTarget);
+	let startIndex = 2, flag;
+	if (wordSyntaxTreeTarget.tree[0].node == "的" || wordSyntaxTreeTarget.tree[0].node == "地") {
+		startIndex = 1;
+	}
+	// 判断是否存在该分词的句法结构树是否还可以有其他可能
+	for(let i=startIndex, len=wordSyntaxTreeTarget.tree.length; i<len; i++) {
+		flag = false;
+		if (wordSyntaxTreeTarget.tree[i].index < SyntacticRules[wordSyntaxTreeTarget.tree[i].node].length-1) {
+			flag = true;
+			break;
+		}
+	}
+
+	if (flag) {
+		while(stackList.length > 0) {
+			stackList.pop();
+		}
+		while(theRulesHadPush.length > 0) {
+			theRulesHadPush.pop();
+		}
+		for(let i=0, len=wordSyntaxTreeTarget.stackList.length; i<len; i++) {
+			stackList.push({
+				node: wordSyntaxTreeTarget.stackList[i].node,
+				index: wordSyntaxTreeTarget.stackList[i].index
+			});
+
+			if (stackList[stackList.length-1].index >= 0) {
+				addRuleInHadPush(theRulesHadPush, stackList[stackList.length-1]);
+			}
+		}
+	}
+	while(stackList[stackList.length-1].index == "-") {
+		stackList.pop();
+	}
+	// console.log("=================");
+	// console.log(stackList);
+	// console.log(theRulesHadPush);
+	// // 若该句法结构树存在其他可能，则重新构建句法树
+	// if (flag) {
+	// 	for(let i=wordSyntaxTreeTarget.length-1; i>=startIndex; i--) {
+	// 		let bool = false, index;
+	// 		for(let j=0, len=stackList.length; j<len; j++) {
+	// 			if (stackList[j].node == wordSyntaxTreeTarget[i].node) {
+	// 				index = j;
+	// 				bool = true;
+	// 				break;
+	// 			}
+	// 		}
+	// 		if (bool) {
+	// 			if (stackList[index].index >= 0) {
+	// 				let theRulesHadPushIndex = judgeTheRulesIfHadPush(theRulesHadPush, stackList[index]);
+	// 				if (theRulesHadPushIndex >= 0) {
+	// 					if (stackList[index].node == "S") {
+	// 						console.log("splice================");
+	// 						console.log(theRulesHadPush[theRulesHadPushIndex]);
+	// 					}
+	// 					theRulesHadPush.splice(theRulesHadPushIndex, 1);
+	// 				}
+	// 			}
+				
+	// 			stackList[index].index = wordSyntaxTreeTarget[i].index;
+	// 		}
+	// 		else {
+	// 			stackList.push({
+	// 				node: wordSyntaxTreeTarget[i].node,
+	// 				index: wordSyntaxTreeTarget[i].index
+	// 			});
+	// 		}
+
+	// 		// 添加该新添加的栈的子句法树
+	// 		let syntac = SyntacticRules[wordSyntaxTreeTarget[i].node][wordSyntaxTreeTarget[i].index];
+	// 		// console.log("====================");
+	// 		// console.log(wordSyntaxTreeTarget);
+	// 		for(let t=syntac.length-1; t>=0; t--) {
+	// 			stackList.push({
+	// 				node: syntac[t],
+	// 				index: "-"
+	// 			});
+	// 		}
+
+	// 		// 添加相应的规则进theRulesHadPush
+	// 		let theRulesHadPushIndex = judgeTheRulesIfHadPush(theRulesHadPush, wordSyntaxTreeTarget[i]);
+	// 		if (theRulesHadPushIndex == -1) {
+	// 			addRuleInHadPush(theRulesHadPush, wordSyntaxTreeTarget[i]);
+	// 		}
+	// 	}
+
+		// while(stackList[stackList.length-1].index == "-") {
+		// 	stackList.pop();
+		// }
+	// }
+
+	// console.log("==============");
+	// console.log(stackList);
+	// console.log(theRulesHadPush);
+	// console.log("7777777777777777");
+	// console.log(stackList);
 }
 
 /** 建立句法树
@@ -260,7 +384,10 @@ function buildTree(onePossibleSentenceWordArr) {
 
 	/** 用于存储每个分词生成的句法树
 	 * 从最底层开始存储句法树的node值
-	 * wordSyntaxTree = [[{node: "我", index: "-"}, {node: "PRON", index: 1}, {}, ...]]
+	 * wordSyntaxTree = [{
+	 	stackList: [{node: "S", index: "2"}, {node: "VP", index: "-"}, {node: "NP", index: "1"}, {node: "PRON", index: "-"}],
+	 	tree: [{node: "我", index: "-"}, {node: "PRON", index: "-"}, {node: "NP", index: 1}, {node: "S", index: 2}],
+	 	{}, {}, ...]
 	*/
 	var wordSyntaxTree = [];
 
@@ -275,14 +402,31 @@ function buildTree(onePossibleSentenceWordArr) {
 		// console.log(stackList);
 		// console.log("theRulesHadPush");
 		// console.log(theRulesHadPush);
+		// for(let i=0, len=wordSyntaxTree.length; i<len; i++) {
+		// 	console.log(wordSyntaxTree[i].stackList);
+		// 	console.log(wordSyntaxTree[i].tree);
+		// }
 		if (!SyntacticRules[stackList[stackList.length-1].node]) {
 			// console.log("node: " + stackList[stackList.length-1].node);
 
 			// 若最后的非终结符跟当前未被句法树找到的第一个词语的词性相等
 			// 将该词语的句法树存储到wordSyntaxTree数组中
 			if ((stackList[stackList.length-1].node == onePossibleSentenceWordArr[currentWordArrIndex].type) || (stackList[stackList.length-1].node == "的" && onePossibleSentenceWordArr[currentWordArrIndex].word == "的") || (stackList[stackList.length-1].node == "地" && onePossibleSentenceWordArr[currentWordArrIndex].word == "地")) {
-				let pushTarget = wordSyntaxTree[wordSyntaxTree.length] = [];
-				pushTarget.push({
+				let lastWordSyntaxTree = wordSyntaxTree[wordSyntaxTree.length] = {
+					stackList: [],
+					tree: []
+				};
+				let wordStackList = lastWordSyntaxTree.stackList;
+				let tree = lastWordSyntaxTree.tree;
+
+				for(let i=0, len=stackList.length; i<len; i++) {
+					wordStackList.push({
+						node: stackList[i].node,
+						index: stackList[i].index
+					});
+				}
+
+				tree.push({
 					node: onePossibleSentenceWordArr[currentWordArrIndex].word,
 					index: "-"
 				});
@@ -290,15 +434,21 @@ function buildTree(onePossibleSentenceWordArr) {
 				let removeNode = stackList.pop();
 
 				if (removeNode.node == onePossibleSentenceWordArr[currentWordArrIndex].type) {
-					// console.log("len: " + stackList.length);
-					// console.log("stackList");
-					// console.log(stackList);
-					// console.log("theRulesHadPush");
-					// console.log(theRulesHadPush);
-					// console.log("node: " + removeNode.node + "  word: " + onePossibleSentenceWordArr[currentWordArrIndex].word + " index: " + currentWordArrIndex);
-					pushTarget.push({
+					console.log("len: " + stackList.length);
+					console.log("stackList");
+					console.log(stackList);
+					console.log("theRulesHadPush");
+					console.log(theRulesHadPush);
+					console.log("node: " + removeNode.node + "  word: " + onePossibleSentenceWordArr[currentWordArrIndex].word + " index: " + currentWordArrIndex);
+					tree.push({
 						node: removeNode.node,
 						index: removeNode.index
+					});
+				}
+				else {
+					wordStackList.push({
+						node: onePossibleSentenceWordArr[currentWordArrIndex].word,
+						index: "-"
 					});
 				}
 
@@ -307,7 +457,7 @@ function buildTree(onePossibleSentenceWordArr) {
 				while(stackList[stackList.length-1] && stackList[stackList.length-1].index != "-") {   // 将该节点从栈中移除
 					let removeNode = stackList.pop();
 					theRulesHadPush.pop();
-					pushTarget.push({
+					tree.push({
 						node: removeNode.node,
 						index: removeNode.index
 					});
@@ -316,7 +466,7 @@ function buildTree(onePossibleSentenceWordArr) {
 					if (stackList[i].index != "-") {
 						// console.log("node: " + stackList[i].node);
 
-						pushTarget.push({
+						tree.push({
 							node:stackList[i].node,
 							index: stackList[i].index
 						});
@@ -357,98 +507,120 @@ function buildTree(onePossibleSentenceWordArr) {
 				// 	return;
 				// }
 
-				if (wordSyntaxTree.length == 0) {
-					while(stackList[stackList.length-1].index == "-") {
-						stackList.pop();
-					}
+				while(stackList[stackList.length-1].index == "-") {
+					stackList.pop();
 				}
-				else {
-					let removeTree = [];
-					// 将不可行的句法树的前面匹配部分一一添加到removeTree数组中
-					for(let i=stackList.length-1; i>=0; i--) {
-						if (stackList[i].index != "-") {
-							removeTree.push(stackList[i].node);
-						}
-					}
 
-					// console.log("removeTree----------");
-					// console.log(removeTree);
+				// if (wordSyntaxTree.length == 0) {
+				// 	while(stackList[stackList.length-1].index == "-") {
+				// 		stackList.pop();
+				// 	}
+				// }
+				// else {
+				// 	let removeTree = [];
+				// 	// 将不可行的句法树的前面匹配部分一一添加到removeTree数组中
+				// 	for(let i=stackList.length-1; i>=0; i--) {
+				// 		if (stackList[i].index != "-") {
+				// 			removeTree.push({
+				// 				node: stackList[i].node,
+				// 				index: stackList[i].index
+				// 			});
+				// 		}
+				// 	}
 
-					// 将从wordSyntaxTree一一找出不可行的句法树，并从wordSyntaxTree中全部删除
-					let flag, spliceIndex;
-					for(let i=wordSyntaxTree.length-1; i>=0; i--) {
-						flag = true;
-						if (wordSyntaxTree[i].length < removeTree.length) {
-							flag = false;
-						}
-						else {
-							for(let w=wordSyntaxTree[i].length-1, r=removeTree.length-1; r>=0; w--, r--) {
-								if (wordSyntaxTree[i][w].node != removeTree[r]) {
-									flag = false;
-									break;
-								}
-							}
-						}
+				// 	// console.log("removeTree----------");
+				// 	// console.log(removeTree);
 
-						if (flag) {
-							spliceIndex = i;
-							break;
-							// console.log(removeTree);
-							// console.log("currentWordArrIndex: " + currentWordArrIndex);
-						}
-					}
+				// 	// 将从wordSyntaxTree一一找出不可行的句法树，并从wordSyntaxTree中全部删除
+				// 	let flag, spliceIndex;
+				// 	for(let i=wordSyntaxTree.length-1; i>=0; i--) {
+				// 		flag = true;
+				// 		if (wordSyntaxTree[i].length < removeTree.length) {
+				// 			flag = false;
+				// 		}
+				// 		else {
+				// 			for(let w=wordSyntaxTree[i].length-1, r=removeTree.length-1; r>=0; w--, r--) {
+				// 				if (wordSyntaxTree[i][w].node != removeTree[r].node || wordSyntaxTree[i][w].index != removeTree[r].index) {
+				// 					flag = false;
+				// 					break;
+				// 				}
+				// 			}
+				// 		}
 
-					if (flag) {
-						let lastWordSyntaxTree = wordSyntaxTree[spliceIndex];
-						// console.log(lastWordSyntaxTree);
+				// 		if (flag) {
+				// 			spliceIndex = i;
+				// 			break;
+				// 			// console.log(removeTree);
+				// 			// console.log("currentWordArrIndex: " + currentWordArrIndex);
+				// 		}
+				// 	}
 
-						let startIndex = 2;
-						if (lastWordSyntaxTree[0].node == "的" || lastWordSyntaxTree[0].node == "地") {
-							startIndex = 1;
-						}
+				// 	if (flag) {
+				// 		let lastWordSyntaxTree = wordSyntaxTree[spliceIndex];
+				// 		// console.log(lastWordSyntaxTree);
 
-						let endIndex = lastWordSyntaxTree.length-removeTree.length-1;
+				// 		let startIndex = 2;
+				// 		if (lastWordSyntaxTree[0].node == "的" || lastWordSyntaxTree[0].node == "地") {
+				// 			startIndex = 1;
+				// 		}
 
-						if (endIndex < startIndex) {
-							while(stackList[stackList.length-1].index == "-") {
-								stackList.pop();
-							}
-						}
-						else {
-							for(let j=endIndex; j>=startIndex; j--) {
-								stackList.push({
-									node: lastWordSyntaxTree[j].node,
-									index: lastWordSyntaxTree[j].index
-								});
+				// 		let endIndex = lastWordSyntaxTree.length-removeTree.length-1;
 
-								if (lastWordSyntaxTree[j].index >= 0) {
-									theRulesHadPush.push({
-										parent: lastWordSyntaxTree[j].node,
-										childNodes: []
-									});
+				// 		if(endIndex >= startIndex) {
+				// 			let initLen = stackList.length, bool, index;
+				// 			for(let j=endIndex; j>=startIndex; j--) {
+				// 				bool = false;
+				// 				for(let t=initLen; t<stackList.length; t++) {
+				// 					if (stackList[t].node == lastWordSyntaxTree[j].node) {
+				// 						bool = true;
+				// 						index = t;
+				// 						break;
+				// 					}
+				// 				}
+				// 				if (bool) {
+				// 					let rulesIndex = judgeTheRulesIfHadPush(theRulesHadPush, stackList[index]);
+				// 					if (rulesIndex >= 0) {
+				// 						theRulesHadPush.splice(rulesIndex, 1);
+				// 					}
+				// 					stackList[index].index = lastWordSyntaxTree[j].index;
+				// 				}
+				// 				else {
+				// 					stackList.push({
+				// 						node: lastWordSyntaxTree[j].node,
+				// 						index: lastWordSyntaxTree[j].index
+				// 					});
+				// 				}
 
-									let SyntacticRulesContent = SyntacticRules[lastWordSyntaxTree[j].node][lastWordSyntaxTree[j].index];
-									for(let t=0,len1=SyntacticRulesContent.length; t<len1; t++) {
-										theRulesHadPush[theRulesHadPush.length-1].childNodes.push(SyntacticRulesContent[t]);
-									}
-								}
-							}
-						}
+				// 				if (lastWordSyntaxTree[j].index >= 0) {
+				// 					let syntac = SyntacticRules[lastWordSyntaxTree[j].node][lastWordSyntaxTree[j].index];
+				// 					for(let p=syntac.length-1; p>=0; p--) {
+				// 						stackList.push({
+				// 							node: syntac[p],
+				// 							index: "-"
+				// 						});
+				// 					}
+				// 					addRuleInHadPush(theRulesHadPush, lastWordSyntaxTree[j]);
+				// 				}
+				// 			}
+				// 		}
+				// 		while(stackList[stackList.length-1].index == "-") {
+				// 			stackList.pop();
+				// 		}
 
-						// console.log("test-----------------");
-						// console.log(stackList);
+				// 		// console.log("test-----------------");
+				// 		// console.log(stackList);
 
-						console.log("0");
-						console.log(wordSyntaxTree[spliceIndex]);
-						wordSyntaxTree.splice(spliceIndex, 1);
-						currentWordArrIndex --;   // 当前还未被句法树找到的第一个词语的下标上移一位
-					}
-					else {
-						while(stackList[stackList.length-1].index == "-") {
-							stackList.pop();
-						}
-					}
-				}
+				// 		// console.log("0");
+				// 		// console.log(wordSyntaxTree[spliceIndex]);
+				// 		wordSyntaxTree.splice(spliceIndex, 1);
+				// 		currentWordArrIndex --;   // 当前还未被句法树找到的第一个词语的下标上移一位
+				// 	}
+				// 	else {
+				// 		while(stackList[stackList.length-1].index == "-") {
+				// 			stackList.pop();
+				// 		}
+				// 	}
+				// }
 
 				// let lastWordSyntaxTree = wordSyntaxTree[wordSyntaxTree.length-1];
 				// for(let i=1, len=lastWordSyntaxTree.length-stackList.length-1; i<len; i++) {
@@ -519,61 +691,6 @@ function buildTree(onePossibleSentenceWordArr) {
 					// 	}
 					// }
 
-					findTreeInCurrentList(stackList, wordSyntaxTree, stackListLastNode.index, function(spliceIndex) {
-						console.log("1");
-						console.log(wordSyntaxTree[spliceIndex]);
-						if (stackList.length == 1 && stackList[0].node == "S" && stackList[0].index == 2) {
-							let target = wordSyntaxTree[spliceIndex], startIndex = 2, flag;
-							if (target[0].node == "的" || target[0].node == "地") {
-								startIndex = 1;
-							}
-							// 判断是否存在该分词的句法结构树是否还可以有其他可能
-							for(let i=startIndex, len=target.length; i<len; i++) {
-								flag = false;
-								if (target[i].index < SyntacticRules[target[i].node][target[i].index].length-1) {
-									flag = true;
-									break;
-								}
-							}
-							// 若该句法结构树存在其他可能，则重新构建句法树
-							if (flag) {
-								for(let i=target.length-1; i>=startIndex; i--) {
-									let bool = false, index;
-									for(let j=0, len=stackList.length; j<len; j++) {
-										if (stackList[j].node == target[i].node) {
-											index = j;
-											bool = true;
-											break;
-										}
-									}
-									if (bool) {
-										stackList[index].index = target[i].index;
-
-										// 添加相应的规则进theRulesHadPush
-										theRulesHadPush
-									}
-									else {
-										stackList.push({
-											node: target[i].node,
-											index: target[i].index
-										});
-
-										// 添加相应的规则进theRulesHadPush
-										theRulesHadPush
-									}
-
-									// 添加该新添加的栈的子句法树
-									let syntac = SyntacticRules[target[i].node][target[i].index];
-									for(let t=syntac.length-1; t>=0; t--) {
-										stackList.push({});
-									}
-								}
-							}
-						}
-						wordSyntaxTree.splice(spliceIndex, 1);
-						currentWordArrIndex--;
-					});
-
 					stackListLastNode.index = -1;
 				}
 			}
@@ -608,7 +725,7 @@ function buildTree(onePossibleSentenceWordArr) {
 				// 	if (hasPushFlag) break;
 				// }
 
-				if (!hasPushFlag) {   // 若该规则没有被添加过，则添加
+				if (hasPushFlag == -1) {   // 若该规则没有被添加过，则添加
 					let prevIndex = stackListLastNode.index-1;
 					if (prevIndex >= 0) {
 						// let theRulesHadPushLastNode = theRulesHadPush[theRulesHadPush.length-1];
@@ -629,10 +746,11 @@ function buildTree(onePossibleSentenceWordArr) {
 
 						let judgeFlag = judgeTheRulesIfHadPush(theRulesHadPush, {node: stackListLastNode.node, index: prevIndex});
 
+
 						// if (stackListLastNode.hasPushTheRules) {
 						// 	theRulesHadPush.pop();
 						// }
-						if (judgeFlag) {
+						if (judgeFlag >= 0) {
 							theRulesHadPush.pop();
 						}
 
@@ -672,8 +790,8 @@ function buildTree(onePossibleSentenceWordArr) {
 						// }
 
 						findTreeInCurrentList(stackList, wordSyntaxTree, prevIndex, function(spliceIndex) {
-							console.log("2");
-							console.log(wordSyntaxTree[spliceIndex]);
+							// console.log("2");
+							// console.log(wordSyntaxTree[spliceIndex]);
 							wordSyntaxTree.splice(spliceIndex, 1);
 							currentWordArrIndex--;
 						});
@@ -685,34 +803,66 @@ function buildTree(onePossibleSentenceWordArr) {
 							index: "-"
 						});
 					}
-					let childNodes = [];
-					for(let i=0, len=pushArr.length; i<len; i++) {
-						childNodes.push(pushArr[i]);
-					}
 
-					// stackListLastNode.hasPushTheRules = true;
-
-					theRulesHadPush.push({
-						parent: stackListLastNode.node,
-						childNodes: childNodes
-					});
+					addRuleInHadPush(theRulesHadPush, stackListLastNode);
 
 					// console.log(theRulesHadPush);
 				}
 			}
 			else {
-				let removeNode = stackList.pop();   // 将已经遍历完了的当前节点删除
+				// let removeNode = stackList.pop();   // 将已经遍历完了的当前节点删除
 				// console.log("remove:   --------------");
 				// console.log(removeNode);
 				// if (removeNode.hasPushTheRules) {
 				// 	theRulesHadPush.pop();
 				// }
-				if (judgeTheRulesIfHadPush(theRulesHadPush, {node: removeNode.node, index: SyntacticRules[removeNode.node].length-1})) {
-					theRulesHadPush.pop();
-				}
+				// if (judgeTheRulesIfHadPush(theRulesHadPush, {node: removeNode.node, index: SyntacticRules[removeNode.node].length-1})) {
+				// 	theRulesHadPush.pop();
+				// }
 
-				while(stackList.length > 0 && stackList[stackList.length-1].index == "-") {
-					stackList.pop();
+				// while(stackList.length > 0 && stackList[stackList.length-1].index == "-") {
+				// 	stackList.pop();
+				// }
+
+				stackListLastNode.index = SyntacticRules[stackListLastNode.node].length-1;
+
+				// console.log("00000000");
+				// console.log(stackList);
+				// console.log(wordSyntaxTree);
+				// console.log(currentWordArrIndex);
+
+				let flag = false;
+				findTreeInCurrentList(stackList, wordSyntaxTree, SyntacticRules[stackListLastNode.node].length-1, function(spliceIndex) {
+					// console.log("1");
+					// console.log(wordSyntaxTree[spliceIndex]);
+					// console.log(stackList);
+					if (stackList.length == 1 && stackList[0].node == "S" && stackList[0].index == 2) {
+						// console.log("=--------============");
+						// console.log(stackList);
+						// console.log(theRulesHadPush);
+						flag = true;
+						wordTreeGoBack(wordSyntaxTree[spliceIndex], stackList, theRulesHadPush);
+
+						// 导致stackList和theRulesHadPush不一致的问题所在
+						// console.log("==============");
+						// console.log(stackList);
+						// console.log(theRulesHadPush);
+					}
+					// wordTreeGoBack(wordSyntaxTree[spliceIndex], stackList, theRulesHadPush);
+					wordSyntaxTree.splice(spliceIndex, 1);
+					currentWordArrIndex--;
+				});
+
+				if (!flag) {
+					let removeNode = stackList.pop();   // 将已经遍历完了的当前节点删除
+					let judgeFlag = judgeTheRulesIfHadPush(theRulesHadPush, removeNode);
+					if (judgeFlag >= 0) {
+						theRulesHadPush.pop();
+					}
+
+					while(stackList.length > 0 && stackList[stackList.length-1].index == "-") {
+						stackList.pop();
+					}
 				}
 
 				// if (stackList.length == 0) {
@@ -733,40 +883,36 @@ function buildTree(onePossibleSentenceWordArr) {
 
 			let lastWordSyntaxTree = wordSyntaxTree[wordSyntaxTree.length-1];
 
-			if (stackList.length > 0 && currentWordArrIndex == onePossibleSentenceWordArr.length) {
-				while (stackList[stackList.length-1].index == "-") {
-					stackList.pop();
-				}
-			}
-			else {
-				let cutIndex;
-				for(let i=0, len=lastWordSyntaxTree.length; i<len; i++) {
-					if (SyntacticRules[lastWordSyntaxTree[i].node]) {
-						cutIndex = i;
-						break;
-					}
-				}
-				for(let i=lastWordSyntaxTree.length-1; i>=cutIndex; i--) {
-					stackList.push({
-						node: lastWordSyntaxTree[i].node,
-						index: lastWordSyntaxTree[i].index
-					});
+			// if (stackList.length > 0 && currentWordArrIndex == onePossibleSentenceWordArr.length) {
+			// 	while (stackList[stackList.length-1].index == "-") {
+			// 		stackList.pop();
+			// 	}
+			// }
+			// else {
+				// let cutIndex;
+				// for(let i=0, len=lastWordSyntaxTree.length; i<len; i++) {
+				// 	if (SyntacticRules[lastWordSyntaxTree[i].node]) {
+				// 		cutIndex = i;
+				// 		break;
+				// 	}
+				// }
+				// for(let i=lastWordSyntaxTree.length-1; i>=cutIndex; i--) {
+				// 	stackList.push({
+				// 		node: lastWordSyntaxTree[i].node,
+				// 		index: lastWordSyntaxTree[i].index
+				// 	});
 
-					if (!judgeTheRulesIfHadPush(theRulesHadPush, stackList[stackList.length-1])) {
-						theRulesHadPush.push({
-							parent: stackList[stackList.length-1].node,
-							childNodes: []
-						});
-						let childNodesArr = SyntacticRules[stackList[stackList.length-1].node][stackList[stackList.length-1].index];
-						for(let j=0, len=childNodesArr.length; j<len; j++) {
-							theRulesHadPush[theRulesHadPush.length-1].childNodes.push(childNodesArr[j]);
-						}
-					}
-				}
-			}
+				// 	if (!judgeTheRulesIfHadPush(theRulesHadPush, stackList[stackList.length-1])) {
+				// 		addRuleInHadPush(theRulesHadPush, stackList[stackList.length-1]);
+				// 	}
+				// }
+			// 	wordTreeGoBack(lastWordSyntaxTree, stackList, theRulesHadPush);
+			// }
 
-			console.log("3");
-			console.log(wordSyntaxTree[wordSyntaxTree.length-1]);
+			wordTreeGoBack(lastWordSyntaxTree, stackList, theRulesHadPush);
+
+			// console.log("3");
+			// console.log(wordSyntaxTree[wordSyntaxTree.length-1]);
 			wordSyntaxTree.splice(wordSyntaxTree.length-1, 1);
 			currentWordArrIndex --;
 		}
@@ -798,25 +944,25 @@ function allTreeOfOneSentence(sentence, professionalNounsArr) {
 	var participleResult = participle(sentence, professionalNounsArr);   // 将句子分词
 	console.log(participleResult);
 	var allPossibleSentence = combinAllPosibility(participleResult);   // 获取所有可能词性组合的所有句子集合
-	// console.log(allPossibleSentence[0]);
+	console.log(allPossibleSentence[8]);
 
-	var allTreeArr = [];
-	for(let i=0, len=allPossibleSentence.length; i<len; i++) {
-		console.log("i: " + i);
+	// var allTreeArr = [];
+	// for(let i=0, len=allPossibleSentence.length; i<len; i++) {
+	// 	console.log("i: " + i);
 
-		var result = buildTree(allPossibleSentence[i]);
+	// 	var result = buildTree(allPossibleSentence[i]);
 
-		if (result) {
-			// console.log(allPossibleSentence[i]);
-			console.log(result);
-			allTreeArr.push(result);
-		}
-	}
+	// 	if (result) {
+	// 		// console.log(allPossibleSentence[i]);
+	// 		console.log(result);
+	// 		allTreeArr.push(result);
+	// 	}
+	// }
 	// console.log(allTreeArr[0]);
 
-	// console.log(buildTree(allPossibleSentence[0]));
+	console.log(buildTree(allPossibleSentence[8]));
 
-	return allTreeArr;
+	// return allTreeArr;
 }
 
 /** 将句法树转化为可以计算的对象
@@ -871,9 +1017,9 @@ function synaticSimilaryCla(wordSyntaxTree1, wordSyntaxTree2) {
 	 }
 	*/
 	let compareObj1 = transformWordSyntaxTree(wordSyntaxTree1);
-	console.log(compareObj1);
+	// console.log(compareObj1);
 	let compareObj2 = transformWordSyntaxTree(wordSyntaxTree2);
-	console.log(compareObj2);
+	// console.log(compareObj2);
 
 	let result = 0;   //用于累积计算相似度结果
 	for(let i in compareObj1) {
@@ -914,7 +1060,7 @@ function SyntacticSimilarity(studentAnswer, correctAnswer, professionalNounsArr)
 			}
 		}
 	}
-	console.log(max);
+	// console.log(max);
 	return max;
 }
 
