@@ -155,8 +155,13 @@ module.exports = function(app) {
 		// console.log(result);
 
 		var SyntacticSimilarity = require("./SyntacticSimilarity");
-		SyntacticSimilarity("我是县长派来的。");
-		// console.log(sentenceSimilary("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
+		// SyntacticSimilarity("数据的逻辑存储结构发生改变时", ["逻辑存储结构"]);
+		let wordSimilaryFn = WordSimilary();
+		// console.log(wordSimilaryFn.simWord("改变", "不改变"));
+		// console.log(sentenceSimilary("数据的逻辑存储结构并不改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
+		// console.log(textSimilaryCal("数据的逻辑存储结构改变", "数据的逻辑存储结构改变"));
+		// console.log(SyntacticSimilarity("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
+		console.log(SyntacticSimilarity("数据的逻辑存储结构并不会发生改变", ["逻辑存储结构"]));
 
 		// console.log(participle("数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 
