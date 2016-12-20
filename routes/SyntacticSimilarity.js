@@ -29,7 +29,7 @@ const SyntacticRules = {
 	VP: [["VC"], ["DV", "ADJ"], ["PP", "VP"], ["VC", "NP"], ["VC", "VP"], ["DV", "VP"]],
 	VC: [["V"], ["V", "V"], ["V", "ADJ"]],
 	DV: [["ADV"], ["ADJ"], ["ADV", "地"], ["ADJ", "地"], ["NP", "地"]],
-	PP: [["PREP", "NP"]]
+	PP: [["PREP"], ["PREP", "NP"]]
 }
 
 /** 递归罗列出具有多种词性词语的各种组合
@@ -117,7 +117,7 @@ function combinAllPosibility(wordArr) {
 				for(let t=0, len3=allPossible[i].length; t<len3; t++) {
 					if (j == allPossible[i][t].wordIndex) {
 						var type = allPossible[i][t].type;
-						if (type != "STRU" || type != "ECHO" || type != "CONJ") {
+						if (type != "STRU" || type != "ECHO" || type != "CONJ" || type != "AUX") {
 							allPossibleSentence[lastIndex].push({
 								word: allPossible[i][t].word,
 								type: allPossible[i][t].type
@@ -575,7 +575,7 @@ function allTreeOfOneSentence(sentence, professionalNounsArr) {
 
 	var allTreeArr = [];
 	for(let i=0, len=allPossibleSentence.length; i<len; i++) {
-		// console.log("i: " + i);
+		console.log("i: " + i);
 
 		let result = buildTree(allPossibleSentence[i]);
 

@@ -1,0 +1,51 @@
+.outer {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	padding: 20px 40px;
+	border: 1px solid #fff;
+	border-radius: 20px 40px;
+	/*background: rgba(255, 255, 255, 0.5);*/
+	/*background: #fff;*/
+	text-align: center;
+	font-family: "幼圆";
+	font-size: 23px;
+	color: #fff;
+}
+
+.outer div {
+	margin: 20px 0;
+}
+
+.username, .password {
+	display: inline-block;
+	width: 250px;
+	font-size: 23px;
+	border: none;
+	border-bottom: 1px solid #fff;
+	outline: none;
+	background: transparent;
+	font-family: "幼圆";
+	color: #fff;
+}
+
+.register, .findPsw {
+	height: 35px;
+	border: none;
+	line-height: 35px;
+	font-size: 20px;
+	color: #fff;
+}
+
+.register {
+	width: 80px;
+	border-radius: 10px;
+	background: #8EAD2E;
+}
+
+.findPsw {
+	width: 110px;
+	background: transparent;
+	color: #D21F1F;
+}

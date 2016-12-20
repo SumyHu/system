@@ -95,10 +95,22 @@ function participleSentence(sentence) {
 				for(let j=0, len=allWordsInGlossary[firstChar].length; j<len; j++) {
 					if (allWordsInGlossary[firstChar][j].word == cutWord) {
 						if (allWordsInGlossary[firstChar][j].type[0] != "PUNC") {   // 将标点符号去除
+							let index = sentence.indexOf(cutWord);
+							let flag = false;
+							while(!flag) {
+								flag = true;
+								for(let t=0, len1=initResult.length; t<len1; t++) {
+									if (initResult[t].index == index) {
+										index = sentence.indexOf(cutWord, index+cutWord.length);
+										flag = false;
+									}
+								}
+							}
+							
 							initResult.push({
 								word: cutWord,
 								type: allWordsInGlossary[firstChar][j].type,
-								index: sentence.indexOf(cutWord)
+								index: index
 							});
 
 							// 将“的”字词性统一化，减少句法树结果的数量

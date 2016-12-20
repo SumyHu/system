@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="CodeMirror-master/lib/codemirror.css">
+<script src="CodeMirror-master/lib/codemirror.js"></script>
+<script src="CodeMirror-master/mode/clike/clike.js"></script>
+<script src="CodeMirror-master/mode/javascript/javascript.js"></script>
+
+<!--引入css文件，用以支持主题-->
+<!-- <link rel="stylesheet" href="CodeMirror-master/theme/eclipse.css"> -->
+<link rel="stylesheet" href="CodeMirror-master/theme/seti.css">
+<!-- <link rel="stylesheet" href="CodeMirror-master/theme/dracula.css"> -->
+
+<!--引入js，绑定Vim-->
+<!-- <link rel="stylesheet" href="CodeMirror-master/addon/dialog/dialog.css">
+<script src="CodeMirror-master/keymap/vim.js"></script>
+<script src="codemirror-5.12/addon/search/searchcursor.js"></script> -->
+<!--改善vim输入命令时的样式-->
+<!-- <script src="codemirror-5.12/addon/dialog/dialog.js"></script> -->
+
+<!--支持代码折叠-->
+<!-- <link rel="stylesheet" href="CodeMirror-master/addon/fold/foldgutter.css"/>
+<script src="CodeMirror-master/addon/fold/foldcode.js"></script>
+<script src="CodeMirror-master/addon/fold/foldgutter.js"></script>
+<script src="CodeMirror-master/addon/fold/brace-fold.js"></script>
+<script src="CodeMirror-master/addon/fold/comment-fold.js"></script> -->
+
+<!--全屏模式-->
+<!-- <link rel="stylesheet" href="CodeMirror-master/addon/display/fullscreen.css">
+<script src="CodeMirror-master/addon/display/fullscreen.js"></script> -->
+
+<!--括号匹配-->
+<script src="CodeMirror-master/addon/edit/matchbrackets.js"></script>
+
+<!--自动补全-->
+<!-- <link rel="stylesheet" href="CodeMirror-master/addon/hint/show-hint.css">
+<script src="CodeMirror-master/addon/hint/show-hint.js"></script>
+<script src="CodeMirror-master/addon/hint/anyword-hint.js"></script> -->
+
+</head>
+<body>
+	<textarea id="code"></textarea>
+
+	<script type="text/javascript">
+		//根据DOM元素的id构造出一个编辑器
+	    var editor=CodeMirror.fromTextArea(document.getElementById("code"),{
+                mode: "text/x-java", //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
+                lineNumbers: true,   // 显示行号
+
+		        //设置主题
+		        theme: "seti",
+
+		        //绑定Vim
+		        // keyMap: "vim",
+
+		        //代码折叠
+		        lineWrapping: true,
+		        foldGutter: true,
+		        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+
+		        //全屏模式
+		        // fullScreen: true,
+
+		        //括号匹配
+		        matchBrackets: true,
+
+		        extraKeys: {"Ctrl-Space":"autocomplete"}   //ctrl-space唤起智能提示
+        });
+	</script>
+</body>
+</html>
