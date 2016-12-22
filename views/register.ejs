@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="stylesheets/commentStyle.css">
+	<link rel="stylesheet" type="text/css" href="stylesheets/loginStyle.css">
+	<link rel="stylesheet" type="text/css" href="stylesheets/registerStyle.css">
+	<link rel="stylesheet" type="text/css" href="stylesheets/findPswStyle.css">
+</head>
+<body>
+	<div class="tips"></div>
+	<div class="outer">
+		<div class="title">注册</div>
+		<div class="firstStep">
+			<div>账号：<input type="text" class="username"></div>
+			<div>密码：<input type="password" class="password"></div>
+			<div>确认密码：<input type="password" class="pswConfirm"></div>
+			<div>
+				<input type="radio" name="identity" value="teacher" id="teacher">
+				<label for="teacher">老师</label> &nbsp; &nbsp; 
+				<input type="radio" name="identity" value="student" id="student">
+				<label for="student">学生</label>
+			</div>
+			<div><input type="button" value="下一步" class="nextStep"></div>
+		</div>
+		<div class="secondStep">
+			<div>问题1：
+				<select>
+					<option>你父亲的名字是？</option>
+					<option>你QQ是？</option>
+				</select>
+			</div>
+			<div>答案：<input type="text"></div>
+			<div>问题2：
+				<select>
+					<option>你母亲的名字是？</option>
+					<option>你手机号码是？</option>
+				</select>
+			</div>
+			<div>答案：<input type="text"></div>
+			<div>问题3：
+				<select>
+					<option>你班主任的名字是？</option>
+					<option>你的宠物的名字是？</option>
+				</select>
+			</div>
+			<div>答案：<input type="text"></div>
+			<div><input type="button" value="注册" class="registerConfirm"></div>
+		</div>
+	</div>
+	<script src="javascripts/jquery.min.js"></script>
+	<script src="javascripts/commentJS.js"></script>
+	<script src="javascripts/registerJs.js"></script>
+</body>
+</html>

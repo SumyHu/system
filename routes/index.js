@@ -187,6 +187,10 @@ module.exports = function(app) {
 		res.render("login");
 	});
 
+	app.get("/register", function(req, res) {
+		res.render("register");
+	});
+
 	app.get("/translater", function(req, res) {
 		res.render("translater");
 	});

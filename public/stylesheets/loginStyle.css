@@ -18,7 +18,11 @@
 	margin: 20px 0;
 }
 
-.username, .password {
+.outer .title {
+	font-size: 25px;
+}
+
+input[type=text], input[type=password] {
 	display: inline-block;
 	width: 250px;
 	font-size: 23px;
@@ -30,22 +34,21 @@
 	color: #fff;
 }
 
-.register, .findPsw {
-	height: 35px;
-	border: none;
-	line-height: 35px;
-	font-size: 20px;
-	color: #fff;
-}
-
-.register {
+.login, .register {
 	width: 80px;
 	border-radius: 10px;
-	background: #8EAD2E;
+	/*background: #8EAD2E;*/
+	background: rgba(142, 173, 46, 0.5);
+}
+
+.login {
+	width: 100px;
+	margin: 10px 0;
+	background: rgba(67, 135, 253, 0.5);
 }
 
 .findPsw {
 	width: 110px;
 	background: transparent;
-	color: #D21F1F;
+	color: #D21F1F !important;
 }

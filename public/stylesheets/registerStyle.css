@@ -1,0 +1,29 @@
+.pswConfirm {
+	display: inline-block;
+	width: 202px !important;
+	font-size: 23px;
+	border: none;
+	border-bottom: 1px solid #fff;
+	outline: none;
+	background: transparent;
+	font-family: "幼圆";
+	color: #fff;
+}
+
+.nextStep, .registerConfirm {
+	width: 80px;
+	border-radius: 10px;
+	background: rgba(67, 135, 253, 0.5);
+}
+
+.secondStep {
+	height: 0;
+	overflow: hidden;
+}
+
+select {
+	width: 224px;
+	border-radius: 10px;
+	outline: none;
+	font-size: 23px;
+}
