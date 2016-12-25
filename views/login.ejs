@@ -5,12 +5,13 @@
 	<link rel="stylesheet" type="text/css" href="stylesheets/loginStyle.css">
 </head>
 <body>
-	<div class="outer">
+	<div class="tips"></div>
+	<section class="outer">
 		<div class="title">登录</div>
 		<div>账号：<input type="text" class="username"></div>
 		<div>密码：<input type="password" class="password"></div>
 		<div>
-			<input type="radio" name="identity" value="teacher" id="teacher">
+			<input type="radio" name="identity" value="teacher" id="teacher" checked>
 			<label for="teacher">老师</label> &nbsp; &nbsp; 
 			<input type="radio" name="identity" value="student" id="student">
 			<label for="student">学生</label>
@@ -20,8 +21,9 @@
 			<input type="button" value="注册" class="register">
 			<input type="button" value="忘记密码？" class="findPsw">
 		</div>
-	</div>
+	</section>
 	<script src="javascripts/jquery.min.js"></script>
-	<script src="javascripts/loginJs.js"></script>
+	<script src="javascripts/commentJS.js"></script>
+	<script src="javascripts/loginJS.js"></script>
 </body>
 </html>

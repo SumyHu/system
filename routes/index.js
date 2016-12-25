@@ -191,6 +191,10 @@ module.exports = function(app) {
 		res.render("register");
 	});
 
+	app.get("/findPsw", function(req, res) {
+		res.render("findPsw");
+	});
+
 	app.get("/translater", function(req, res) {
 		res.render("translater");
 	});

@@ -21,7 +21,87 @@ input[type=button] {
 }
 
 .toolbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100px;
+	overflow: hidden;
+	line-height: 100px;
 	background: #222;
+}
+
+.logo {
+	position: absolute;
+	left: 0;
+	height: 50px;
+	margin: 18px 20px;
+	padding: 5px 10px;
+	/*float: left;*/
+	/*border: 2px solid #514F02;*/
+	border: 2px solid #A4CD33;
+	border-radius: 30%;
+	font-family: "Brush Script Std";
+	/*font-family: "Chiller";*/
+	font-size: 28px;
+	letter-spacing: 3px;
+	line-height: 50px;
+	/*background: #A4CD33;*/
+	/*color: #2C1A18;*/
+	/*color: #514F02*/
+	/*color: #FA050D;*/
+	color: #A4CD33;
+}
+
+.time {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 28px;
+	color: #fff;
+}
+
+.userInfo {
+	position: absolute;
+	right: 0;
+	margin: 0 20px;
+}
+
+.userInfo div {
+	display: inline-block;
+}
+
+.errorExercise {
+	position: relative;
+	display: inline-block;
+	padding: 0 10px;
+	border-radius: 10px;
+	background: red;
+	color: #fff;
+}
+
+.userImg {
+	position: relative;
+	top: 20px;
+	width: 60px;
+	height: 60px;
+	margin: 0 0 0 20px;
+	border: 1px solid #fff;
+	border-radius: 50%;
+	background-image: url("../image/userImg1.png");
+	background-size: 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.userSetting {
+	position: relative;
+	top: 6px;
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	margin: 0 0 0 20px;
 }
 
 .tips {
@@ -37,5 +117,5 @@ input[type=button] {
 	font-size: 23px;
 	color: #fff;
 	z-index: 10;
-	transition: 0.5s height linear;
+	transition: 0.5s all linear;
 }

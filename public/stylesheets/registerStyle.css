@@ -10,20 +10,26 @@
 	color: #fff;
 }
 
-.nextStep, .registerConfirm {
+.nextStep, .previousStep, .registerConfirm {
 	width: 80px;
 	border-radius: 10px;
 	background: rgba(67, 135, 253, 0.5);
 }
 
-.secondStep {
-	height: 0;
-	overflow: hidden;
+.previousStep {
+	background: rgba(142, 173, 46, 0.5);
 }
 
-select {
-	width: 224px;
-	border-radius: 10px;
-	outline: none;
-	font-size: 23px;
+.firstStep, .secondStep {
+	margin: 0 !important;
+	overflow: hidden;
+	transition: 1s height linear;
+}
+
+.firstStep {
+	/*height: 0;*/
+}
+
+.secondStep {
+	height: 0;
 }

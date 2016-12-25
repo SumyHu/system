@@ -1,0 +1,11 @@
+select {
+	width: 224px;
+	border-radius: 10px;
+	outline: none;
+	font-size: 23px;
+}
+.findPswBtn {
+	width: 80px;
+	border-radius: 10px;
+	background: rgba(67, 135, 253, 0.5);
+}
