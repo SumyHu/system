@@ -1,8 +1,37 @@
-ul li {
+.subject {
+	position: absolute;
+	width: 830px;
+	top: 200px;
+	left: 50%;
+	margin: 0 0 180px 0;
+	transform: translateX(-50%);
+}
+
+.subject div {
 	display: inline-block;
-	margin: 10px;
-	padding: 10px;
-	border: 1px solid;
-	border-radius: 5px;
-	/*cursor: pointer;*/
+	width: 250px;
+	height: 150px;
+	margin: 15px 10px;
+	border: none;
+	line-height: 150px;
+	text-align: center;
+	font-size: 30px;
+	color: #fff;
+	/*background-color: #f95a4e;*/
+	/*background-color: rgba(249, 90, 78, 0.5);*/
+	background-color: rgba(0, 0, 0, 0.7);
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.subject div:hover {
+	width: 248px;
+	height: 148px;
+	/*background-color: #f95a4e;*/
+	background-color: #000;
+	border: 1px solid #fff;
+}
+
+.addSubject {
+	font-size: 100px !important;
 }

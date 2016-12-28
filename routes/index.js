@@ -72,6 +72,14 @@ module.exports = function(app) {
 		res.render("index");
 	});
 
+	app.get("/pratice", function(req, res) {
+		res.render("pratice");
+	});
+
+	app.get("/doPratice", function(req, res) {
+		res.render("doPratice");
+	});
+
 	app.get("/exercise", function(req, res) {
 		res.render("exercise");
 	});

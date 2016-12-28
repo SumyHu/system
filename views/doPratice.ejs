@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="stylesheets/commentStyle.css">
+	<link rel="stylesheet" type="text/css" href="stylesheets/doPraticeStyle.css">
+</head>
+<body>
+	<header class="toolbar">
+		<div class="logo">PRATICE</div>
+		<div class="time">00:00</div>
+		<section class="userInfo">
+			<input type="button" value="错题" class="errorExercise">
+			<div class="userImg">
+				<div class="showUsername">SunnyHutes</div>
+			</div>
+		</section>
+	</header>
+
+	<section class="praticeContent body">
+		<div class="SingleChoice">
+			<p class="title">1.2008年2月有几天？</p>
+			<div class="answer">
+				<div>
+					<input type="radio" id="radio1" name="flag">
+					<label for="radio1">A.28天</label>
+				</div>
+				<div>
+					<input type="radio" id="radio2" name="flag">
+					<label for="radio2">B.29天</label>
+				</div>
+				<div>
+					<input type="radio" id="radio3" name="flag">
+					<label for="radio3">C.30天</label>
+				</div>
+				<div>
+					<input type="radio" id="radio4" name="flag">
+					<label for="radio4">D.31天</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="MultipleChoices">
+			<p class="title">2.请问哪些是特别行政区？</p>
+			<div class="answer">
+				<div>
+					<input type="checkbox" id="checkbox1">
+					<label for="checkbox1">A.香港</label>
+				</div>
+				<div>
+					<input type="checkbox" id="checkbox2">
+					<label for="checkbox2">B.澳门</label>
+				</div>
+				<div>
+					<input type="checkbox" id="checkbox3">
+					<label for="checkbox3">C.深圳</label>
+				</div>
+				<div>
+					<input type="checkbox" id="checkbox4">
+					<label for="checkbox4">D.广州</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="trueOrFalse">
+			<p class="title">3.2008年2月有30天。</p>
+			<div class="answer">
+				<div>
+					<input type="radio" id="judge1" name="judge">
+					<label for="judge1">T</label>
+				</div>
+				<div>
+					<input type="radio" id="judge2" name="judge">
+					<label for="judge2">F</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="FillInTheBlank">
+			<p class="title">4.香港是在_______年回归？</>
+		</div>
+
+		<div class="shortAnswer">
+			<p class="title">5.什么是操作系统？</>
+		</div>
+
+		<div class="Programming">
+			<p class="title">6.请编写一个计算总和的程序，例如：输入(20,30)，输出50.</>
+		</div>
+
+		<div class="flip">
+			<input type="button" value="<" class="previous">
+			<span class="currentPage">1/10</span>
+			<input type="button" value=">" class="next">
+		</div>
+	</section>
+
+	<footer>
+		<div class="message">
+			<span class="author">Email:18824167803@163.com</span>|
+			<span class="telphone">Tel:18824167803</span>
+		</div>
+		<div class="copyright">Copyright©2016-2017 SunnyHu</div>
+	</footer>
+
+	<script src="javascripts/jquery.min.js"></script>
+	<script src="javascripts/commentJS.js"></script>
+	<script src="javascripts/doPraticeJS.js"></script>
+</body>
+</html>

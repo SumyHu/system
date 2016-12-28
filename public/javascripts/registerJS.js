@@ -23,6 +23,10 @@ function bindEvent() {
 			showTips("账号不能为空！");
 			return;
 		}
+		if ($(".username").val().length != 13 || !(Number($(".username").val()) || Number($(".username").val()) == 0)) {
+			showTips("请输入正确的手机号！");
+			return;
+		}
 		if (isEmpty($(".password"))) {
 			showTips("密码不能为空！");
 			return;

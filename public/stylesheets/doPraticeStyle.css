@@ -1,0 +1,58 @@
+.praticeContent {
+	font-size: 23px;
+	color: #fff;
+}
+
+.title, .answer div {
+	height: 60px;
+	padding: 0 20px;
+	border: 1px dashed #000;
+	line-height: 60px;
+	background: rgba(34, 34, 34, 0.6);
+}
+
+.title {
+	margin: 0 0 30px;
+}
+
+.answer div {
+	margin: 10px 0;
+}
+
+.flip {
+	position: relative;
+	width: 150px;
+	left: 50%;
+	overflow: hidden;
+	transform: translateX(-50%);
+}
+
+.previous, .next {
+	width: 40px;
+	height: 40px;
+	border-radius: 5px;
+	background: rgba(67, 135, 253, 0.5);
+}
+
+.previous:hover, .next:hover {
+	background: rgba(67, 135, 253, 0.3);
+}
+
+.previous {
+	float: left;
+}
+
+.next {
+	float: right;
+}
+
+.currentPage {
+	display: inline-block;
+	width: 50px;
+	position: absolute;
+	left: 50%;
+	clear: both;
+	line-height: 35px;
+	font-size: 25px;
+	transform: translateX(-50%);
+}

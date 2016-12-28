@@ -74,3 +74,18 @@ function radioRest() {
 		radioObj[k][0].checked = true;
 	}
 }
+
+function toobarEvent() {
+	$(".tab").hover(function() {
+		$(".navigation").css("height", "30px");
+		$(".navigation").css("opacity", 1);
+	});
+
+	$(".naviSec").hover(function() {
+	}, function() {
+		if ($(".navigation").css("opacity") == 1) {
+			$(".navigation").css("height", 0);
+			$(".navigation").css("opacity", 0);
+		}
+	});
+}

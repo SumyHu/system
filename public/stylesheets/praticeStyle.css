@@ -1,0 +1,157 @@
+.typeNav {
+	position: relative;
+	top: 150px;
+	left: 50%;
+	width: 450px;
+	transform: translateX(-50%);
+}
+
+.typeNav div {
+	display: inline-block;
+	width: 150px;
+	height: 50px;
+	margin: 0 -5px;
+	text-align: center;
+	line-height: 50px;
+	font-size: 20px;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+	transition: 0.5s all linear;
+}
+
+.typeNav div:hover {
+	background: rgba(249, 90, 78, 0.8) !important;
+}
+
+.typeNav .chapter {
+	background: rgba(249, 90, 78, 0.8);
+}
+
+.praticeContent {
+	top: 200px;
+}
+
+.praticeContent aside {
+	width: 20%;
+	float: left;
+	overflow: hidden;
+	overflow-y: auto;
+	text-align: center;
+	font-size: 20px;
+	color: #fff;
+}
+
+.praticeContent aside ul {
+	border: 1px solid #fff;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.praticeContent aside li, .addMore {
+	width: 100%;
+	height: 46px;
+	text-align: center;
+	line-height: 46px;
+	font-size: 23px;
+	cursor: pointer;
+	transition: 0.5s all linear;
+}
+
+.addMore {
+	margin: 20px 0;
+	background: rgba(255, 255, 255, 0.4);
+	transition: 0.5s all linear;
+}
+
+.addMore:hover {
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.praticeContent aside li:first-child {
+	background-color: rgba(164, 205, 51, 0.4);
+}
+
+.praticeContent aside li:hover {
+	background-color: rgba(164, 205, 51, 0.4) !important;
+}
+
+.praticeContent aside li+li {
+	border-top: 1px solid #fff;
+}
+
+.content {
+	width: 70%;
+	padding: 0px 20px;
+	float: right;
+	border: 1px solid #fff;
+	border-radius: 10px;
+	font-size: 18px;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.content section {
+	margin: 0 0 30px;
+	overflow: hidden;
+}
+
+.content > section+section {
+	border-top: 1px solid #fff;
+}
+
+.showEg, .contentDetail {
+	width: 85%;
+	float: left;
+}
+
+.showEg > .title {
+	font-size: 27px;
+}
+
+.enter {
+	position: relative;
+	top: 50px;
+	width: 8%;
+	float: right;
+	right: 20px;
+}
+
+.examContent .enter {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 8%;
+	float: right;
+	right: 20px;
+}
+
+.enter input{
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	border-radius: 10px;
+	background: rgba(67, 135, 253, 0.5);
+}
+
+.enter input:hover {
+	background: rgba(67, 135, 253, 0.3);
+}
+
+.chapterContent {
+	display: none;
+}
+
+.examContent {
+	display: none;
+}
+
+.randomContent {
+	/*display: none;*/
+}
+
+
+.contentDetail > div+div {
+	padding: 20px 0 0;
+	border-top: 1px solid #fff;
+	line-height: 30px;
+}
