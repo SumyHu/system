@@ -16,7 +16,7 @@ var segment = new Segment();
 segment.useDefault();
 
 // 调用结巴分词
-var jieba = require("nodejieba");
+// var jieba = require("nodejieba");
 
 // 调用k-means聚类算法
 var kMeans = require("kmeans-js");

@@ -76,7 +76,7 @@ function showQuesComment(content) {
 	$(".runTest").click(function(e) {
 		var url = window.location.href;
 		var type = url.split("?")[1].split("=")[1];
-		var textarea = $(e.target).parent().find("textarea");
+		var textarea = $(getTarget(e)).parent().find("textarea");
 
 		switch(type) {
 			case "javaScript":

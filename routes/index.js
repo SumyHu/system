@@ -4,6 +4,12 @@ const exec = require('child_process').exec;
 const path = require('path');
 const iconv = require('iconv-lite');
 
+// 调用用户曾删改查方法
+const users = require("./users");
+
+// 调用各个界面的初始化内容
+const initInterface = require("./initInterface")
+
 // 调用文本计算相似度算法
 var textSimilaryCal = require("./textSimilaryCal");
 
@@ -15,7 +21,7 @@ var WordSimilary = require("./WordSimilary");
 
 var participle = require("./participle");
 
-var jieba = require("nodejieba");
+// var jieba = require("nodejieba");
 
 const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
 
@@ -68,16 +74,50 @@ module.exports = function(app) {
 	// 	e.stderr.setEncoding('utf8');
 	// });
 
+	app.get("/login", function(req, res) {
+		res.render("login");
+	});
+
+	app.get("/register", function(req, res) {
+		res.render("register");
+	});
+
+	app.get("/findPsw", function(req, res) {
+		res.render("findPsw");
+	});
+
 	app.get("/", function(req, res) {
-		res.render("index");
+		res.render("comment", {
+			cssFilePath: "stylesheets/indexStyle.css",
+			scriptFilePath: "javascripts/indexJS.js",
+			innerHtml: initInterface.indexInterface
+		});
 	});
 
 	app.get("/pratice", function(req, res) {
-		res.render("pratice");
+		console.log(req.query);
+		res.render("comment", {
+			cssFilePath: "stylesheets/praticeStyle.css",
+			scriptFilePath: "javascripts/praticeJS.js",
+			innerHtml: initInterface.praticeInterface
+		});
 	});
 
 	app.get("/doPratice", function(req, res) {
-		res.render("doPratice");
+		res.render("comment", {
+			cssFilePath: "stylesheets/doPraticeStyle.css",
+			scriptFilePath: "javascripts/doPraticeJS.js",
+			innerHtml: initInterface.doPraticeInterface
+		});
+	});
+
+	app.get("/addPratice", function(req, res) {
+		// res.render("addPratice");
+		res.render("comment", {
+			cssFilePath: "stylesheets/addPraticeStyle.css",
+			scriptFilePath: "javascripts/addPraticeJS.js",
+			innerHtml: initInterface.addPraticeInterface
+		});
 	});
 
 	app.get("/exercise", function(req, res) {
@@ -191,19 +231,22 @@ module.exports = function(app) {
 		// res.send(result.toString());
 	});
 
-	app.get("/login", function(req, res) {
-		res.render("login");
-	});
-
-	app.get("/register", function(req, res) {
-		res.render("register");
-	});
-
-	app.get("/findPsw", function(req, res) {
-		res.render("findPsw");
-	});
-
 	app.get("/translater", function(req, res) {
 		res.render("translater");
+	});
+
+	app.post("/callUsers", function(req, res) {
+		switch(req.body.callFunction) {
+			case "findUser":
+				users.findUser(req.body.userId, function(data) {
+					res.send(data);
+				});
+				break;
+			case "saveUser":
+				users.saveUser(req.body.userId, req.body.password, req.body.checkContent, function(err) {
+					res.send(err);
+				});
+				break;
+		}
 	});
 }

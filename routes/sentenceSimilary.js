@@ -5,7 +5,7 @@
 */
 
 // 结巴分词
-const jieba = require("nodejieba");
+// const jieba = require("nodejieba");
 
 // 自定义分词库
 const participleFn = require("./participle");

@@ -41,10 +41,18 @@ input[type=text], input[type=password] {
 	background: rgba(142, 173, 46, 0.5);
 }
 
+.register:hover {
+	background: rgba(142, 173, 46, 0.3);
+}
+
 .login {
 	width: 100px;
 	margin: 10px 0;
 	background: rgba(67, 135, 253, 0.5);
+}
+
+.login:hover {
+	background: rgba(67, 135, 253, 0.3);
 }
 
 .findPsw {

@@ -55,7 +55,7 @@
 	font-size: 18px !important;
 	background: red;
 	opacity: 0;
-	transition: 0.3s all linear;
+	transition: 0.1s all linear;
 }
 
 .remove:hover {

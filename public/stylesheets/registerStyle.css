@@ -16,8 +16,16 @@
 	background: rgba(67, 135, 253, 0.5);
 }
 
+.nextStep:hover, .registerConfirm:hover {
+	background: rgba(67, 135, 253, 0.3);
+}
+
 .previousStep {
 	background: rgba(142, 173, 46, 0.5);
+}
+
+.previousStep:hover {
+	background: rgba(142, 173, 46, 0.3);
 }
 
 .firstStep, .secondStep {

@@ -1,0 +1,160 @@
+.appPratice {
+}
+
+.title {
+	height: 60px;
+	padding: 0 20px;
+	border: 1px dashed #000;
+	text-align: center;
+	line-height: 60px;
+	font-size: 30px;
+	color: #fff;
+	background: rgba(34, 34, 34, 0.6);
+}
+
+.addPraticeToolbar {
+	position: relative;
+	left: 50%;
+	width: 720px;
+	transform: translateX(-50%);
+}
+
+.addPraticeToolbar div {
+	display: inline-block;
+	width: 120px;
+	height: 50px;
+	margin: 20px -5px;
+	text-align: center;
+	line-height: 50px;
+	font-size: 20px;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+	transition: 0.5s all linear;
+}
+
+.addPraticeToolbar .SingleChoice {
+	background: rgba(249, 90, 78, 0.8);
+}
+
+.addPraticeToolbar div:hover {
+	background: rgba(249, 90, 78, 0.8) !important;
+}
+
+.addPraticeContent > section {
+	display: none;
+	font-size: 20px;
+	color: #fff;
+}
+
+.addPraticeContent > section:first-child {
+	display: block;
+}
+
+.addMore {
+	position: relative;
+	width: 250px;
+	height: 46px;
+	left: 50%;
+	transform: translateX(-50%);
+	margin: 40px 0 20px;
+	text-align: center;
+	line-height: 46px;
+	font-size: 40px;
+	color: #fff;
+	background: rgba(255, 255, 255, 0.4);
+	transition: 0.5s all linear;
+	cursor: pointer;
+}
+
+.addMore:hover {
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.flip {
+	position: relative;
+	width: 120px;
+	left: 50%;
+	margin: 50px 0 0;
+	transform: translateX(-50%);
+}
+
+.submit {
+	position: relative;
+	width: 100px;
+	left: 50%;
+	margin: 30px 0;
+	transform: translateX(-50%);
+	border-radius: 10px;
+	background: rgba(67, 135, 253, 0.5);
+}
+
+.submit:hover {
+	background: rgba(67, 135, 253, 0.3);
+}
+
+.content {
+	margin: 40px 0;
+	padding: 20px 40px;
+	overflow: hidden;
+	border: 1px dashed #000;
+	color: #fff;
+	background: rgba(34, 34, 34, 0.6);
+}
+
+.correctAnswerTips {
+	position: relative;
+	width: 500px;
+	height: 40px;
+	left: 50%;
+	margin: 20px 0 0;
+	text-align: center;
+	line-height: 40px;
+	transform: translateX(-50%);
+	background: rgba(255, 0, 0, 0.3);
+}
+
+.textInput {
+	font-size: 20px;
+}
+
+.topic {
+	margin: 0 0 25px 0;
+}
+
+.topic > .textInput {
+	width: 50%;
+}
+
+.choice {
+	margin: 10px 0;
+}
+
+.num {
+	display: inline-block;
+}
+
+.choice > .textInput {
+	width: 55%;
+}
+
+.addChoiceBtn, .addBlankBtn {
+	display: block;
+	width: 130px;
+	margin: 20px 0 0;
+	background: rgba(142, 173, 46, 0.5);
+}
+
+.addChoiceBtn:hover, .addBlankBtn:hover {
+	background: rgba(142, 173, 46, 0.3);
+}
+
+.answer {
+	margin: 0 0 15px;
+	color: #fff;
+}
+
+.answer textarea {
+	width: 500px;
+	height: 200px;
+}

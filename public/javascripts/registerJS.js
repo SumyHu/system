@@ -1,3 +1,12 @@
+/**
+ * registerVal = {
+	username: String,   // 用户ID
+	password: String,   //用户密码
+	questionAndAnswer1: {question: String, answer: String},   // 用户忘记密码时校验问题
+	questionAndAnswer2: {question: String, answer: String},
+	questionAndAnswer3: {question: String, answer: String},
+ }
+*/
 let registerVal = {};
 
 function judgeThePswIsConsistent() {
@@ -23,7 +32,8 @@ function bindEvent() {
 			showTips("账号不能为空！");
 			return;
 		}
-		if ($(".username").val().length != 13 || !(Number($(".username").val()) || Number($(".username").val()) == 0)) {
+		let pattern = /^[0-9]{11}$/
+		if ($(".username").val().length != 11 || !(pattern.test($(".username").val()))) {
 			showTips("请输入正确的手机号！");
 			return;
 		}
@@ -41,18 +51,37 @@ function bindEvent() {
 		}
 
 		registerVal.username = $(".username").val();
-		registerVal.password = $(".password").val();
+		console.log(registerVal.username);
 
-		if ($("#teacher")[0].checked) {
-			registerVal.identity = $("#teacher").val();
-		}
-		else {
-			registerVal.identity = $("#student").val();
-		}
+		$.ajax({
+			url: "../callUsers",
+			type: "POST",
+			data: {
+				userId: registerVal.username,
+				callFunction: "findUser"
+			},
+			success: function(data) {
+				console.log(data);
+				if (data.length > 0) {
+					$(".username").select();
+					showTips("该用户名已经存在，请重新输入！");
+				}
+				else {
+					registerVal.password = $(".password").val();
 
-		$(".firstStep").css("height", 0);
-		$(".secondStep").css("height", 372);
-		hideTips();
+					if ($("#teacher")[0].checked) {
+						registerVal.identity = $("#teacher").val();
+					}
+					else {
+						registerVal.identity = $("#student").val();
+					}
+
+					$(".firstStep").css("height", 0);
+					$(".secondStep").css("height", 372);
+					hideTips();
+				}
+			}
+		});
 	});
 
 	$(".registerConfirm").click(function() {
@@ -71,12 +100,31 @@ function bindEvent() {
 			}
 		}
 
-		$(".tips").css("height", 0);
+		$.ajax({
+			url: "../callUsers",
+			type: "POST",
+			data: {
+				userId: registerVal.username,
+				password: registerVal.password,
+				checkContent: [registerVal.questionAndAnswer1, registerVal.questionAndAnswer2, registerVal.questionAndAnswer3],
+				callFunction: "saveUser"
+			},
+			success: function(err) {
+				if (!err) {
+					// $(".tips").css("height", 0);
+					selectRest();
+					radioRest();
+					inputRest("text");
+					inputRest("password");
 
-		selectRest();
-		radioRest();
-		inputRest("text");
-		inputRest("password");
+					window.location.href = "../login";
+					showTips("注册成功！");
+				}
+			},
+			error: function() {
+				showTips("注册失败，请重新注册！");
+			}
+		});
 	});
 }
 
