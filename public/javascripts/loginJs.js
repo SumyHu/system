@@ -1,3 +1,15 @@
+init = function() {
+	let query = window.location.href.split("?");
+	if (query.length > 1) {
+		if (query[1].indexOf("register=success") > -1) {
+			showTips("注册成功！");
+		}
+		else if (query[1].indexOf("changeUser=success") > -1) {
+			showTips("修改密码成功！");
+		}
+	}
+}
+
 function bindEvent() {
 	$(".login").click(function() {
 		if (isEmpty($(".username"))) {
@@ -8,11 +20,39 @@ function bindEvent() {
 			showTips("请输入密码！");
 			return;
 		}
-		hideTips();
-		
-		radioRest();
-		inputRest("text");
-		inputRest("password");
+
+		let identity;
+		if ($("#teacher")[0].checked) {
+			identity = $("#teacher").val();
+		}
+		else {
+			identity = $("#student").val();
+		}
+
+		$.ajax({
+			url: "../login",
+			type: "POST",
+			data: {
+				userId: $(".username").val(),
+				password: $(".password").val(),
+				identity: identity
+			},
+			success: function(data) {
+				if (data.error) {
+					$("." + data.error.reason).select();
+					showTips(data.error.message);
+				}
+				else {
+					window.location.href = "../";
+
+					hideTips();
+
+					radioRest();
+					inputRest("text");
+					inputRest("password");
+				}
+			}
+		});
 	});
 
 	$(".register").click(function() {
@@ -25,5 +65,6 @@ function bindEvent() {
 }
 
 $(function() {
+	init();
 	bindEvent();
 });

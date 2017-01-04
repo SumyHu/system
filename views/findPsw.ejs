@@ -9,33 +9,47 @@
 	<div class="tips"></div>
 	<section class="outer">
 		<div class="title">找回密码</div>
-		<div>问题1：
-			<select class="select1">
-				<option>你父亲的名字是？</option>
-				<option>你QQ是？</option>
-			</select>
-		</div>
-		<div>答案：<input type="text" class="answer1"></div>
-		<div>问题2：
-			<select class="select2">
-				<option>你母亲的名字是？</option>
-				<option>你手机号码是？</option>
-			</select>
-		</div>
-		<div>答案：<input type="text" class="answer2"></div>
-		<div>问题3：
-			<select class="select3">
-				<option>你班主任的名字是？</option>
-				<option>你的宠物的名字是？</option>
-			</select>
-		</div>
-		<div>答案：<input type="text" class="answer3"></div>
-		<div>
-			<input type="button" value="GO" class="findPswBtn">
-		</div>
+
+		<section class="firstStep">
+			<div>用户名：<input type="text" maxlength=11 class="textInput username"></div>
+			<div><input type="button" value="next" class="findPswBtn firstStepBtn"></div>
+		</section>
+
+		<section class="secondStep">
+			<div>问题1：
+				<select class="select1">
+					<option>你父亲的名字是？</option>
+					<option>你QQ是？</option>
+				</select>
+			</div>
+			<div>答案：<input type="text" class="textInput answer1"></div>
+			<div>问题2：
+				<select class="select2">
+					<option>你母亲的名字是？</option>
+					<option>你手机号码是？</option>
+				</select>
+			</div>
+			<div>答案：<input type="text" class="textInput answer2"></div>
+			<div>问题3：
+				<select class="select3">
+					<option>你班主任的名字是？</option>
+					<option>你的宠物的名字是？</option>
+				</select>
+			</div>
+			<div>答案：<input type="text" class="textInput answer3"></div>
+			<div>
+				<input type="button" value="next" class="findPswBtn secondStepBtn">
+			</div>
+		</section>
+
+		<section class="thirdStep">
+			<div>新密码：<input type="password" maxlength=11 class="textInput newPasswd"></div>
+			<div>密码确认：<input type="password" maxlength=11 class="textInput passwdConfirm"></div>
+			<div><input type="button" value="GO" class="findPswBtn thirdStepBtn"></div>
+		</section>
 	</section>
 	<script src="javascripts/jquery.min.js"></script>
-	<script src="javascripts/commentJS.js"></script>
+	<script src="javascripts/commentFunction.js"></script>
 	<script src="javascripts/findPswJS.js"></script>
 </body>
 </html>

@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: 'hxy',
     name: 'hxy',   //这里的name值得是cookie的name，默认cookie的name是：connect.sid
-    cookie: {maxAge: 1*60*60*1000 },  //设置maxAge是1小时，即1h后session和相应的cookie失效过期
+    cookie: {maxAge: 5*60*60*1000 },  //设置maxAge是5小时，即1h后session和相应的cookie失效过期
     resave: false,
     saveUninitialized: true
 }));

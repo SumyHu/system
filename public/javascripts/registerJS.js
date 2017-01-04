@@ -2,6 +2,7 @@
  * registerVal = {
 	username: String,   // 用户ID
 	password: String,   //用户密码
+	identity: String,   // 用户身份
 	questionAndAnswer1: {question: String, answer: String},   // 用户忘记密码时校验问题
 	questionAndAnswer2: {question: String, answer: String},
 	questionAndAnswer3: {question: String, answer: String},
@@ -51,7 +52,6 @@ function bindEvent() {
 		}
 
 		registerVal.username = $(".username").val();
-		console.log(registerVal.username);
 
 		$.ajax({
 			url: "../callUsers",
@@ -61,7 +61,6 @@ function bindEvent() {
 				callFunction: "findUser"
 			},
 			success: function(data) {
-				console.log(data);
 				if (data.length > 0) {
 					$(".username").select();
 					showTips("该用户名已经存在，请重新输入！");
@@ -106,19 +105,19 @@ function bindEvent() {
 			data: {
 				userId: registerVal.username,
 				password: registerVal.password,
+				identity: registerVal.identity,
 				checkContent: [registerVal.questionAndAnswer1, registerVal.questionAndAnswer2, registerVal.questionAndAnswer3],
 				callFunction: "saveUser"
 			},
 			success: function(err) {
 				if (!err) {
-					// $(".tips").css("height", 0);
+					$(".tips").css("height", 0);
 					selectRest();
 					radioRest();
 					inputRest("text");
 					inputRest("password");
 
-					window.location.href = "../login";
-					showTips("注册成功！");
+					window.location.href = "../login?register=success";
 				}
 			},
 			error: function() {

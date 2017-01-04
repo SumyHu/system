@@ -9,3 +9,11 @@ select {
 	border-radius: 10px;
 	background: rgba(67, 135, 253, 0.5);
 }
+
+.secondStep {
+	display: none;
+}
+
+.thirdStep {
+	display: none;
+}

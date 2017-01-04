@@ -4,6 +4,9 @@ const exec = require('child_process').exec;
 const path = require('path');
 const iconv = require('iconv-lite');
 
+// 用md5对密码进行加密
+const md = require("md5");
+
 // 调用用户曾删改查方法
 const users = require("./users");
 
@@ -78,7 +81,28 @@ module.exports = function(app) {
 		res.render("login");
 	});
 
+	app.post("/login", function(req, res) {
+		users.findUser(req.body.userId, function(data) {
+			if (!data) {
+				res.send({error: {message: "该用户不存在！", reason: "username"}});
+			}
+			else {
+				if (data.password != md(req.body.password)) {
+					res.send({error: {message: "密码错误！", reason: "password"}});
+				}
+				else if (data.identity != req.body.identity) {
+					res.send({error: {message: "登录失败，请确定登录信息无误！", reason: "identity"}});
+				}
+				else {
+					req.session.userId = req.body.userId;
+					res.send({success: "login success!"});
+				}
+			}
+		})
+	});
+
 	app.get("/register", function(req, res) {
+		// users.removeUser("18824167803",function() {});
 		res.render("register");
 	});
 
@@ -243,8 +267,13 @@ module.exports = function(app) {
 				});
 				break;
 			case "saveUser":
-				users.saveUser(req.body.userId, req.body.password, req.body.checkContent, function(err) {
+				users.saveUser(req.body.userId, req.body.password, req.body.identity, req.body.checkContent, function(err) {
 					res.send(err);
+				});
+				break;
+			case "modifyUser":
+				users.modifyUser(req.body.userId, req.body.update, function(data) {
+					res.send(data);
 				});
 				break;
 		}

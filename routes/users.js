@@ -8,6 +8,7 @@ var Schema = mongoose.Schema;
 var usersSchema = new Schema ({
 	_id: String,   // 用户唯一标识
 	password: String,   // 用户密码
+	identity: String,   // 用户身份
 	imageSrc: String,   // 用户头像
 	checkContent: [],   // 用户忘记密码验证内容
 	errorExercise: []   // 用户存储的错题
@@ -24,7 +25,7 @@ users.findUser = function(userId, callback) {
 		if (err) {
 			throw Error('something error happened');
 		}
-		callback(data);
+		callback(data[0]);
 	});
 };
 
@@ -35,10 +36,11 @@ users.findUser = function(userId, callback) {
  * checkContent = [{question: String, answer: String}, {...}, {...}]
  * @param callback Function 回调函数
 */
-users.saveUser = function(userId, password, checkContent, callback) {
+users.saveUser = function(userId, password, identity, checkContent, callback) {
 	var newUser = new users({
 		_id: userId,
 		password: md(password),
+		identity: identity,
 		imageSrc: 'upload/default.jpg',
 		checkContent: checkContent,
 		errorExercise: []
@@ -64,6 +66,19 @@ users.updateUser = function(userId, update, callback) {
 	});
 };
 
+users.modifyUser = function(userId, update, callback) {
+	let newUpdate = {};
+	for(var k in update) {
+		if (k == "password") {
+			newUpdate[k] = md(update[k]);
+		}
+		else {
+			newUpdate[k] = update[k];
+		}
+	}
+	users.updateUser(userId, {$set: newUpdate}, callback);
+}
+
 /** 注销指定用户
  * @param userId String 用户ID
  * @param callback Function 回调函数
@@ -73,7 +88,7 @@ users.removeUser = function(userId, callback) {
 		if (err) {
 			throw Error('something error happened');
 		}
-		callback(data);
+		callback(data[0]);
 	})
 };
 
