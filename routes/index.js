@@ -95,6 +95,7 @@ module.exports = function(app) {
 				}
 				else {
 					req.session.userId = req.body.userId;
+					req.session.imageSrc = data.imageSrc;
 					res.send({success: "login success!"});
 				}
 			}
@@ -111,11 +112,18 @@ module.exports = function(app) {
 	});
 
 	app.get("/", function(req, res) {
-		res.render("comment", {
-			cssFilePath: "stylesheets/indexStyle.css",
-			scriptFilePath: "javascripts/indexJS.js",
-			innerHtml: initInterface.indexInterface
-		});
+		if (!req.session.userId) {
+			res.render("login");
+		}
+		else {
+			res.render("comment", {
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				imageSrc: req.session.imageSrc,
+				cssFilePath: "stylesheets/indexStyle.css",
+				scriptFilePath: "javascripts/indexJS.js",
+				innerHtml: initInterface.indexInterface
+			});
+		}
 	});
 
 	app.get("/pratice", function(req, res) {

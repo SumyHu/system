@@ -138,7 +138,7 @@ input[type=button] {
 	overflow: hidden;
 	border: 1px solid #fff;
 	border-radius: 50%;
-	background-image: url("../image/userImg1.png");
+	/*background-image: url("../image/userImg1.png");*/
 	background-size: 100%;
 	background-position: center center;
 	background-repeat: no-repeat;

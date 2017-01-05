@@ -6,7 +6,7 @@ var mongoose = require('./mongodb');
 var Schema = mongoose.Schema;
 
 var usersSchema = new Schema ({
-	_id: String,   // 用户唯一标识
+	_id: String,   // 用户唯一标识（用户名，即手机号码）
 	password: String,   // 用户密码
 	identity: String,   // 用户身份
 	imageSrc: String,   // 用户头像
