@@ -2,19 +2,39 @@
  * @param subjectName String 科目名称
 */
 function addSubject(subjectName) {
-	let section = document.createElement("section");
-	section.innerHTML = '<div><div class="subjectName">' + subjectName 
-						+'</div><input type="button" value="X" class="remove"></div>';
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "subjects",
+			callFunction: "save",
+			saveData: {
+				_id: subjectName
+			}
+		},
+		success: function(err) {
+			if (!err) {
+				showTips("新建科目成功！", 2000);
 
-	let addSubject = $(".addSubject");
-	addSubject.before(section);
+				let section = document.createElement("section");
+				section.innerHTML = '<div><div class="subjectName">' + subjectName 
+									+'</div><input type="button" value="X" class="remove"></div>';
 
-	$(section).hover(function(e) {
-		let target = getTarget(e);
-		$(target).find(".remove").css("opacity", 1);
-	}, function(e) {
-		let target = getTarget(e);
-		$(target).find(".remove").css("opacity", 0);
+				let addSubject = $(".addSubject");
+				addSubject.before(section);
+
+				$(section).hover(function(e) {
+					let target = getTarget(e);
+					$(target).find(".remove").css("opacity", 1);
+				}, function(e) {
+					let target = getTarget(e);
+					$(target).find(".remove").css("opacity", 0);
+				});
+			}
+			else {
+				showTips("该科目已存在！", 2000);
+			}
+		}
 	});
 }
 

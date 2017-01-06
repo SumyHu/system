@@ -14,11 +14,23 @@ function getTarget(e) {
 /** 显示提示
  * @param msg String 提示的信息
 */
-function showTips(msg) {
+function showTips(msg, millTime) {
+	if ($(".tips").length == 0) {
+		let div = document.createElement("div");
+		div.className = "tips";
+		document.getElementsByTagName("body")[0].appendChild(div);
+	}
 	let $tips = $(".tips");
+
 	if ($tips.css("height") == "0px") {
 		$tips[0].innerHTML = msg;
 		$tips.css("height", 50);
+
+		if (millTime) {
+			setTimeout(function() {
+				$tips.css("height", 0);
+			}, millTime);
+		}
 	}
 	else {
 		$tips.css("opacity", 0);
@@ -27,6 +39,12 @@ function showTips(msg) {
 			$tips[0].innerHTML = msg;
 			$tips.css("opacity", 1);
 		}, 500);
+
+		if (millTime) {
+			setTimeout(function() {
+				$tips.css("opacity", 0);
+			}, 500+millTime);
+		}
 	}
 }
 

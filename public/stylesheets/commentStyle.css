@@ -59,7 +59,7 @@ input[type=button] {
 	line-height: 50px;
 	font-size: 23px;
 	color: #fff;
-	z-index: 10;
+	z-index: 500;
 	transition: 0.5s all linear;
 }
 

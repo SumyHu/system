@@ -54,14 +54,15 @@ function bindEvent() {
 		registerVal.username = $(".username").val();
 
 		$.ajax({
-			url: "../callUsers",
+			url: "../callDataProcessing",
 			type: "POST",
 			data: {
-				userId: registerVal.username,
-				callFunction: "findUser"
+				data: "users",
+				id: registerVal.username,
+				callFunction: "find"
 			},
 			success: function(data) {
-				if (data.length > 0) {
+				if (data) {
 					$(".username").select();
 					showTips("该用户名已经存在，请重新输入！");
 				}
@@ -100,14 +101,18 @@ function bindEvent() {
 		}
 
 		$.ajax({
-			url: "../callUsers",
+			url: "../callDataProcessing",
 			type: "POST",
 			data: {
-				userId: registerVal.username,
-				password: registerVal.password,
-				identity: registerVal.identity,
-				checkContent: [registerVal.questionAndAnswer1, registerVal.questionAndAnswer2, registerVal.questionAndAnswer3],
-				callFunction: "saveUser"
+				data: "users",
+				saveData: {
+					_id: registerVal.username,
+					password: registerVal.password,
+					imageSrc: "upload/default.jpg",
+					identity: registerVal.identity,
+					checkContent: [registerVal.questionAndAnswer1, registerVal.questionAndAnswer2, registerVal.questionAndAnswer3],
+				},
+				callFunction: "save"
 			},
 			success: function(err) {
 				if (!err) {

@@ -14,11 +14,12 @@ function bindevent() {
 			}
 
 			$.ajax({
-				url: "../callUsers",
+				url: "../callDataProcessing",
 				type: "POST",
 				data: {
-					userId: $(".username").val(),
-					callFunction: "findUser"
+					data: "users",
+					id: $(".username").val(),
+					callFunction: "find"
 				},
 				success: function(data) {
 					if (!data) {
@@ -29,8 +30,8 @@ function bindevent() {
 						hideTips();
 						changeUser.username = $(".username").val();
 						changeUser.checkContent = data.checkContent;
-						$(".firstStep").css("display", "none");
-						$(".secondStep").css("display", "block");
+						$(".firstStep").css("height", 0);
+						$(".secondStep").css("height", "382px");
 					}
 				}
 			});
@@ -61,8 +62,8 @@ function bindevent() {
 			}
 			else {
 				hideTips();
-				$(".secondStep").css("display", "none");
-				$(".thirdStep").css("display", "block");
+				$(".secondStep").css("height", 0);
+				$(".thirdStep").css("height", "181px");
 			}
 		}
 		else if (className.indexOf("thirdStepBtn") > -1) {
@@ -77,17 +78,18 @@ function bindevent() {
 			else {
 				hideTips();
 				$.ajax({
-					url: "../callUsers",
+					url: "../callDataProcessing",
 					type: "POST",
 					data: {
-						userId: changeUser.username,
+						data: "users",
+						id: changeUser.username,
+						operation: "set",
 						update: {
 							password: $(".newPasswd").val()
 						},
-						callFunction: "modifyUser"
+						callFunction: "update"
 					},
 					success: function(data) {
-						console.log(data);
 						if (data) {
 							window.location.href  = "../login?changeUser=success";
 						}

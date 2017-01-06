@@ -7,8 +7,8 @@ const iconv = require('iconv-lite');
 // 用md5对密码进行加密
 const md = require("md5");
 
-// 调用用户曾删改查方法
-const users = require("./users");
+// 调用所有数据库的增删改查方法
+const buildData = require("./buildData");
 
 // 调用各个界面的初始化内容
 const initInterface = require("./initInterface")
@@ -82,7 +82,7 @@ module.exports = function(app) {
 	});
 
 	app.post("/login", function(req, res) {
-		users.findUser(req.body.userId, function(data) {
+		buildData.usersObj.find(req.body.userId, function(data) {
 			if (!data) {
 				res.send({error: {message: "该用户不存在！", reason: "username"}});
 			}
@@ -103,7 +103,7 @@ module.exports = function(app) {
 	});
 
 	app.get("/register", function(req, res) {
-		// users.removeUser("18824167803",function() {});
+		// buildData["usersObj"].remove("11111111111",function() {});
 		res.render("register");
 	});
 
@@ -267,23 +267,32 @@ module.exports = function(app) {
 		res.render("translater");
 	});
 
-	app.post("/callUsers", function(req, res) {
+	app.post("/callDataProcessing", function(req, res) {
 		switch(req.body.callFunction) {
-			case "findUser":
-				users.findUser(req.body.userId, function(data) {
+			case "find":
+				buildData[req.body.data+"Obj"].find(req.body.id, function(data) {
 					res.send(data);
 				});
 				break;
-			case "saveUser":
-				users.saveUser(req.body.userId, req.body.password, req.body.identity, req.body.checkContent, function(err) {
+			case "findAll":
+				buildData[req.body.data+"Obj"].findAll(function(data) {
+					res.send(data);
+				});
+				break;
+			case "save":
+				buildData[req.body.data+"Obj"].save(req.body.saveData, function(err) {
 					res.send(err);
 				});
 				break;
-			case "modifyUser":
-				users.modifyUser(req.body.userId, req.body.update, function(data) {
+			case "update":
+				buildData[req.body.data+"Obj"].update(req.body.id, req.body.operation, req.body.update, function(data) {
 					res.send(data);
 				});
 				break;
+			case "remove":
+				buildData[req.body.data+"Obj"].remove(req.body.id, function(data) {
+					res.send(data);
+				});
 		}
 	});
 }

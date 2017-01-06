@@ -1,12 +1,12 @@
-// 用md5对密码进行加密
-const md = require("md5");
-
 // 调用建立共同的数据库处理方法的库
 const commentDataProcessing = require("./commentDataProcessing");
 
 var mongoose = require('./mongodb');
 
 var Schema = mongoose.Schema;
+
+let buildData = {};
+
 
 // 建立用户信息数据库
 var usersSchema = new Schema ({
@@ -20,7 +20,8 @@ var usersSchema = new Schema ({
 
 var users = mongoose.model('users', usersSchema);
 
-var usersObj = commentDataProcessing(users);
+buildData.usersObj = commentDataProcessing(users);
+
 
 // 建立题库数据库
 var subjectsSchema = new Schema ({
@@ -30,4 +31,6 @@ var subjectsSchema = new Schema ({
 
 var subjects = mongoose.model('subjects', subjectsSchema);
 
-var subjectsObj = commentDataProcessing(subjects);
+buildData.subjectsObj = commentDataProcessing(subjects);
+
+module.exports = buildData;

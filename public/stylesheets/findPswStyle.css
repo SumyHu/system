@@ -4,6 +4,12 @@ select {
 	outline: none;
 	font-size: 23px;
 }
+
+.outer > section {
+	overflow: hidden;
+	transition: 0.3s all linear;
+}
+
 .findPswBtn {
 	width: 80px;
 	border-radius: 10px;
@@ -11,9 +17,9 @@ select {
 }
 
 .secondStep {
-	display: none;
+	height: 0;
 }
 
 .thirdStep {
-	display: none;
+	height: 0;
 }
