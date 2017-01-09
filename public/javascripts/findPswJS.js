@@ -18,7 +18,7 @@ function bindevent() {
 				type: "POST",
 				data: {
 					data: "users",
-					id: $(".username").val(),
+					findOpt: {_id: $(".username").val()},
 					callFunction: "find"
 				},
 				success: function(data) {
@@ -82,7 +82,7 @@ function bindevent() {
 					type: "POST",
 					data: {
 						data: "users",
-						id: changeUser.username,
+						updateOpt: {_id: changeUser.username},
 						operation: "set",
 						update: {
 							password: $(".newPasswd").val()

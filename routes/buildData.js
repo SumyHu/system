@@ -25,7 +25,7 @@ buildData.usersObj = commentDataProcessing(users);
 
 // 建立题库数据库
 var subjectsSchema = new Schema ({
-	_id: String,   // 科目唯一标识，即科目名
+	subjectName: String,   // 科目唯一标识，即科目名
 	content: {}    // 科目所有题目与答案
 });
 

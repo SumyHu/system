@@ -1,7 +1,9 @@
 $(function() {
 	toobarEvent();
 
-	init();
+	try {
+		init();
+	} catch(e) {}
 
 	bindEvent();
 });

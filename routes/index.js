@@ -28,6 +28,15 @@ var participle = require("./participle");
 
 const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
 
+function isLoginIn(req, res, exitCallback) {
+	if (req.session.userId) {
+		exitCallback();
+	}
+	else {
+		res.render("login");
+	}
+}
+
 module.exports = function(app) {
 	// 解决跨域问题
 	app.all("*", function(req, res, next) {
@@ -78,11 +87,19 @@ module.exports = function(app) {
 	// });
 
 	app.get("/login", function(req, res) {
-		res.render("login");
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				imageSrc: req.session.imageSrc,
+				cssFilePath: "stylesheets/indexStyle.css",
+				scriptFilePath: "javascripts/indexJS.js",
+				innerHtml: initInterface.indexInterface
+			});
+		});
 	});
 
 	app.post("/login", function(req, res) {
-		buildData.usersObj.find(req.body.userId, function(data) {
+		buildData.usersObj.find({_id: req.body.userId}, function(data) {
 			if (!data) {
 				res.send({error: {message: "该用户不存在！", reason: "username"}});
 			}
@@ -112,10 +129,7 @@ module.exports = function(app) {
 	});
 
 	app.get("/", function(req, res) {
-		if (!req.session.userId) {
-			res.render("login");
-		}
-		else {
+		isLoginIn(req, res, function() {
 			res.render("comment", {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
@@ -123,32 +137,43 @@ module.exports = function(app) {
 				scriptFilePath: "javascripts/indexJS.js",
 				innerHtml: initInterface.indexInterface
 			});
-		}
+		});
 	});
 
 	app.get("/pratice", function(req, res) {
-		console.log(req.query);
-		res.render("comment", {
-			cssFilePath: "stylesheets/praticeStyle.css",
-			scriptFilePath: "javascripts/praticeJS.js",
-			innerHtml: initInterface.praticeInterface
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				imageSrc: req.session.imageSrc,
+				cssFilePath: "stylesheets/praticeStyle.css",
+				scriptFilePath: "javascripts/praticeJS.js",
+				innerHtml: initInterface.praticeInterface
+			});
 		});
 	});
 
 	app.get("/doPratice", function(req, res) {
-		res.render("comment", {
-			cssFilePath: "stylesheets/doPraticeStyle.css",
-			scriptFilePath: "javascripts/doPraticeJS.js",
-			innerHtml: initInterface.doPraticeInterface
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				imageSrc: req.session.imageSrc,
+				cssFilePath: "stylesheets/doPraticeStyle.css",
+				scriptFilePath: "javascripts/doPraticeJS.js",
+				innerHtml: initInterface.doPraticeInterface
+			});
 		});
 	});
 
 	app.get("/addPratice", function(req, res) {
 		// res.render("addPratice");
-		res.render("comment", {
-			cssFilePath: "stylesheets/addPraticeStyle.css",
-			scriptFilePath: "javascripts/addPraticeJS.js",
-			innerHtml: initInterface.addPraticeInterface
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				imageSrc: req.session.imageSrc,
+				cssFilePath: "stylesheets/addPraticeStyle.css",
+				scriptFilePath: "javascripts/addPraticeJS.js",
+				innerHtml: initInterface.addPraticeInterface
+			});
 		});
 	});
 
@@ -270,7 +295,7 @@ module.exports = function(app) {
 	app.post("/callDataProcessing", function(req, res) {
 		switch(req.body.callFunction) {
 			case "find":
-				buildData[req.body.data+"Obj"].find(req.body.id, function(data) {
+				buildData[req.body.data+"Obj"].find(req.body.findOpt, function(data) {
 					res.send(data);
 				});
 				break;
@@ -285,12 +310,12 @@ module.exports = function(app) {
 				});
 				break;
 			case "update":
-				buildData[req.body.data+"Obj"].update(req.body.id, req.body.operation, req.body.update, function(data) {
+				buildData[req.body.data+"Obj"].update(req.body.updateOpt, req.body.operation, req.body.update, function(data) {
 					res.send(data);
 				});
 				break;
 			case "remove":
-				buildData[req.body.data+"Obj"].remove(req.body.id, function(data) {
+				buildData[req.body.data+"Obj"].remove(req.body.removeOpt, function(data) {
 					res.send(data);
 				});
 		}

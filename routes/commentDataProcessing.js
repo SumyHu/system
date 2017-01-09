@@ -7,8 +7,8 @@ module.exports = function(model) {
 		 * @param id String 唯一标识
 		 * @param callback Function 回调函数
 		*/
-		find: function(id, callback) {
-			model.find({_id: id}, function(err, data) {
+		find: function(findOpt, callback) {
+			model.find(findOpt, function(err, data) {
 				if (err) {
 					throw Error('something error happened');
 				}
@@ -51,7 +51,7 @@ module.exports = function(model) {
 		 * update = {$set: {errorExercise: [{...}]}}
 		 * @param callback Function 回调函数
 		*/
-		update: function(id, operation, update, callback) {
+		update: function(updateOpt, operation, update, callback) {
 			if (update["password"]) {
 				update["password"] = md(update["password"]);
 			}
@@ -82,8 +82,9 @@ module.exports = function(model) {
 					updateObj = {$pull: update};
 					break;
 			}
-			model.update({_id:id}, updateObj, function(err, data) {
+			model.update(updateOpt, updateObj, function(err, data) {
 				if (err) {
+					console.log(err);
 					throw Error('something error happened');
 				}
 				callback(data);
@@ -94,8 +95,8 @@ module.exports = function(model) {
 		 * @param id String 用户ID
 		 * @param callback Function 回调函数
 		*/
-		remove: function(id, callback) {
-			model.remove({_id: id}, function(err, data) {
+		remove: function(removeOpt, callback) {
+			model.remove(removeOpt, function(err, data) {
 				if (err) {
 					throw Error('something error happened');
 				}

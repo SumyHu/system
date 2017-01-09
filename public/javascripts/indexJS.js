@@ -1,7 +1,56 @@
-/** 在界面添加某个科目
+/** 查找数据库中的所有subject
+ * @param callback Function 回调函数
+*/
+function findAllSubject(callback) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "subjects",
+			callFunction: "findAll"
+		},
+		success: function(result) {
+			callback(result);
+		}
+	});
+}
+
+/** 在界面中添加某个科目
+ * @param subjectName String 科目名称
+*/
+function addSubjectInView(subjectName) {
+	let section = document.createElement("section");
+	section.innerHTML = '<div><div class="subjectName">' + subjectName 
+						+ '</div><input type="button" value="X" class="remove">'
+						+ '<input type="button" class="modify"></div>';
+
+	let addSubject = $(".addSubject");
+	addSubject.before(section);
+
+	$(section).hover(function(e) {
+		let target = getTarget(e);
+		$(target).find(".remove").css("opacity", 1);
+		$(target).find(".modify").css("opacity", 1);
+	}, function(e) {
+		let target = getTarget(e);
+		$(target).find(".remove").css("opacity", 0);
+		$(target).find(".modify").css("opacity", 0);
+	});
+}
+
+/** 在界面和数据库中添加某个科目
  * @param subjectName String 科目名称
 */
 function addSubject(subjectName) {
+	// $.ajax({
+	// 	url: "../callDataProcessing",
+	// 	type: "POST",
+	// 	data: {
+	// 		data: "subjects",
+	// 		callFunction: "find",
+	// 		id: 
+	// 	}
+	// })
 	$.ajax({
 		url: "../callDataProcessing",
 		type: "POST",
@@ -16,20 +65,7 @@ function addSubject(subjectName) {
 			if (!err) {
 				showTips("新建科目成功！", 2000);
 
-				let section = document.createElement("section");
-				section.innerHTML = '<div><div class="subjectName">' + subjectName 
-									+'</div><input type="button" value="X" class="remove"></div>';
-
-				let addSubject = $(".addSubject");
-				addSubject.before(section);
-
-				$(section).hover(function(e) {
-					let target = getTarget(e);
-					$(target).find(".remove").css("opacity", 1);
-				}, function(e) {
-					let target = getTarget(e);
-					$(target).find(".remove").css("opacity", 0);
-				});
+				addSubjectInView(subjectName);
 			}
 			else {
 				showTips("该科目已存在！", 2000);
@@ -60,9 +96,64 @@ function enterSubjectExercise(subjectName) {
 	window.location.href = "/pratice?suubjectName=" + subjectName;
 }
 
-// 删除某个科目，并将该科目的所有题库从数据库中删除
-function removeSubject(removeTarget) {
-	removeTarget.remove();
+/** 删除某个科目，并将该科目的所有题库从数据库中删除
+ * @param $removeTarget Object 删除的对象（jq对象）
+*/
+function removeSubject($removeTarget) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "subjects",
+			callFunction: "remove",
+			removeOpt: {subjectName: $removeTarget.find(".subjectName")[0].innerHTML}
+		},
+		success: function() {
+			$removeTarget.remove();
+			showTips("删除成功！", 2000);
+		}
+	});
+}
+
+/** 修改科目名称
+ * @param $modifyTarget Object 修改对象（jq对象）
+*/
+function modifySubjectName($modifyTarget) {
+	let oldSubjectName = $modifyTarget.find(".subjectName")[0].innerHTML;
+	let contentHTML = '<div>请输入新的科目名称：</div>'
+						+ '<div><input class="textInput" type="text" autofocus=true value="'
+						+ oldSubjectName 
+						+ '" style="color: #000; border-bottom-color: #000; margin: 20px 0;"></div>';
+	showWin(contentHTML, function() {
+		let newSubjectName = $(".textInput").val();
+		if (newSubjectName && newSubjectName != oldSubjectName) {
+			$.ajax({
+				url: "../callDataProcessing",
+				type: "POST",
+				data: {
+					data: "subjects",
+					callFunction: "update",
+					updateOpt: {subjectName: oldSubjectName},
+					operation: "set",
+					update: {subjectName: newSubjectName}
+				},
+				success: function(result) {
+					if (result) {
+						$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
+					}
+				}
+			});
+		}
+		inputRest("text");
+	});
+}
+
+function init() {
+	findAllSubject(function(result) {
+		for(let i=0, len=result.length; i<len; i++) {
+			addSubjectInView(result[i].subjectName);
+		}
+	});
 }
 
 function bindEvent() {
@@ -83,6 +174,9 @@ function bindEvent() {
 				showWin("确定删除该科目吗？（连同该科目的所有题库都删除）", function() {
 					removeSubject($(target).parent());
 				}, function() {}, true);
+				break;
+			case "modify":
+				modifySubjectName($(target).parent());
 				break;
 		}
 	});

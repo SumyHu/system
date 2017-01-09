@@ -12,7 +12,7 @@ function addShortAnswer() {}
 
 function addProgramming() {}
 
-init = function() {
+function init() {
 	showWin("若没有该题型的题目，可直接不添加任何题目。");
 }
 

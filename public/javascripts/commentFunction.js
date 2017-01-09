@@ -1,6 +1,3 @@
-// 定义初始化函数
-let init = function() {}
-
 /** 兼容ie浏览器
 */
 function getEvent(e) {
