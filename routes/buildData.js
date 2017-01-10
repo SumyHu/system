@@ -26,7 +26,7 @@ buildData.usersObj = commentDataProcessing(users);
 // 建立题库数据库
 var subjectsSchema = new Schema ({
 	subjectName: String,   // 科目唯一标识，即科目名
-	content: {}    // 科目所有题目与答案
+	pratice: {}    // 科目所有题目与答案
 });
 
 var subjects = mongoose.model('subjects', subjectsSchema);

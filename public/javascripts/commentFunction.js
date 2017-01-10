@@ -103,6 +103,21 @@ function radioRest() {
 	}
 }
 
+// 获取当前的导航栏内容并正确显示
+function getCurrentToolbar() {
+	let subjectName;
+	let location = "localhost:3000/pratice?";
+	let paramArray = window.location.href.split("?")[1].split("&");
+	for(let i=0, len=paramArray.length; i<len; i++) {
+		let keyValuePair = paramArray[i].split("=");
+		if (i != 0) {
+			location = location + "&";
+		}
+		location = location + paramArray[i];
+		$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + keyValuePair[1] +"</a>";
+	}
+}
+
 // 绑定顶部导航栏事件
 function toobarEvent() {
 	$(".tab").hover(function() {

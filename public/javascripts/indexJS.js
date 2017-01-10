@@ -1,3 +1,30 @@
+/** 根据科目名查找某个科目
+ * @param subjectName String 科目名称
+ * @param notFindCallback Function 没有找到该科目的回调函数
+ * @param findCallback Function 找到该科目的回调函数
+*/
+function findSubjectByName(subjectName, notFindCallback, findCallback) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "subjects",
+			callFunction: "find",
+			findOpt: {
+				subjectName: subjectName
+			}
+		},
+		success: function(data) {
+			if (!data) {
+				notFindCallback();
+			}
+			else {
+				findCallback();
+			}
+		}
+	});
+}
+
 /** 查找数据库中的所有subject
  * @param callback Function 回调函数
 */
@@ -42,35 +69,32 @@ function addSubjectInView(subjectName) {
  * @param subjectName String 科目名称
 */
 function addSubject(subjectName) {
-	// $.ajax({
-	// 	url: "../callDataProcessing",
-	// 	type: "POST",
-	// 	data: {
-	// 		data: "subjects",
-	// 		callFunction: "find",
-	// 		id: 
-	// 	}
-	// })
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
-		data: {
-			data: "subjects",
-			callFunction: "save",
-			saveData: {
-				_id: subjectName
-			}
-		},
-		success: function(err) {
-			if (!err) {
-				showTips("新建科目成功！", 2000);
+	findSubjectByName(subjectName, function() {
+		$.ajax({
+			url: "../callDataProcessing",
+			type: "POST",
+			data: {
+				data: "subjects",
+				callFunction: "save",
+				saveData: {
+					subjectName: subjectName,
+					pratice: {
+						chapter: [],
+						examination: [],
+						random: []
+					}
+				}
+			},
+			success: function(err) {
+				if (!err) {
+					showTips("新建科目成功！", 2000);
 
-				addSubjectInView(subjectName);
+					addSubjectInView(subjectName);
+				}
 			}
-			else {
-				showTips("该科目已存在！", 2000);
-			}
-		}
+		});
+	}, function() {
+		showTips("该科目已存在！", 2000);
 	});
 }
 
@@ -93,7 +117,7 @@ function newSubjectName() {
 
 // 请求进入某个科目的题库
 function enterSubjectExercise(subjectName) {
-	window.location.href = "/pratice?suubjectName=" + subjectName;
+	window.location.href = "/pratice?subjectName=" + subjectName;
 }
 
 /** 删除某个科目，并将该科目的所有题库从数据库中删除
@@ -127,24 +151,28 @@ function modifySubjectName($modifyTarget) {
 	showWin(contentHTML, function() {
 		let newSubjectName = $(".textInput").val();
 		if (newSubjectName && newSubjectName != oldSubjectName) {
-			$.ajax({
-				url: "../callDataProcessing",
-				type: "POST",
-				data: {
-					data: "subjects",
-					callFunction: "update",
-					updateOpt: {subjectName: oldSubjectName},
-					operation: "set",
-					update: {subjectName: newSubjectName}
-				},
-				success: function(result) {
-					if (result) {
-						$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
+			findSubjectByName(newSubjectName, function() {
+				$.ajax({
+					url: "../callDataProcessing",
+					type: "POST",
+					data: {
+						data: "subjects",
+						callFunction: "update",
+						updateOpt: {subjectName: oldSubjectName},
+						operation: "set",
+						update: {subjectName: newSubjectName}
+					},
+					success: function(result) {
+						if (result) {
+							$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
+							showTips("科目名称修改成功！", 2000);
+						}
 					}
-				}
+				});
+			}, function() {
+				showTips("该科目已存在！", 2000);
 			});
 		}
-		inputRest("text");
 	});
 }
 

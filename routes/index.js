@@ -142,13 +142,21 @@ module.exports = function(app) {
 
 	app.get("/pratice", function(req, res) {
 		isLoginIn(req, res, function() {
-			res.render("comment", {
+			let renderContent = {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
-				imageSrc: req.session.imageSrc,
-				cssFilePath: "stylesheets/praticeStyle.css",
-				scriptFilePath: "javascripts/praticeJS.js",
-				innerHtml: initInterface.praticeInterface
-			});
+				imageSrc: req.session.imageSrc
+			}
+			if (req.query.praticeType) {
+				renderContent.cssFilePath = "stylesheets/addPraticeStyle.css";
+				renderContent.scriptFilePath = "javascripts/addPraticeJS.js";
+				renderContent.innerHtml = initInterface.addPraticeInterface;
+			}
+			else if (req.query.subjectName) {
+				renderContent.cssFilePath = "stylesheets/praticeStyle.css";
+				renderContent.scriptFilePath = "javascripts/praticeJS.js";
+				renderContent.innerHtml = initInterface.praticeInterface;
+			}
+			res.render("comment", renderContent);
 		});
 	});
 
@@ -160,19 +168,6 @@ module.exports = function(app) {
 				cssFilePath: "stylesheets/doPraticeStyle.css",
 				scriptFilePath: "javascripts/doPraticeJS.js",
 				innerHtml: initInterface.doPraticeInterface
-			});
-		});
-	});
-
-	app.get("/addPratice", function(req, res) {
-		// res.render("addPratice");
-		isLoginIn(req, res, function() {
-			res.render("comment", {
-				username: req.session.userId.substr(req.session.userId.length-5, 5),
-				imageSrc: req.session.imageSrc,
-				cssFilePath: "stylesheets/addPraticeStyle.css",
-				scriptFilePath: "javascripts/addPraticeJS.js",
-				innerHtml: initInterface.addPraticeInterface
 			});
 		});
 	});
