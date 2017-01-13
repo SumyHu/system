@@ -106,7 +106,7 @@ function radioRest() {
 // 获取当前的导航栏内容并正确显示
 function getCurrentToolbar() {
 	let subjectName;
-	let location = "localhost:3000/pratice?";
+	let location = "http://localhost:3000/pratice?";
 	let paramArray = window.location.href.split("?")[1].split("&");
 	for(let i=0, len=paramArray.length; i<len; i++) {
 		let keyValuePair = paramArray[i].split("=");
@@ -207,4 +207,17 @@ function addDir(dirName, linkHref) {
 	let appenHtml = '>>>>> <a class="link" href="' + linkHref + '">' + dirName + '</div>';
 	let initHtml = $(".navigation").innerHtml;
 	$(".navigation").innerHtml = initHtml + appendHtml;
+}
+
+/** 获取url传参的值
+ * @param key String 键名
+*/
+function getValueInUrl(key) {
+	let queryParamArr = window.location.href.split("?")[1].split("&");
+	for(let i=0, len=queryParamArr.length; i<len; i++) {
+		let keyValuePair = queryParamArr[i].split("=");
+		if (keyValuePair[0] == key) {
+			return keyValuePair[1];
+		}
+	}
 }

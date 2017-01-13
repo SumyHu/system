@@ -170,7 +170,7 @@ initInterface = {
 
 							<section class="randomContent">
 								<section class="content">
-									<section class="showOneType">
+									<section class="showOneType SingleChoice">
 										<div class="showEg">
 											<p class="title">单选题</>
 											<div class="eg">
@@ -186,6 +186,111 @@ initInterface = {
 													<label for="radio4">D.31天</label>
 												</div>
 											</div>
+										</div>
+
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
+										</div>
+
+										<div class="enter">
+											<input type="button" value="Go">
+										</div>
+									</section>
+
+									<section class="showOneType MultipleChoices">
+										<div class="showEg">
+											<p class="title">多选题</>
+											<div class="eg">
+												<p class="title">e.g：请问哪些是特别行政区？</p>
+												<div>
+													<input type="checkbox" id="checkbox1">
+													<label for="checkbox1">A.香港</label>
+													<input type="checkbox" id="checkbox2">
+													<label for="checkbox2">B.澳门</label>
+													<input type="checkbox" id="checkbox3">
+													<label for="checkbox3">C.深圳</label>
+													<input type="checkbox" id="checkbox4">
+													<label for="checkbox4">D.广州</label>
+												</div>
+											</div>
+										</div>
+
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
+										</div>
+
+										<div class="enter">
+											<input type="button" value="Go">
+										</div>
+									</section>
+
+									<section class="showOneType TrueOrFalse">
+										<div class="showEg">
+											<p class="title">判断题（T为对，F为错）</>
+											<div class="eg">
+												<p class="title">e.g：2008年2月有30天。</p>
+												<div>
+													<input type="radio" id="judge1" name="judge">
+													<label for="judge1">T</label>
+													<input type="radio" id="judge2" name="judge">
+													<label for="judge2">F</label>
+												</div>
+											</div>
+										</div>
+
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
+										</div>
+
+										<div class="enter">
+											<input type="button" value="Go">
+										</div>
+									</section>
+
+									<section class="showOneType FillInTheBlank">
+										<div class="showEg">
+											<p class="title">填空题</>
+											<div class="eg">
+												<p class="title">e.g：香港是在_______年回归？</p>
+											</div>
+										</div>
+
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
+										</div>
+
+										<div class="enter">
+											<input type="button" value="Go">
+										</div>
+									</section>
+
+									<section class="showOneType ShortAnswer">
+										<div class="showEg">
+											<p class="title">简答题</>
+											<div class="eg">
+												<p class="title">e.g：什么是操作系统？</p>
+											</div>
+										</div>
+
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
+										</div>
+
+										<div class="enter">
+											<input type="button" value="Go">
+										</div>
+									</section>
+
+									<section class="showOneType Programming">
+										<div class="showEg">
+											<p class="title">编程题</>
+											<div class="eg">
+												<p class="title">e.g：请编写一个计算总和的程序，例如：输入(20,30)，输出50.</p>
+											</div>
+										</div>
+
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 
 										<div class="enter">
@@ -211,8 +316,12 @@ initInterface = {
 							</nav>
 
 							<section class="addPraticeContent">
-								<section class="addSingleChoice"></section>
-								<section class="addMultipleChoices"></section>
+								<section class="addSingleChoice">
+									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
+								</section>
+								<section class="addMultipleChoices">
+									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
+								</section>
 								<section class="addTrueOrFalse"></section>
 								<section class="addFillInTheBlank"></section>
 								<section class="addShortAnswer"></section>

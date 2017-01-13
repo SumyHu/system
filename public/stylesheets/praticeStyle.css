@@ -99,13 +99,32 @@
 	border-top: 1px solid #fff;
 }
 
-.showEg, .contentDetail {
+.randomContent .content > section+section {
+	border-top: none;
+}
+
+.randomContent .showOneType {
+	display: none;
+}
+
+.randomContent > .content > .SingleChoice {
+	display: block;
+}
+
+.showEg, .contentDetail, .exerciseCount {
 	width: 85%;
 	float: left;
 }
 
 .showEg > .title {
 	font-size: 27px;
+}
+
+.exerciseCount {
+	margin: 30px 0 0;
+	clear: both;
+	font-size: 21px;
+	color: #5CB099;
 }
 
 .enter {
@@ -116,13 +135,17 @@
 	right: 20px;
 }
 
-.examContent .enter {
+.examContent .enter, .randomContent .enter {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
 	width: 8%;
 	float: right;
 	right: 20px;
+}
+
+.randomContent .enter {
+	top: 30%;
 }
 
 .enter input{

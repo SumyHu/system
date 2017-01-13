@@ -192,6 +192,7 @@ input[type=button] {
 	border-bottom: 1px solid #fff;
 	font-size: 18px;
 	color: #fff;
+	background: #222;
 	transition: 0.5s all linear;
 }
 
