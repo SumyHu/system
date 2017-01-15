@@ -152,6 +152,28 @@
 	width: 55%;
 }
 
+.blank {
+	margin: 0 0 15px;
+}
+
+.blank > .textInput {
+	margin: 0 0 15px;
+}
+
+.addOtherAnswer {
+	display: inline-block;
+	width: 25px;
+	height: 25px !important;
+	border-radius: 50%;
+	line-height: 25px !important;
+	background: rgba(67, 135, 253, 0.5);
+	transition: all 0.5s linear;
+}
+
+.addOtherAnswer:hover {
+	background: rgba(67, 135, 253, 0.3);
+}
+
 .addChoiceBtn, .addBlankBtn {
 	display: block;
 	width: 130px;

@@ -105,9 +105,10 @@ function addFillInTheBlank() {
 						<div class="blank">
 							<span class="num">1.</span>
 							<input type="text" class="textInput">
+							<input type="button" value="+" class="addOtherAnswer">
 						</div>
-						<input type="button" value="添加答案" class="addBlankBtn">
-					</div>`;
+					</div>
+					<input type="button" value="添加答案" class="addBlankBtn">`;
 
 	let section = document.createElement("section");
 	section.className = "content";
@@ -161,6 +162,24 @@ function getAllExercise(callback) {
 	});
 }
 
+function showSomePraticeType(praticeType) {
+	if (praticeType === "Programming") {
+		$(".next").css("width", "60px");
+		$(".next").val("提交");
+	}
+	else {
+		$(".next").css("width", "40px");
+		$(".next").val(">");
+	}
+	$(".addPraticeToolbar > div").css("background", "rgba(0, 0, 0, 0.5)");
+	$("." + praticeType).css("background", "rgba(249, 90, 78, 0.8)");
+
+	$(".addPraticeContent > section").css("display", "none");
+	$(".add" + praticeType).css("display", "block");
+
+	currentAddType = praticeType;
+}
+
 /** 添加选项
  * @param $addChoiceSection Object 需要添加选项的section对象
 */
@@ -182,6 +201,24 @@ function addMoreChoice($addChoiceSection) {
 							<input type="` + addInputType + `" name="` + addInputName + `">
 						</div>`;
 	$addChoiceSection[0].innerHTML = $addChoiceSection[0].innerHTML + appendContent;
+}
+
+/** 添加更多填充空格选项
+ * @param addBlankSection Object 需要添加更多空格选项的section对象
+*/
+function addMoreBlank($addBlankSection) {
+	let num = $addBlankSection.find(".blank").length+1;
+	let appendContent = `<div class="blank">
+							<span class="num">` + num + `.</span>
+							<input type="text" class="textInput">
+							<input type="button" value="+" class="addOtherAnswer">
+						</div>`;
+	$addBlankSection[0].innerHTML = $addBlankSection[0].innerHTML + appendContent;
+}
+
+function addMoreOtherAnswer($addOtherAnswerBtn) {
+	let appendContent = `<br>【或：<input type="text" class="textInput">】`;
+	$addOtherAnswerBtn.before(appendContent);
 }
 
 function init() {
@@ -214,14 +251,7 @@ function init() {
 
 function bindEvent() {
 	$(".addPraticeToolbar").click(function(e) {
-		let target = getTarget(e);
-		$(".addPraticeToolbar > div").css("background", "rgba(0, 0, 0, 0.5)");
-		$(target).css("background", "rgba(249, 90, 78, 0.8)");
-
-		$(".addPraticeContent > section").css("display", "none");
-		$(".add" + target.className).css("display", "block");
-
-		currentAddType = target.className;
+		showSomePraticeType(getTarget(e).className);
 	});
 
 	$(".addMore")[0].onclick = function() {
@@ -258,7 +288,58 @@ function bindEvent() {
 				addMoreChoice($(getTarget(e)).parent().find(".allChoices"));
 				break;
 			case "addBlankBtn":
+				addMoreBlank($(getTarget(e)).parent().find(".allBlank"));
+				break;
+			case "addOtherAnswer":
+				addMoreOtherAnswer($(getTarget(e)));
 				break;
 		}
+	});
+
+	$(".previous").click(function() {
+		let showPraticeType;
+		if (currentAddType === "SingleChoice") {
+			return;
+		}
+		else if (currentAddType === "MultipleChoices") {
+			showPraticeType = "SingleChoice";
+		}
+		else if (currentAddType === "TrueOrFalse") {
+			showPraticeType = "MultipleChoices";
+		}
+		else if (currentAddType === "FillInTheBlank") {
+			showPraticeType = "TrueOrFalse";
+		}
+		else if (currentAddType === "ShortAnswer") {
+			showPraticeType = "FillInTheBlank";
+		}
+		else if (currentAddType === "Programming") {
+			showPraticeType = "ShortAnswer";
+		}
+		showSomePraticeType(showPraticeType);
+	});
+
+	$(".next").click(function() {
+		if (this.value === "提交") {
+			showWin("确定提交所添加的所有习题？", function() {});
+			return;
+		}
+		let showPraticeType;
+		if (currentAddType === "SingleChoice") {
+			showPraticeType = "MultipleChoices";
+		}
+		else if (currentAddType === "MultipleChoices") {
+			showPraticeType = "TrueOrFalse";
+		}
+		else if (currentAddType === "TrueOrFalse") {
+			showPraticeType = "FillInTheBlank";
+		}
+		else if (currentAddType === "FillInTheBlank") {
+			showPraticeType = "ShortAnswer";
+		}
+		else if (currentAddType === "ShortAnswer") {
+			showPraticeType = "Programming";
+		}
+		showSomePraticeType(showPraticeType);
 	});
 }
