@@ -195,30 +195,149 @@ function addMoreChoice($addChoiceSection) {
 	}
 
 	let num = String.fromCharCode(65+$addChoiceSection.find(".choice").length);
-	let appendContent = `<div class="choice">
-							<span class="num">` + num + `.</span>
-							<input type="text" class="textInput">
-							<input type="` + addInputType + `" name="` + addInputName + `">
-						</div>`;
-	$addChoiceSection[0].innerHTML = $addChoiceSection[0].innerHTML + appendContent;
+	let div = document.createElement("div");
+	div.className = "choice";
+	div.innerHTML = `<span class="num">` + num + `.</span>
+					<input type="text" class="textInput">
+					<input type="` + addInputType + `" name="` + addInputName + `">`;
+	$addChoiceSection.append(div);
 }
 
 /** 添加更多填充空格选项
- * @param addBlankSection Object 需要添加更多空格选项的section对象
+ * @param $addBlankSection Object 需要添加更多空格选项的section对象
 */
 function addMoreBlank($addBlankSection) {
 	let num = $addBlankSection.find(".blank").length+1;
-	let appendContent = `<div class="blank">
-							<span class="num">` + num + `.</span>
-							<input type="text" class="textInput">
-							<input type="button" value="+" class="addOtherAnswer">
-						</div>`;
-	$addBlankSection[0].innerHTML = $addBlankSection[0].innerHTML + appendContent;
+	let div = document.createElement("div");
+	div.className = "blank";
+	div.innerHTML = `<span class="num">` + num + `.</span>
+					<input type="text" class="textInput">
+					<input type="button" value="+" class="addOtherAnswer">`;
+	$addBlankSection.append(div);
 }
 
+/** 添加更多可能的答案
+ * @param $addOtherAnswerBtn Object 点击添加更多可能的答案的按钮
+*/
 function addMoreOtherAnswer($addOtherAnswerBtn) {
 	let appendContent = `<br>【或：<input type="text" class="textInput">】`;
 	$addOtherAnswerBtn.before(appendContent);
+}
+
+/** 获取所要添加的选择题内容
+ * @param $content Object 所要添加的全部content对象
+*/
+function getChoiceContent($content) {
+	if ($content.length === 0) return;
+	let allContent = [], type;
+
+	let parentClassName = $content.parent()[0].className;
+	if (parentClassName === "addSingleChoice" || parentClassName === "addTrueOrFalse") {
+		type = "radio";
+	}
+	else {
+		type = "checkbox";
+	}
+
+	for(let i=0, len=$content.length; i<len; i++) {
+		let topic = $($content[i]).find(".topic > .textInput").val();
+
+		let allChoices = $($content[i]).find(".allChoices > .choice");
+		let choiceArray = [], answer = [];
+		for(let j=0, choiceLen=allChoices.length; j<choiceLen; j++) {
+			choiceArray.push({
+				num: $(allChoices[j]).find(".num")[0].innerHTML,
+				choiceContent: $(allChoices[j]).find(".textInput").val()
+			});
+
+			if ($(allChoices[j]).find("input[type=" + type + "]")[0].checked) {
+				answer.push(choiceArray[choiceArray.length-1].num);
+			}
+		}
+
+		allContent.push({
+			topic: topic,
+			choice: choiceArray,
+			answer: answer
+		});
+	}
+
+	return allContent;
+}
+
+/** 获取所要添加的填空题内容
+ * @param $content Object 所要添加的全部content对象
+*/
+function getFillInTheBlankContent($content) {
+	let allContent = [];
+
+	for(let i=0, len=$content.length; i<len; i++) {
+		let topic = $($content[i]).find(".topic > .textInput").val();
+
+		let allBlank = $($content[i]).find(".allBlank > .blank");
+		let answer = [];
+		for(let j=0, blankLen=allBlank.length; j<blankLen; j++) {
+			let textInput = $(allBlank[j]).find(".textInput");
+			let answerChild = [];
+			for(let t=0, textInputLen=textInput.length; t<textInputLen; t++) {
+				answerChild.push(textInput[t].value);
+			}
+			answer.push(answerChild);
+		}
+
+		allContent.push({
+			topic: topic,
+			answer: answer
+		});
+	}
+
+	return allContent;
+}
+
+/** 获取所要添加的简答题内容
+ * @param $content Object 所要添加的全部content对象
+*/
+function getShortAnswerContent($content) {
+}
+
+/** 获取所要添加的编程题内容
+ * @param $content Object 所要添加的全部content对象
+*/
+function getProgrammingContent($content) {
+	let allContent = [];
+
+	for(let i=0, len=$content.length; i<len; i++) {
+		let topic = $($content[i]).find(".topic > .textInput").val();
+		let answer = $($content[i]).find(".answer textarea").val();
+		
+		allContent.push({
+			topic: topic,
+			answer: answer
+		});
+	}
+
+	return allContent;
+}
+
+/** 存储添加的所有习题
+*/
+function savePratice() {
+	let SingleChoiceContentArr = [], MultipleChoicesContentArr = [], TrueOrFalseContentArr = [], FillInTheBlankContentArr = [], ShortAnswerContentArr = [], ProgrammingContentArr = [];
+
+	let SingleChoiceContent = $(".addSingleChoice > .content");
+	let MultipleChoicesContent = $(".addMultipleChoices > .content");
+	let TrueOrFalseContent = $(".addTrueOrFalse > .content");
+	let FillInTheBlankContent = $(".addFillInTheBlank > .content");
+	let ShortAnswerContent = $(".addShortAnswer > .content");
+	let ProgrammingContent = $(".addProgramming > .content");
+
+	SingleChoiceContentArr = getChoiceContent(SingleChoiceContent);
+	MultipleChoicesContentArr = getChoiceContent(MultipleChoicesContent);
+	TrueOrFalseContentArr = getChoiceContent(TrueOrFalseContent);
+	FillInTheBlankContentArr = getFillInTheBlankContent(FillInTheBlankContent);
+	ProgrammingContentArr = getProgrammingContent(ProgrammingContent);
+
+	if (SingleChoiceContentArr.length > 0) {}
 }
 
 function init() {
@@ -277,10 +396,6 @@ function bindEvent() {
 		}
 	}
 
-	$(".addChoiceBtn").click(function(e) {
-		console.log($(getTarget(e)).parent().find(".allChoices").length);
-	});
-
 	$(".addPraticeContent").click(function(e) {
 		let className = getTarget(e).className;
 		switch(className) {
@@ -321,7 +436,9 @@ function bindEvent() {
 
 	$(".next").click(function() {
 		if (this.value === "提交") {
-			showWin("确定提交所添加的所有习题？", function() {});
+			showWin("确定提交所添加的所有习题？", function() {
+				savePratice();
+			});
 			return;
 		}
 		let showPraticeType;

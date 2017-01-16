@@ -39,7 +39,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -62,7 +63,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -81,7 +83,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -94,7 +97,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -107,7 +111,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -120,7 +125,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 								</section>
@@ -163,7 +169,8 @@ initInterface = {
 										</div>
 									</section>
 									<div class="enter">
-										<input type="button" value="Go">
+										<input type="button" value="修改" class="modify">
+										<input type="button" value="Go" class="enterPratice">
 									</div>
 								</section>
 							</section>
@@ -193,7 +200,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -220,7 +228,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -243,7 +252,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -260,7 +270,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -277,7 +288,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -294,7 +306,8 @@ initInterface = {
 										</div>
 
 										<div class="enter">
-											<input type="button" value="Go">
+											<input type="button" value="修改" class="modify">
+											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 								</section>

@@ -62,14 +62,17 @@ function bindEvent() {
 	});
 
 	$(".praticeContent > aside > ul").click(function(e) {
+		if (getTarget(e).className === "removeIndex") {
+			return;
+		}
+		
 		let allLi = $(".praticeContent > aside li");
 		for(let i=0, len=allLi.length; i<len; i++) {
 			$(allLi[i]).css("background", "rgba(0, 0, 0, 0.5)");
 		}
-		$(e.target).css("background", "rgba(164, 205, 51, 0.4)");
+		$(getTarget(e)).css("background", "rgba(164, 205, 51, 0.4)");
 
 		if (currentPraticeType == "random") {
-			console.log(e.target.innerHTML);
 			showRandomPraticeListEnter(e.target.innerHTML);
 		}
 	});
