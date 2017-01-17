@@ -85,8 +85,8 @@ function addSubject(subjectName) {
 					}
 				}
 			},
-			success: function(err) {
-				if (!err) {
+			success: function(result) {
+				if (!result.err) {
 					showTips("新建科目成功！", 2000);
 
 					addSubjectInView(subjectName);

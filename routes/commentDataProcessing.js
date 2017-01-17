@@ -40,7 +40,7 @@ module.exports = function(model) {
 			var newObj = new model(data);
 			//model.markModified('articles');
 			newObj.save(function(err) {
-				callback(err);
+				callback({err: err, id: newObj._id});
 			});
 		},
 

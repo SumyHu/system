@@ -114,8 +114,8 @@ function bindEvent() {
 				},
 				callFunction: "save"
 			},
-			success: function(err) {
-				if (!err) {
+			success: function(result) {
+				if (!result.err) {
 					$(".tips").css("height", 0);
 					selectRest();
 					radioRest();

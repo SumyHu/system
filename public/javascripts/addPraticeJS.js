@@ -319,6 +319,103 @@ function getProgrammingContent($content) {
 	return allContent;
 }
 
+/** 将习题添加进以习题为单位的数据库里面
+ * @param contentObj Object 要添加的习题内容
+ * @param callback Function 回调函数
+*/
+function addPraticeInPratice(contentObj, callback) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "pratices",
+			callFunction: "save",
+			saveData: contentObj
+		},
+		success: function(result) {
+			callback(result);
+		}
+	});
+}
+
+/** 改变以完整单元为单位的数据库内容
+*/
+function changeUnitsData() {}
+
+/** 添加一个新的单元
+*/
+function addOneUnit() {}
+
+/** 将习题添加进数据库
+ * @param contentObj Object 题目内容
+*/
+function savePraticeInData(contentObj) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "pratices",
+			callFunction: "save",
+			saveData: contentObj
+		},
+		success: function(result) {
+			let update = {};
+			update[praticeType+"Pratices"] = result.id;
+			if (!result.err) {
+				$.ajax({
+					url: "../callDataProcessing",
+					type: "POST",
+					data: {
+						data: "subjects",
+						callFunction: "update",
+						updateOpt: {
+							subjectName: subjectName
+						},
+						operation: "addToSet",
+						update: update
+					}
+				});
+			}
+		}
+	});
+}
+
+/** 删除题目
+*/
+function removePratice(id) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "pratices",
+			callFunction: "remove",
+			removeOpt: {
+				_id: id
+			}
+		},
+		success: function(data) {
+			let update = {};
+			update[praticeType+"Pratices"] = id;
+			$.ajax({
+				url: "../callDataProcessing",
+				type: "POST",
+				data: {
+					data: "subjects",
+					callFunction: "update",
+					updateOpt: {
+						subjectName: subjectName
+					},
+					operation: "pull",
+					update: update
+				},
+				success: function() {
+					console.log("remove success");
+				}
+			});
+		}
+	});
+}
+
 /** 存储添加的所有习题
 */
 function savePratice() {
@@ -337,16 +434,16 @@ function savePratice() {
 	FillInTheBlankContentArr = getFillInTheBlankContent(FillInTheBlankContent);
 	ProgrammingContentArr = getProgrammingContent(ProgrammingContent);
 
-	if (SingleChoiceContentArr.length > 0) {}
+	for(let i=0, len=SingleChoiceContentArr.length; i<len; i++) {
+		savePraticeInData(SingleChoiceContentArr[i]);
+	}
 }
 
 function init() {
-	showWin("若没有该题型的题目，可直接不添加任何题目。");
 	getCurrentToolbar();
 
 	subjectName = getValueInUrl("subjectName");
 	praticeType = getValueInUrl("praticeType");
-
 
 	// 正确显示当前添加题目的title
 	let count = 0;

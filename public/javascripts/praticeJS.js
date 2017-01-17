@@ -1,4 +1,4 @@
-let currentPraticeType = "chapter";
+let subjectName, currentPraticeType = "chapter";
 
 let randomPraticeListInnerHtml = `<li>单选题</li><li>多选题</li><li>判断题</li>
                                   <li>填空题</li><li>简答题</li><li>编程题</li>`;
@@ -38,8 +38,34 @@ function showRandomPraticeListEnter(exerciseName) {
 	}
 }
 
+/** 通过练习类型查找习题内容
+ * @param praticeType String 练习类型
+*/
+function findPraticesByType(praticeType, callback) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: {
+			data: "subjects",
+			callFunction: "find",
+			findOpt: {
+				subjectName: subjectName
+			}
+		},
+		success: function(data) {
+			callback(data[praticeType+"Pratices"]);
+		}
+	});
+}
+
 function init() {
 	getCurrentToolbar();
+
+	subjectName = getValueInUrl("subjectName");
+
+	findPraticesByType(currentPraticeType, function(data) {
+		console.log(data);
+	});
 }
 
 function bindEvent() {

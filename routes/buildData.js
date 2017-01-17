@@ -23,14 +23,43 @@ var users = mongoose.model('users', usersSchema);
 buildData.usersObj = commentDataProcessing(users);
 
 
-// 建立题库数据库
+// 建立以科目为单位的数据库
 var subjectsSchema = new Schema ({
 	subjectName: String,   // 科目唯一标识，即科目名
-	pratice: {}    // 科目所有题目与答案
+	chapterPratices: [],   // 章节练习内容
+	examinationPratices: [],   // 考试模拟内容
+	randomPratices: String   // 随机练习内容
 });
 
 var subjects = mongoose.model('subjects', subjectsSchema);
 
 buildData.subjectsObj = commentDataProcessing(subjects);
+
+
+// 建立以一个完整单元（如章节、试卷）为单位的数据库
+var unitsSchema = new Schema ({
+	SingleChoice: [],
+	MultipleChoices: [],
+	TrueOrFalse: [],
+	FillInTheBlank: [],
+	ShortAnswer: [],
+	Programming: []
+});
+
+var units = mongoose.model('units', unitsSchema);
+
+buildData.unitsObj = commentDataProcessing(units);
+
+
+// 建立以题目为单位的数据库
+var praticesSchema = new Schema ({
+	topic: String,   // 题目
+	choices: [],   // 所有选项
+	answer: []   // 答案
+});
+
+var pratices = mongoose.model('pratices', praticesSchema);
+
+buildData.praticesObj = commentDataProcessing(pratices);
 
 module.exports = buildData;
