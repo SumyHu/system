@@ -34,7 +34,7 @@ module.exports = function(model) {
 		 * @param callback Function 回调函数
 		*/
 		save: function(data, callback) {
-			if (data["password"]) {
+			if (data && data["password"]) {
 				data["password"] = md(data["password"]);
 			}
 			var newObj = new model(data);
@@ -52,7 +52,7 @@ module.exports = function(model) {
 		 * @param callback Function 回调函数
 		*/
 		update: function(updateOpt, operation, update, callback) {
-			if (update["password"]) {
+			if (update && update["password"]) {
 				update["password"] = md(update["password"]);
 			}
 			let updateObj;

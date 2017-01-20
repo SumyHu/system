@@ -221,3 +221,27 @@ function getValueInUrl(key) {
 		}
 	}
 }
+
+/** 调用后台数据库处理方法
+ * @param param Object
+ * param = {
+	data: Object,   // 传给后台的数据
+	success: Function,   // 调用成功的回调函数
+	error: Function    // 调用失败的回调函数（可选）
+ }
+*/
+function callDataProcessingFn(param) {
+	$.ajax({
+		url: "../callDataProcessing",
+		type: "POST",
+		data: param.data,
+		success: function(result) {
+			param.success(result);
+		},
+		error: function(error) {
+			if (param.error) {
+				param.error(error);
+			}
+		}
+	});
+}

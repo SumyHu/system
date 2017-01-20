@@ -53,9 +53,7 @@ function bindEvent() {
 
 		registerVal.username = $(".username").val();
 
-		$.ajax({
-			url: "../callDataProcessing",
-			type: "POST",
+		callDataProcessingFn({
 			data: {
 				data: "users",
 				id: registerVal.username,
@@ -100,9 +98,7 @@ function bindEvent() {
 			}
 		}
 
-		$.ajax({
-			url: "../callDataProcessing",
-			type: "POST",
+		callDataProcessingFn({
 			data: {
 				data: "users",
 				saveData: {

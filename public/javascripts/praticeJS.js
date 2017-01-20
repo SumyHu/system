@@ -42,9 +42,7 @@ function showRandomPraticeListEnter(exerciseName) {
  * @param praticeType String 练习类型
 */
 function findPraticesByType(praticeType, callback) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+	callDataProcessingFn({
 		data: {
 			data: "subjects",
 			callFunction: "find",
@@ -53,7 +51,26 @@ function findPraticesByType(praticeType, callback) {
 			}
 		},
 		success: function(data) {
-			callback(data[praticeType+"Pratices"]);
+			callback(data);
+			let praticeResult = data[praticeType+"Pratices"];
+	// 		if (currentPraticeType === "random") {
+	// 		}
+	// 		else {
+	// 			for(let i=0, len=praticeResult.length; i<len; i++) {
+	// 				callDataProcessingFn({
+	// 					data: {
+	// 						data: "units",
+	// 						callFunction: "remove",
+	// 						removeOpt: {
+	// 							_id: praticeResult[i]
+	// 						}
+	// 					},
+	// 					success: function() {
+	// 						console.log("remove success");
+	// 					}
+	// 				});
+	// 			}
+			// }
 		}
 	});
 }
@@ -65,6 +82,31 @@ function init() {
 
 	findPraticesByType(currentPraticeType, function(data) {
 		console.log(data);
+	});
+
+	callDataProcessingFn({
+		data: {
+			data: "pratices",
+			callFunction: "findAll",
+		},
+		success: function(result) {
+			console.log(result);
+
+			// for(let i=0, len=result.length; i<len; i++) {
+			// 	callDataProcessingFn({
+			// 		data: {
+			// 			data: "pratices",
+			// 			callFunction: "remove",
+			// 			removeOpt: {
+			// 				_id: result[i]
+			// 			}
+			// 		},
+			// 		success: function() {
+			// 			console.log("remove success");
+			// 		}
+			// 	});
+			// }
+		}
 	});
 }
 
@@ -84,6 +126,10 @@ function bindEvent() {
 
 		if (e.target.className == "random") {
 			$(".praticeContent aside ul")[0].innerHTML = randomPraticeListInnerHtml;
+			$(".addMore").css("display", "none");
+		}
+		else {
+			$(".addMore").css("display", "block");
 		}
 	});
 

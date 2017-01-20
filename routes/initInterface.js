@@ -335,7 +335,9 @@ initInterface = {
 								<section class="addMultipleChoices">
 									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
 								</section>
-								<section class="addTrueOrFalse"></section>
+								<section class="addTrueOrFalse">
+									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
+								</section>
 								<section class="addFillInTheBlank"></section>
 								<section class="addShortAnswer"></section>
 								<section class="addProgramming"></section>

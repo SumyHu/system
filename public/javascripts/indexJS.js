@@ -4,9 +4,7 @@
  * @param findCallback Function 找到该科目的回调函数
 */
 function findSubjectByName(subjectName, notFindCallback, findCallback) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+	callDataProcessingFn({
 		data: {
 			data: "subjects",
 			callFunction: "find",
@@ -19,7 +17,7 @@ function findSubjectByName(subjectName, notFindCallback, findCallback) {
 				notFindCallback();
 			}
 			else {
-				findCallback();
+				findCallback(data);
 			}
 		}
 	});
@@ -29,9 +27,7 @@ function findSubjectByName(subjectName, notFindCallback, findCallback) {
  * @param callback Function 回调函数
 */
 function findAllSubject(callback) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+	callDataProcessingFn({
 		data: {
 			data: "subjects",
 			callFunction: "findAll"
@@ -39,6 +35,23 @@ function findAllSubject(callback) {
 		success: function(result) {
 			callback(result);
 		}
+	});
+}
+
+/** 查找某个单元
+ * @param unitId String 单元id
+ * @param callback 回调函数
+*/
+function findUnitById(unitId, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "find",
+			findOpt: {
+				_id: unitId
+			}
+		},
+		success: callback
 	});
 }
 
@@ -70,29 +83,33 @@ function addSubjectInView(subjectName) {
 */
 function addSubject(subjectName) {
 	findSubjectByName(subjectName, function() {
-		$.ajax({
-			url: "../callDataProcessing",
-			type: "POST",
+		callDataProcessingFn({
 			data: {
-				data: "subjects",
-				callFunction: "save",
-				saveData: {
-					subjectName: subjectName,
-					pratice: {
-						chapter: [],
-						examination: [],
-						random: []
-					}
-				}
+				data: "units",
+				callFunction: "save"
 			},
 			success: function(result) {
 				if (!result.err) {
-					showTips("新建科目成功！", 2000);
+					callDataProcessingFn({
+						data: {
+							data: "subjects",
+							callFunction: "save",
+							saveData: {
+								subjectName: subjectName,
+								randomPratices: result.id
+							}
+						},
+						success: function(result) {
+							if (!result.err) {
+								showTips("新建科目成功！", 2000);
 
-					addSubjectInView(subjectName);
+								addSubjectInView(subjectName);
+							}
+						}
+					});
 				}
 			}
-		});
+		})
 	}, function() {
 		showTips("该科目已存在！", 2000);
 	});
@@ -120,22 +137,123 @@ function enterSubjectExercise(subjectName) {
 	window.location.href = "/pratice?subjectName=" + subjectName;
 }
 
-/** 删除某个科目，并将该科目的所有题库从数据库中删除
- * @param $removeTarget Object 删除的对象（jq对象）
+/** 将某个习题从以习题为单位的数据库中删除
+ * @param praticeId String 习题id
+ * @param callback Function 回调函数
 */
-function removeSubject($removeTarget) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+function removePratice(praticeId, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "pratices",
+			callFunction: "remove",
+			removeOpt: {
+				_id: praticeId
+			}
+		},
+		success: callback
+	});
+}
+
+/** 将某个单元从以单元为单位的数据库中删除
+ * @param unitId String 单元id
+ * @param callback Function 回调函数
+*/
+function removeUnit(unitId, callback) {
+	console.log('unitId: ' + unitId);
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "remove",
+			removeOpt: {
+				_id: unitId
+			}
+		},
+		success: callback
+	});
+}
+
+/** 将某个科目从科目数据库中删除
+ * @param subjectName String 科目名称
+ * @param callback Function 回调函数
+*/
+function removeSubject(subjectName, callback) {
+	callDataProcessingFn({
 		data: {
 			data: "subjects",
 			callFunction: "remove",
-			removeOpt: {subjectName: $removeTarget.find(".subjectName")[0].innerHTML}
+			removeOpt: {subjectName: subjectName}
 		},
-		success: function() {
+		success: callback
+	});
+}
+
+function removeOneUnitAllContent(unitId) {
+	findUnitById(unitId, function(result) {
+		if (!result) return;
+
+		console.log(result);
+
+		let SingleChoice = result.SingleChoice,
+			MultipleChoices = result.MultipleChoices,
+			TrueOrFalse = result.TrueOrFalse,
+			FillInTheBlank = result.FillInTheBlank,
+			ShortAnswer = result.ShortAnswer,
+			Programming = result.Programming;
+
+		SingleChoice.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		MultipleChoices.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		TrueOrFalse.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		FillInTheBlank.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		ShortAnswer.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		Programming.forEach(function(praticeId, index, array) {
+			console.log(praticeId);
+			removePratice(praticeId, function() {});
+		});
+	});
+}
+
+/** 删除某个科目，并将该科目的所有题库从数据库中删除
+ * @param $removeTarget Object 删除的对象（jq对象）
+*/
+function removeOneSubjectAllContent($removeTarget) {
+	let subjectName = $removeTarget.find(".subjectName")[0].innerHTML;
+	findSubjectByName(subjectName, function() {}, function(result) {
+		console.log('subject result', result);
+		let chapterPratices = result.chapterPratices,
+			examinationPratices = result.examinationPratices,
+			randomPratices = result.randomPratices;
+
+		removeSubject(subjectName, function() {
 			$removeTarget.remove();
 			showTips("删除成功！", 2000);
-		}
+		});
+
+		chapterPratices.forEach(function(unitId, index, array) {
+			findUnitById(unitId, function(result) {
+				removeUnit(unitId, function() {});
+				removeOneUnitAllContent(unitId);
+			});
+		});
+		examinationPratices.forEach(function(unitId, index, array) {
+			findUnitById(unitId, function(result) {
+				removeUnit(unitId, function() {});
+				removeOneUnitAllContent(unitId);
+			});
+		});
+		findUnitById(randomPratices, function(result) {
+			removeUnit(randomPratices, function() {});
+			removeOneUnitAllContent(randomPratices);
+		});
 	});
 }
 
@@ -178,8 +296,38 @@ function modifySubjectName($modifyTarget) {
 
 function init() {
 	findAllSubject(function(result) {
+		console.log(result);
 		for(let i=0, len=result.length; i<len; i++) {
 			addSubjectInView(result[i].subjectName);
+		}
+	});
+
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "findAll"
+		},
+		success: function(result) {
+			console.log("units", result);
+			// for(let i=0, len=result.length; i<len; i++) {
+			// 	removeUnit(result[i]._id, function() {});
+			// }
+		}
+	});
+
+	callDataProcessingFn({
+		data: {
+			data: "pratices",
+			callFunction: "findAll"
+		},
+		success: function(result) {
+			console.log("pratices", result);
+			// for(let i=0, len=result.length; i<len; i++) {
+			// 	console.log(result[i]._id);
+			// 	removePratice(result[i]._id, function() {
+			// 		console.log('success');
+			// 	});
+			// }
 		}
 	});
 }
@@ -200,7 +348,7 @@ function bindEvent() {
 				break;
 			case "remove":   // 绑定删除科目事件
 				showWin("确定删除该科目吗？（连同该科目的所有题库都删除）", function() {
-					removeSubject($(target).parent());
+					removeOneSubjectAllContent($(target).parent());
 				}, function() {}, true);
 				break;
 			case "modify":

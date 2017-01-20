@@ -13,12 +13,12 @@ function addSingleChoice() {
 						<div class="choice">
 							<span class="num">A.</span>
 							<input type="text" class="textInput">
-							<input type="radio" name="` + name + `"">
+							<input type="radio" name="` + name + `" checked>
 						</div>
 						<div class="choice">
 							<span class="num">B.</span>
 							<input type="text" class="textInput">
-							<input type="radio" name="` + name + `"">
+							<input type="radio" name="` + name + `">
 						</div>
 						<div class="choice">
 							<span class="num">C.</span>
@@ -82,7 +82,7 @@ function addTrueOrFalse() {
 						<div class="choice">
 							<span class="num true">T.</span>
 							<input type="text" class="textInput">
-							<input type="radio" name="` + name + `">
+							<input type="radio" name="` + name + `" checked>
 						</div>
 						<div class="choice">
 							<span class="num false">F.</span>
@@ -142,9 +142,7 @@ function addProgramming() {
 }
 
 function getAllExercise(callback) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+	callDataProcessingFn({
 		data: {
 			data: "subjects",
 			callFunction: "find",
@@ -228,7 +226,7 @@ function addMoreOtherAnswer($addOtherAnswerBtn) {
  * @param $content Object 所要添加的全部content对象
 */
 function getChoiceContent($content) {
-	if ($content.length === 0) return;
+	if ($content.length === 0) return [];
 	let allContent = [], type;
 
 	let parentClassName = $content.parent()[0].className;
@@ -257,7 +255,7 @@ function getChoiceContent($content) {
 
 		allContent.push({
 			topic: topic,
-			choice: choiceArray,
+			choices: choiceArray,
 			answer: answer
 		});
 	}
@@ -319,73 +317,216 @@ function getProgrammingContent($content) {
 	return allContent;
 }
 
-/** 将习题添加进以习题为单位的数据库里面
+/** 在以习题为单位的数据库中添加一个新习题
  * @param contentObj Object 要添加的习题内容
  * @param callback Function 回调函数
 */
-function addPraticeInPratice(contentObj, callback) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+function addPratice(contentObj, callback) {
+	callDataProcessingFn({
 		data: {
 			data: "pratices",
 			callFunction: "save",
 			saveData: contentObj
 		},
 		success: function(result) {
-			callback(result);
+			if (!result.err) {
+				callback(result.id);
+			}
+		}
+	});
+}
+
+/** 在以单元为单位的数据库中添加一个新单元
+ * @param callback Function 回调函数
+*/
+function addUnit(callback) {
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "save"
+		},
+		success: function(result) {
+			if (!result.err) {
+				callback(result.id);
+			}
 		}
 	});
 }
 
 /** 改变以完整单元为单位的数据库内容
+ * @param param Object
+ * param = {
+ 	praticeType: String,   // 习题所属的类型
+	praticeId: String,   // 添加的习题的id
+	unitId: String,   // 要添加习题的单元id
+	callback: Function   // 回调函数
+   }
 */
-function changeUnitsData() {}
+function addPraticeInUnits(param) {
+	let update = {};
+	update[param.praticeType] = param.praticeId;
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "update",
+			updateOpt: {
+				_id: param.unitId
+			},
+			operation: "addToSet",
+			update: update
+		},
+		success: function(data) {
+			param.callback(data);
+		}
+	});
+}
 
 /** 添加一个新的单元
+* @param param Object
+ * param = {
+ 	unitType: String,   // 单元所属的类型
+	unitId: String,   // 添加的单元的id
+	subjectName: String,   // 要添加单元的科目名称
+	callback: Function   // 回调函数
+   }
 */
-function addOneUnit() {}
+function addOneUnitInSubject(param) {
+	let update = {}, operation = "addToSet";
 
-/** 将习题添加进数据库
- * @param contentObj Object 题目内容
-*/
-function savePraticeInData(contentObj) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+	update[param.unitType] = param.unitId;
+
+	callDataProcessingFn({
 		data: {
-			data: "pratices",
-			callFunction: "save",
-			saveData: contentObj
+			data: "subjects",
+			callFunction: "update",
+			updateOpt: {
+				subjectName: param.subjectName
+			},
+			operation: operation,
+			update: update
+		},
+		success: function(data) {
+			param.callback(data);
+		}
+	});
+}
+
+/** 将随机练习的题型单独出来
+ * @param contentObj Array 题目内容
+*/
+function saveRandomPraticesInData(contentObj, addPraticeType) {
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "find",
+			findOpt: {
+				subjectName: subjectName
+			}
 		},
 		success: function(result) {
-			let update = {};
-			update[praticeType+"Pratices"] = result.id;
-			if (!result.err) {
-				$.ajax({
-					url: "../callDataProcessing",
-					type: "POST",
-					data: {
-						data: "subjects",
-						callFunction: "update",
-						updateOpt: {
-							subjectName: subjectName
-						},
-						operation: "addToSet",
-						update: update
-					}
+			let randomId = result.randomPratices;
+
+			for(let i=0, len=contentObj.length; i<len; i++) {
+				addPratice(contentObj[i], function(praticeId) {
+					addPraticeInUnits({
+						praticeType: addPraticeType,
+						praticeId: praticeId,
+						unitId: randomId,
+						callback: function(result) {
+						}
+					});
 				});
 			}
 		}
 	});
 }
 
+/** 将习题添加进数据库
+ * @param contentObj Object 题目内容
+ * contentObj = {
+	SingleChoice: Array,    // 单选题内容
+	MultipleChoices: Array,   // 多选题内容
+	...
+ }
+*/
+function savePraticesInData(contentObj) {
+	addUnit(function(unitId) {
+		addOneUnitInSubject({
+			unitType: praticeType + "Pratices",
+			unitId: unitId,
+			subjectName: subjectName,
+			callback: function() {
+				for(var key in contentObj) {
+					let content = contentObj[key];
+					for(let i=0, len=content.length; i<len; i++) {
+						addPratice(content[i], function(praticeId) {
+							addPraticeInUnits({
+								praticeType: key,
+								praticeId: praticeId,
+								unitId: unitId,
+								callback: function(result) {
+									// callDataProcessingFn({
+									// 	data: {
+									// 		data: "units",
+									// 		callFunction: "find",
+									// 		findOpt: {
+									// 			_id: unitId
+									// 		}
+									// 	},
+									// 	success: function(result) {
+									// 		console.log(i);
+									// 	}
+									// });
+								}
+							});
+						});
+					}
+				}
+			}
+		});
+	});
+}
+// function savePraticesInData(contentObj, addPraticeType) {
+// 	if (contentObj.length > 0) {
+// 		addUnit(function(unitId) {
+// 			addOneUnitInSubject({
+// 				unitType: praticeType + "Pratices",
+// 				unitId: unitId,
+// 				subjectName: subjectName,
+// 				callback: function() {
+// 					for(let i=0, len=contentObj.length; i<len; i++) {
+// 						addPratice(contentObj[i], function(praticeId) {
+// 							addPraticeInUnits({
+// 								praticeType: addPraticeType,
+// 								praticeId: praticeId,
+// 								unitId: unitId,
+// 								callback: function(result) {
+// 									callDataProcessingFn({
+// 										data: {
+// 											data: "units",
+// 											callFunction: "find",
+// 											findOpt: {
+// 												_id: unitId
+// 											}
+// 										},
+// 										success: function(result) {
+// 											console.log(i);
+// 										}
+// 									});
+// 								}
+// 							});
+// 						});
+// 					}
+// 				}
+// 			});
+// 		});
+// 	}
+// }
+
 /** 删除题目
 */
 function removePratice(id) {
-	$.ajax({
-		url: "../callDataProcessing",
-		type: "POST",
+	callDataProcessingFn({
 		data: {
 			data: "pratices",
 			callFunction: "remove",
@@ -418,7 +559,7 @@ function removePratice(id) {
 
 /** 存储添加的所有习题
 */
-function savePratice() {
+function savePratices() {
 	let SingleChoiceContentArr = [], MultipleChoicesContentArr = [], TrueOrFalseContentArr = [], FillInTheBlankContentArr = [], ShortAnswerContentArr = [], ProgrammingContentArr = [];
 
 	let SingleChoiceContent = $(".addSingleChoice > .content");
@@ -434,8 +575,44 @@ function savePratice() {
 	FillInTheBlankContentArr = getFillInTheBlankContent(FillInTheBlankContent);
 	ProgrammingContentArr = getProgrammingContent(ProgrammingContent);
 
-	for(let i=0, len=SingleChoiceContentArr.length; i<len; i++) {
-		savePraticeInData(SingleChoiceContentArr[i]);
+	console.log(SingleChoiceContentArr);
+	console.log(MultipleChoicesContentArr);
+	console.log(TrueOrFalseContentArr);
+	console.log(FillInTheBlankContentArr);
+	console.log(ProgrammingContentArr);
+
+	let totalCount = SingleChoiceContentArr.length + MultipleChoicesContentArr.length + TrueOrFalseContentArr.length + FillInTheBlankContentArr.length + ProgrammingContentArr.length;
+
+	// savePraticesInData(SingleChoiceContentArr, "SingleChoice");
+	// savePraticesInData(MultipleChoicesContentArr, "MultipleChoices");
+	// savePraticesInData(TrueOrFalseContentArr, "TrueOrFalse");
+	// savePraticesInData(FillInTheBlankContentArr, "FillInTheBlank");
+	// savePraticesInData(ProgrammingContentArr, "Programming");
+	savePraticesInData({
+		SingleChoice: SingleChoiceContentArr,
+		MultipleChoices: MultipleChoicesContentArr,
+		TrueOrFalse: TrueOrFalseContentArr,
+		FillInTheBlank: FillInTheBlankContentArr,
+		Programming: ProgrammingContentArr
+	});
+}
+
+function checkMultipleChoicesAnswerExit() {
+	let allContent = $(".addMultipleChoices > .content");
+	if (allContent.length === 0) {
+		return true;
+	}
+	else {
+		let MultipleChoicesCheckAnswerExit = false;
+		let lastMultipleChoicesContent = $(allContent[allContent.length-1]).find(".allChoices > .choice");
+		for(let i=0, len=lastMultipleChoicesContent.length; i<len; i++) {
+			if ($(lastMultipleChoicesContent[i]).find("input[type=checkbox]")[0].checked) {
+				MultipleChoicesCheckAnswerExit = true;
+				break;
+			}
+		}
+
+		return MultipleChoicesCheckAnswerExit;
 	}
 }
 
@@ -467,7 +644,12 @@ function init() {
 
 function bindEvent() {
 	$(".addPraticeToolbar").click(function(e) {
-		showSomePraticeType(getTarget(e).className);
+		if (checkMultipleChoicesAnswerExit()) {
+			showSomePraticeType(getTarget(e).className);
+		}
+		else {
+			showTips("存在题目没有勾选标准答案！", 2000);
+		}
 	});
 
 	$(".addMore")[0].onclick = function() {
@@ -476,7 +658,12 @@ function bindEvent() {
 				addSingleChoice();
 				break;
 			case "MultipleChoices":
-				addMultipleChoices();
+				if (checkMultipleChoicesAnswerExit()) {
+					addMultipleChoices();
+				}
+				else {
+					showTips("存在题目没有勾选标准答案！", 2000);
+				}
 				break;
 			case "TrueOrFalse":
 				addTrueOrFalse();
@@ -514,7 +701,13 @@ function bindEvent() {
 			return;
 		}
 		else if (currentAddType === "MultipleChoices") {
-			showPraticeType = "SingleChoice";
+			if (checkMultipleChoicesAnswerExit()) {
+				showPraticeType = "SingleChoice";
+			}
+			else {
+				showTips("存在题目没有勾选标准答案！", 2000);
+				return;
+			}
 		}
 		else if (currentAddType === "TrueOrFalse") {
 			showPraticeType = "MultipleChoices";
@@ -534,7 +727,7 @@ function bindEvent() {
 	$(".next").click(function() {
 		if (this.value === "提交") {
 			showWin("确定提交所添加的所有习题？", function() {
-				savePratice();
+				savePratices();
 			});
 			return;
 		}
@@ -543,7 +736,13 @@ function bindEvent() {
 			showPraticeType = "MultipleChoices";
 		}
 		else if (currentAddType === "MultipleChoices") {
-			showPraticeType = "TrueOrFalse";
+			if (checkMultipleChoicesAnswerExit()) {
+				showPraticeType = "TrueOrFalse";
+			}
+			else {
+				showTips("存在题目没有勾选标准答案！", 2000);
+				return;
+			}
 		}
 		else if (currentAddType === "TrueOrFalse") {
 			showPraticeType = "FillInTheBlank";

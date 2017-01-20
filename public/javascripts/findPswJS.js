@@ -13,9 +13,7 @@ function bindevent() {
 				return;
 			}
 
-			$.ajax({
-				url: "../callDataProcessing",
-				type: "POST",
+			callDataProcessingFn({
 				data: {
 					data: "users",
 					findOpt: {_id: $(".username").val()},
@@ -77,9 +75,7 @@ function bindevent() {
 			}
 			else {
 				hideTips();
-				$.ajax({
-					url: "../callDataProcessing",
-					type: "POST",
+				callDataProcessingFn({
 					data: {
 						data: "users",
 						updateOpt: {_id: changeUser.username},
@@ -94,7 +90,7 @@ function bindevent() {
 							window.location.href  = "../login?changeUser=success";
 						}
 					}
-				})
+				});
 			}
 		}
 
