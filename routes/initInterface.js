@@ -12,8 +12,6 @@ initInterface = {
 							<aside>
 								<ul>
 									<li>示例</li>
-									<li>第一章 <input type="button" class="removeIndex" value="X"></li>
-									<li>第二章 <input type="button" class="removeIndex" value="X"></li>
 								</ul>
 								<div class="addMore">+</div>
 							</aside>
@@ -317,7 +315,7 @@ initInterface = {
 						</section>`,
 
 	addPraticeInterface: `<section class="addPratice body">
-							<div  class="title">第一章</div>
+							<div  class="title"></div>
 
 							<nav class="addPraticeToolbar">
 								<div class="SingleChoice">单选题</div>

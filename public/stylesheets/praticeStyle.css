@@ -67,8 +67,8 @@
 	background: rgba(255, 255, 255, 0.7);
 }
 
-.praticeContent aside li:first-child {
-	background-color: rgba(164, 205, 51, 0.4);
+.praticeContent aside li.select {
+	background-color: rgba(164, 205, 51, 0.4) !important;
 }
 
 .praticeContent aside li:hover {
@@ -167,6 +167,11 @@
 
 .enter .modify:hover {
 	background: rgba(255, 0, 0, 0.5);
+}
+
+.disable {
+	background: #dbd0d0 !important;
+	color: #000 !important;
 }
 
 .chapterContent {

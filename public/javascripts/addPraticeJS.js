@@ -11,22 +11,22 @@ function addSingleChoice() {
 	let content = `<div class="topic">题目` + addSingleChoiceCount + `：<input type="text" class="textInput"></div>
 					<div class="allChoices">
 						<div class="choice">
-							<span class="num">A.</span>
+							<span class="num">A</span>.
 							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `" checked>
 						</div>
 						<div class="choice">
-							<span class="num">B.</span>
+							<span class="num">B</span>.
 							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `">
 						</div>
 						<div class="choice">
-							<span class="num">C.</span>
+							<span class="num">C</span>.
 							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `">
 						</div>
 						<div class="choice">
-							<span class="num">D.</span>
+							<span class="num">D</span>.
 							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `">
 						</div>
@@ -45,22 +45,22 @@ function addMultipleChoices() {
 					+ `：<input type="text" class="textInput"></div>
 					<div class="allChoices">
 						<div class="choice">
-							<span class="num">A.</span>
+							<span class="num">A</span>.
 							<input type="text" class="textInput">
 							<input type="checkbox">
 						</div>
 						<div class="choice">
-							<span class="num">B.</span>
+							<span class="num">B</span>.
 							<input type="text" class="textInput">
 							<input type="checkbox">
 						</div>
 						<div class="choice">
-							<span class="num">C.</span>
+							<span class="num">C</span>.
 							<input type="text" class="textInput">
 							<input type="checkbox">
 						</div>
 						<div class="choice">
-							<span class="num">D.</span>
+							<span class="num">D</span>.
 							<input type="text" class="textInput">
 							<input type="checkbox">
 						</div>
@@ -80,12 +80,12 @@ function addTrueOrFalse() {
 					`：<input type="text" class="textInput"></div>
 					<div class="allChoices">
 						<div class="choice">
-							<span class="num true">T.</span>
+							<span class="num true">T</span>.
 							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `" checked>
 						</div>
 						<div class="choice">
-							<span class="num false">F.</span>
+							<span class="num false">F</span>.
 							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `">
 						</div>
@@ -142,20 +142,11 @@ function addProgramming() {
 }
 
 function getAllExercise(callback) {
-	callDataProcessingFn({
-		data: {
-			data: "subjects",
-			callFunction: "find",
-			findOpt: {
-				subjectName: subjectName
-			}
-		},
-		success: function(data) {
-			try {
-				callback(data.pratice[praticeType]);
-			} catch(e) {
-				callback();
-			}
+	findSubjectByName(subjectName, function(data) {
+		try {
+			callback(data[praticeType + "Pratices"]);
+		} catch(e) {
+			callback();
 		}
 	});
 }
@@ -195,7 +186,7 @@ function addMoreChoice($addChoiceSection) {
 	let num = String.fromCharCode(65+$addChoiceSection.find(".choice").length);
 	let div = document.createElement("div");
 	div.className = "choice";
-	div.innerHTML = `<span class="num">` + num + `.</span>
+	div.innerHTML = `<span class="num">` + num + `</span>.
 					<input type="text" class="textInput">
 					<input type="` + addInputType + `" name="` + addInputName + `">`;
 	$addChoiceSection.append(div);
@@ -411,36 +402,6 @@ function addOneUnitInSubject(param) {
 	});
 }
 
-/** 将随机练习的题型单独出来
- * @param contentObj Array 题目内容
-*/
-function saveRandomPraticesInData(contentObj, addPraticeType) {
-	callDataProcessingFn({
-		data: {
-			data: "subjects",
-			callFunction: "find",
-			findOpt: {
-				subjectName: subjectName
-			}
-		},
-		success: function(result) {
-			let randomId = result.randomPratices;
-
-			for(let i=0, len=contentObj.length; i<len; i++) {
-				addPratice(contentObj[i], function(praticeId) {
-					addPraticeInUnits({
-						praticeType: addPraticeType,
-						praticeId: praticeId,
-						unitId: randomId,
-						callback: function(result) {
-						}
-					});
-				});
-			}
-		}
-	});
-}
-
 /** 将习题添加进数据库
  * @param contentObj Object 题目内容
  * contentObj = {
@@ -459,69 +420,35 @@ function savePraticesInData(contentObj) {
 				for(var key in contentObj) {
 					let content = contentObj[key];
 					for(let i=0, len=content.length; i<len; i++) {
-						addPratice(content[i], function(praticeId) {
-							addPraticeInUnits({
-								praticeType: key,
-								praticeId: praticeId,
-								unitId: unitId,
-								callback: function(result) {
-									// callDataProcessingFn({
-									// 	data: {
-									// 		data: "units",
-									// 		callFunction: "find",
-									// 		findOpt: {
-									// 			_id: unitId
-									// 		}
-									// 	},
-									// 	success: function(result) {
-									// 		console.log(i);
-									// 	}
-									// });
-								}
+						(function(key) {
+							addPratice(content[i], function(praticeId) {
+								addPraticeInUnits({
+									praticeType: key,
+									praticeId: praticeId,
+									unitId: unitId,
+									callback: function(result) {
+										// callDataProcessingFn({
+										// 	data: {
+										// 		data: "units",
+										// 		callFunction: "find",
+										// 		findOpt: {
+										// 			_id: unitId
+										// 		}
+										// 	},
+										// 	success: function(result) {
+										// 		console.log(i);
+										// 	}
+										// });
+									}
+								});
 							});
-						});
+						})(key);
 					}
 				}
 			}
 		});
 	});
 }
-// function savePraticesInData(contentObj, addPraticeType) {
-// 	if (contentObj.length > 0) {
-// 		addUnit(function(unitId) {
-// 			addOneUnitInSubject({
-// 				unitType: praticeType + "Pratices",
-// 				unitId: unitId,
-// 				subjectName: subjectName,
-// 				callback: function() {
-// 					for(let i=0, len=contentObj.length; i<len; i++) {
-// 						addPratice(contentObj[i], function(praticeId) {
-// 							addPraticeInUnits({
-// 								praticeType: addPraticeType,
-// 								praticeId: praticeId,
-// 								unitId: unitId,
-// 								callback: function(result) {
-// 									callDataProcessingFn({
-// 										data: {
-// 											data: "units",
-// 											callFunction: "find",
-// 											findOpt: {
-// 												_id: unitId
-// 											}
-// 										},
-// 										success: function(result) {
-// 											console.log(i);
-// 										}
-// 									});
-// 								}
-// 							});
-// 						});
-// 					}
-// 				}
-// 			});
-// 		});
-// 	}
-// }
 
 /** 删除题目
 */
@@ -583,6 +510,8 @@ function savePratices() {
 
 	let totalCount = SingleChoiceContentArr.length + MultipleChoicesContentArr.length + TrueOrFalseContentArr.length + FillInTheBlankContentArr.length + ProgrammingContentArr.length;
 
+	if (totalCount === 0) return;
+
 	// savePraticesInData(SingleChoiceContentArr, "SingleChoice");
 	// savePraticesInData(MultipleChoicesContentArr, "MultipleChoices");
 	// savePraticesInData(TrueOrFalseContentArr, "TrueOrFalse");
@@ -597,28 +526,45 @@ function savePratices() {
 	});
 }
 
-function checkMultipleChoicesAnswerExit() {
-	let allContent = $(".addMultipleChoices > .content");
-	if (allContent.length === 0) {
-		return true;
+// 判断是否所有的空格都不为空
+function checkAllTextInputHasVal() {
+	let allTextInput = $(".add" + currentAddType + " .textInput");
+
+	for(let i=0, len=allTextInput.length; i<len; i++) {
+		if (!allTextInput[i].value) {
+			return false;
+		}
 	}
-	else {
-		let MultipleChoicesCheckAnswerExit = false;
-		let lastMultipleChoicesContent = $(allContent[allContent.length-1]).find(".allChoices > .choice");
-		for(let i=0, len=lastMultipleChoicesContent.length; i<len; i++) {
-			if ($(lastMultipleChoicesContent[i]).find("input[type=checkbox]")[0].checked) {
-				MultipleChoicesCheckAnswerExit = true;
-				break;
+
+	let textarea = $(".add" + currentAddType + " textarea");
+	if (textarea.length > 0) {
+		for(let i=0, len=textarea.length; i<len; i++) {
+			if (!textarea[i].value) {
+				return false;
 			}
 		}
-
-		return MultipleChoicesCheckAnswerExit;
 	}
+
+	return true;
+}
+
+// 判断多选题是否都勾选了答案
+function checkMultipleChoicesAnswerExit() {
+	let allContent = $(".addMultipleChoices > .content");
+
+	if (allContent.length === 0) return true;
+
+	let lastMultipleChoicesContent = $(allContent[allContent.length-1]).find(".allChoices > .choice");
+	for(let i=0, len=lastMultipleChoicesContent.length; i<len; i++) {
+		if ($(lastMultipleChoicesContent[i]).find("input[type=checkbox]")[0].checked) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 function init() {
-	getCurrentToolbar();
-
 	subjectName = getValueInUrl("subjectName");
 	praticeType = getValueInUrl("praticeType");
 
@@ -628,28 +574,31 @@ function init() {
 		if (result) {
 			count = result.length;
 		}
-	});
 
-	let innerHTML;
-	switch(praticeType) {
-		case "chapter": 
-			innerHTML = "第 " + (++count) +" 章";
-			break;
-		case "examination":
-			innerHTML = "试卷 " + (++count);
-			break;
-	}
-	$(".addPratice .title")[0].innerHTML = innerHTML;
+		let innerHTML;
+		switch(praticeType) {
+			case "chapter": 
+				innerHTML = "第 " + (++count) +" 章";
+				break;
+			case "examination":
+				innerHTML = "试卷 " + (++count);
+				break;
+		}
+		$(".addPratice .title")[0].innerHTML = innerHTML;
+	});
 }
 
 function bindEvent() {
 	$(".addPraticeToolbar").click(function(e) {
-		if (checkMultipleChoicesAnswerExit()) {
-			showSomePraticeType(getTarget(e).className);
+		if (!checkAllTextInputHasVal()) {
+			showTips("存在没有填写的空格！", 1000);
+			return;
 		}
-		else {
-			showTips("存在题目没有勾选标准答案！", 2000);
+		if (!checkMultipleChoicesAnswerExit()) {
+			showTips("存在题目没有勾选标准答案！", 1000);
+			return;
 		}
+		showSomePraticeType(getTarget(e).className);
 	});
 
 	$(".addMore")[0].onclick = function() {
@@ -662,7 +611,7 @@ function bindEvent() {
 					addMultipleChoices();
 				}
 				else {
-					showTips("存在题目没有勾选标准答案！", 2000);
+					showTips("存在题目没有勾选标准答案！", 1000);
 				}
 				break;
 			case "TrueOrFalse":
@@ -700,12 +649,16 @@ function bindEvent() {
 		if (currentAddType === "SingleChoice") {
 			return;
 		}
+		if (!checkAllTextInputHasVal()) {
+			showTips("存在没有填写的空格！", 1000);
+			return;
+		}
 		else if (currentAddType === "MultipleChoices") {
 			if (checkMultipleChoicesAnswerExit()) {
 				showPraticeType = "SingleChoice";
 			}
 			else {
-				showTips("存在题目没有勾选标准答案！", 2000);
+				showTips("存在题目没有勾选标准答案！", 1000);
 				return;
 			}
 		}
@@ -725,6 +678,10 @@ function bindEvent() {
 	});
 
 	$(".next").click(function() {
+		if (!checkAllTextInputHasVal()) {
+			showTips("存在没有填写的空格！", 1000);
+			return;
+		}
 		if (this.value === "提交") {
 			showWin("确定提交所添加的所有习题？", function() {
 				savePratices();
@@ -740,7 +697,7 @@ function bindEvent() {
 				showPraticeType = "TrueOrFalse";
 			}
 			else {
-				showTips("存在题目没有勾选标准答案！", 2000);
+				showTips("存在题目没有勾选标准答案！", 1000);
 				return;
 			}
 		}

@@ -107,13 +107,20 @@ function radioRest() {
 function getCurrentToolbar() {
 	let subjectName;
 	let location = "http://localhost:3000/pratice?";
+	if (window.location.href.split("?").length < 2) return;
 	let paramArray = window.location.href.split("?")[1].split("&");
-	for(let i=0, len=paramArray.length; i<len; i++) {
-		let keyValuePair = paramArray[i].split("=");
-		if (i != 0) {
-			location = location + "&";
-		}
-		location = location + paramArray[i];
+	// for(let i=0, len=paramArray.length; i<len; i++) {
+	// 	let keyValuePair = paramArray[i].split("=");
+	// 	if (i != 0) {
+	// 		location = location + "&";
+	// 	}
+	// 	location = location + paramArray[i];
+	// 	$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + keyValuePair[1] +"</a>";
+	// }
+
+	if (paramArray.length > 0) {
+		let keyValuePair = paramArray[0].split("=");
+		location = location + paramArray[0];
 		$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + keyValuePair[1] +"</a>";
 	}
 }
@@ -220,6 +227,7 @@ function getValueInUrl(key) {
 			return keyValuePair[1];
 		}
 	}
+	return;
 }
 
 /** 调用后台数据库处理方法
@@ -243,5 +251,97 @@ function callDataProcessingFn(param) {
 				param.error(error);
 			}
 		}
+	});
+}
+
+/** 根据科目名查找某个科目
+ * @param subjectName String 科目名称
+ * @param notFindCallback Function 没有找到该科目的回调函数
+ * @param findCallback Function 找到该科目的回调函数
+*/
+function findSubjectByName(subjectName, findCallback, notFindCallback) {
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "find",
+			findOpt: {
+				subjectName: subjectName
+			}
+		},
+		success: function(data) {
+			if (!data) {
+				if (notFindCallback) {
+					notFindCallback();
+				}
+			}
+			else {
+				findCallback(data);
+			}
+		}
+	});
+}
+
+/** 查找数据库中的所有subject
+ * @param callback Function 回调函数
+*/
+function findAllSubject(callback) {
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "findAll"
+		},
+		success: callback
+	});
+}
+
+/** 查找某个单元
+ * @param unitId String 单元id
+ * @param callback 回调函数
+*/
+function findUnitById(unitId, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "find",
+			findOpt: {
+				_id: unitId
+			}
+		},
+		success: callback
+	});
+}
+
+/** 通过练习类型查找习题内容
+ * @param praticeType String 练习类型
+*/
+function findPraticesByType(praticeType, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "find",
+			findOpt: {
+				subjectName: subjectName
+			}
+		},
+		success: function(data) {
+			callback(data[praticeType+"Pratices"]);
+		}
+	});
+}
+
+/** 通过习题id查找习题的具体内容
+ * @param praticeId String 习题id
+ * @param callback Function 回调函数
+*/
+function findPraticesById(praticeId, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "pratices",
+			callFunction: "find",
+			findOpt: {
+				_id: praticeId
+			}
+		},
+		success: callback
 	});
 }

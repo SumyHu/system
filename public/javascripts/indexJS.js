@@ -1,60 +1,3 @@
-/** 根据科目名查找某个科目
- * @param subjectName String 科目名称
- * @param notFindCallback Function 没有找到该科目的回调函数
- * @param findCallback Function 找到该科目的回调函数
-*/
-function findSubjectByName(subjectName, notFindCallback, findCallback) {
-	callDataProcessingFn({
-		data: {
-			data: "subjects",
-			callFunction: "find",
-			findOpt: {
-				subjectName: subjectName
-			}
-		},
-		success: function(data) {
-			if (!data) {
-				notFindCallback();
-			}
-			else {
-				findCallback(data);
-			}
-		}
-	});
-}
-
-/** 查找数据库中的所有subject
- * @param callback Function 回调函数
-*/
-function findAllSubject(callback) {
-	callDataProcessingFn({
-		data: {
-			data: "subjects",
-			callFunction: "findAll"
-		},
-		success: function(result) {
-			callback(result);
-		}
-	});
-}
-
-/** 查找某个单元
- * @param unitId String 单元id
- * @param callback 回调函数
-*/
-function findUnitById(unitId, callback) {
-	callDataProcessingFn({
-		data: {
-			data: "units",
-			callFunction: "find",
-			findOpt: {
-				_id: unitId
-			}
-		},
-		success: callback
-	});
-}
-
 /** 在界面中添加某个科目
  * @param subjectName String 科目名称
 */
@@ -83,6 +26,8 @@ function addSubjectInView(subjectName) {
 */
 function addSubject(subjectName) {
 	findSubjectByName(subjectName, function() {
+		showTips("该科目已存在！", 2000);
+	}, function() {
 		callDataProcessingFn({
 			data: {
 				data: "units",
@@ -110,8 +55,6 @@ function addSubject(subjectName) {
 				}
 			}
 		})
-	}, function() {
-		showTips("该科目已存在！", 2000);
 	});
 }
 
@@ -189,6 +132,9 @@ function removeSubject(subjectName, callback) {
 
 function removeOneUnitAllContent(unitId) {
 	findUnitById(unitId, function(result) {
+		removeUnit(unitId, function() {});
+
+		console.log('find unit result', unitId, result);
 		if (!result) return;
 
 		console.log(result);
@@ -227,7 +173,7 @@ function removeOneUnitAllContent(unitId) {
 */
 function removeOneSubjectAllContent($removeTarget) {
 	let subjectName = $removeTarget.find(".subjectName")[0].innerHTML;
-	findSubjectByName(subjectName, function() {}, function(result) {
+	findSubjectByName(subjectName, function(result) {
 		console.log('subject result', result);
 		let chapterPratices = result.chapterPratices,
 			examinationPratices = result.examinationPratices,
@@ -239,21 +185,12 @@ function removeOneSubjectAllContent($removeTarget) {
 		});
 
 		chapterPratices.forEach(function(unitId, index, array) {
-			findUnitById(unitId, function(result) {
-				removeUnit(unitId, function() {});
-				removeOneUnitAllContent(unitId);
-			});
+			removeOneUnitAllContent(unitId);
 		});
 		examinationPratices.forEach(function(unitId, index, array) {
-			findUnitById(unitId, function(result) {
-				removeUnit(unitId, function() {});
-				removeOneUnitAllContent(unitId);
-			});
+			removeOneUnitAllContent(unitId);
 		});
-		findUnitById(randomPratices, function(result) {
-			removeUnit(randomPratices, function() {});
-			removeOneUnitAllContent(randomPratices);
-		});
+		removeOneUnitAllContent(randomPratices);
 	});
 }
 
@@ -270,6 +207,8 @@ function modifySubjectName($modifyTarget) {
 		let newSubjectName = $(".textInput").val();
 		if (newSubjectName && newSubjectName != oldSubjectName) {
 			findSubjectByName(newSubjectName, function() {
+				showTips("该科目已存在！", 2000);
+			}, function() {
 				$.ajax({
 					url: "../callDataProcessing",
 					type: "POST",
@@ -287,8 +226,6 @@ function modifySubjectName($modifyTarget) {
 						}
 					}
 				});
-			}, function() {
-				showTips("该科目已存在！", 2000);
 			});
 		}
 	});

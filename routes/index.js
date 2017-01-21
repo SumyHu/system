@@ -146,7 +146,12 @@ module.exports = function(app) {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc
 			}
-			if (req.query.praticeType) {
+			if (req.query.index || req.query.type) {
+				renderContent.cssFilePath = "stylesheets/doPraticeStyle.css";
+				renderContent.scriptFilePath = "javascripts/doPraticeJS.js";
+				renderContent.innerHtml = initInterface.doPraticeInterface;
+			}
+			else if (req.query.praticeType) {
 				renderContent.cssFilePath = "stylesheets/addPraticeStyle.css";
 				renderContent.scriptFilePath = "javascripts/addPraticeJS.js";
 				renderContent.innerHtml = initInterface.addPraticeInterface;

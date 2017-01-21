@@ -1,4 +1,5 @@
 $(function() {
+	getCurrentToolbar();
 	toobarEvent();
 
 	try {
