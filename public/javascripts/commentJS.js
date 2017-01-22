@@ -1,4 +1,6 @@
 $(function() {
+	$(".time").css("display", "none");
+	
 	getCurrentToolbar();
 	toobarEvent();
 

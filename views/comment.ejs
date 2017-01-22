@@ -2,7 +2,9 @@
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="stylesheets/commentStyle.css">
-	<link rel="stylesheet" type="text/css" href=<%= cssFilePath %>>
+	<% for(let i=0, len=cssFilePath.length; i<len; i++) { %>
+		<link rel="stylesheet" type="text/css" href=<%= cssFilePath[i] %>>
+	<% } %>
 </head>
 <body>
 	<header class="toolbar">
@@ -37,7 +39,9 @@
 
 	<script src="javascripts/jquery.min.js"></script>
 	<script src="javascripts/commentFunction.js"></script>
-	<script src=<%= scriptFilePath %>></script>
+	<% for(let i=0, len=scriptFilePath.length; i<len; i++) { %>
+		<script src=<%= scriptFilePath[i] %>></script>
+	<% } %>
 	<script src="javascripts/commentJS.js"></script>
 </body>
 </html>

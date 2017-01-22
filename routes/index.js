@@ -91,8 +91,8 @@ module.exports = function(app) {
 			res.render("comment", {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
-				cssFilePath: "stylesheets/indexStyle.css",
-				scriptFilePath: "javascripts/indexJS.js",
+				cssFilePath: ["stylesheets/indexStyle.css"],
+				scriptFilePath: ["javascripts/indexJS.js"],
 				innerHtml: initInterface.indexInterface
 			});
 		});
@@ -133,8 +133,8 @@ module.exports = function(app) {
 			res.render("comment", {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
-				cssFilePath: "stylesheets/indexStyle.css",
-				scriptFilePath: "javascripts/indexJS.js",
+				cssFilePath: ["stylesheets/indexStyle.css"],
+				scriptFilePath: ["javascripts/indexJS.js"],
 				innerHtml: initInterface.indexInterface
 			});
 		});
@@ -147,18 +147,18 @@ module.exports = function(app) {
 				imageSrc: req.session.imageSrc
 			}
 			if (req.query.index || req.query.type) {
-				renderContent.cssFilePath = "stylesheets/doPraticeStyle.css";
-				renderContent.scriptFilePath = "javascripts/doPraticeJS.js";
+				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"];
+				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;
 			}
 			else if (req.query.praticeType) {
-				renderContent.cssFilePath = "stylesheets/addPraticeStyle.css";
-				renderContent.scriptFilePath = "javascripts/addPraticeJS.js";
+				renderContent.cssFilePath = ["stylesheets/addPraticeStyle.css"];
+				renderContent.scriptFilePath = ["javascripts/addPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.subjectName) {
-				renderContent.cssFilePath = "stylesheets/praticeStyle.css";
-				renderContent.scriptFilePath = "javascripts/praticeJS.js";
+				renderContent.cssFilePath = ["stylesheets/praticeStyle.css"];
+				renderContent.scriptFilePath = ["javascripts/praticeJS.js"];
 				renderContent.innerHtml = initInterface.praticeInterface;
 			}
 			res.render("comment", renderContent);
@@ -170,8 +170,8 @@ module.exports = function(app) {
 			res.render("comment", {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
-				cssFilePath: "stylesheets/doPraticeStyle.css",
-				scriptFilePath: "javascripts/doPraticeJS.js",
+				cssFilePath: ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"],
+				scriptFilePath: ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
 				innerHtml: initInterface.doPraticeInterface
 			});
 		});

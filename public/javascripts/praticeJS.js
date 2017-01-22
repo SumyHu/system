@@ -46,6 +46,8 @@ function showIndex(praticeType, index) {
 		}
 		else {
 			if (praticeType === "chapter") {
+				$(".chapterContent > .content > section").css("display", "block");
+				
 				findPraticesByType("chapter", function(result) {
 					let selectChapterId = result[index];
 					findUnitById(selectChapterId, function(data) {
