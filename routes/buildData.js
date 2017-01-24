@@ -54,6 +54,7 @@ buildData.unitsObj = commentDataProcessing(units);
 // 建立以题目为单位的数据库
 var praticesSchema = new Schema ({
 	topic: String,   // 题目
+	programmingTypeMode: String,   // 编程题代码类型
 	choices: [],   // 所有选项
 	answer: []   // 答案
 });

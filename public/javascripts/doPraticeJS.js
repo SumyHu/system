@@ -43,18 +43,24 @@ function editorStyle(id, mode) {
     });
 }
 
+function addPraticeIndex(count) {
+	for(let i=1; i<=count; i++) {
+		let div = document.createElement("div");
+		div.innerHTML = i;
+		$(".showPraticeIndex").append(div);
+	}
+}
+
 function addChoicePratices(praticeIdArr, addPraticeType) {
-	console.log("he");
 	let section = document.createElement("section");
 	section.className = addPraticeType;
 	praticeIdArr.forEach(function(praticeId, index, array) {
 		findPraticesById(praticeId, function(result) {
-			console.log(result);
 			let sec = document.createElement("section");
 			sec.className = "content";
 			let showIndex = index+1;
 
-			let innerHtml = `<p class="title">` + showIndex + `.` + result.topic + `</p>
+			let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							 <div class="answer">`;
 
 			if (addPraticeType === "MultipleChoices") {
@@ -74,13 +80,16 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
 			}
 			sec.innerHTML = innerHtml + `</div>`;
 			$(section).append(sec);
-			$(".praticeContent").append(section);
+			$(".flip").before(section);
+
+			if (index !== 0) {
+				$(sec).css("display", "none");
+			}
 		});
 	});
 }
 
 function addNotChoicePratices(praticeIdArr, addPraticeType) {
-	console.log("hi");
 	let section = document.createElement("section");
 	section.className = "FillInTheBlank";
 	praticeIdArr.forEach(function(praticeId, index, array) {
@@ -90,7 +99,7 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 			sec.className = "content";
 			let showIndex = index+1;
 
-			let innerHtml = `<p class="title">` + showIndex + `.` + result.topic + `</p>
+			let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							 <div class="answer">`;
 
 			if (addPraticeType === "FillInTheBlank") {
@@ -103,26 +112,27 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 				}
 				sec.innerHTML = innerHtml + `</div>`;
 				$(section).append(sec);
-				$(".praticeContent").append(section);
+				$(".flip").before(section);
 			}
 			else {
-				sec.innerHTML = `<p class="title">` + showIndex + `.` + result.topic + `</p>
+				sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
 
 				$(section).append(sec);
-				$(".praticeContent").append(section);
+				$(".flip").before(section);
 
 				$(".answer").addClass("longAnswer");
 
-				let mode = "text/x-java";
-				if (addPraticeType === "ShortAnswer") {
-					mode = "text/plain";
-				}
-				else {
-					// mode = ""
+				let mode = "text/plain";
+				if (addPraticeType === "Programming") {
+					mode = result.programmingTypeMode;
 				}
 
 				editorStyle(addPraticeType + 'Editor' + index, mode);
+			}
+
+			if (index !== 0) {
+				$(sec).css("display", "none");
 			}
 		});
 	});
@@ -150,6 +160,8 @@ function init() {
 			if (type) {
 				allPraticeContent = data[type];
 
+				addPraticeIndex(allPraticeContent.length);
+
 				switch(type) {
 					case "SingleChoice":
 					case "MultipleChoices":
@@ -170,6 +182,11 @@ function init() {
 			console.log(allPraticeContent);
 		});
 	});
+
+	$(".showPraticeIndex").click(function(e) {});
+
+	$(".previous").click(function() {});
+	$(".next").click(function() {});
 }
 
 function bindEvent() {}

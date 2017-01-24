@@ -5,6 +5,47 @@ let subjectName, praticeType;
 let addSingleChoiceCount = 0, addMultipleChoicesCount = 0, addTrueOrFalseCount = 0,
 	addFillInTheBlankCount = 0, addShortAnswerCount = 0, addProgrammingCount = 0;
 
+let programmingTypeMode = {
+	text: "text/plain",
+	ecmascript: "application/ecmascript",
+	javascript: "application/javascript",
+	json: "application/json",
+	typescript: "application/typescript",
+	c: "text/x-c",
+	java: "text/x-java"
+}
+
+// 记录Programing添加的editor，用于后面判断editor是否都不为空
+let programingEditorArray = [];
+
+function editorStyle(id, mode) {
+	var editor=CodeMirror.fromTextArea(document.getElementById(id), {
+            mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
+            lineNumbers: true,   // 显示行号
+
+	        //设置主题
+	        theme: "seti",
+
+	        //绑定Vim
+	        // keyMap: "vim",
+
+	        //代码折叠
+	        lineWrapping: true,
+	        foldGutter: true,
+	        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+
+	        //全屏模式
+	        // fullScreen: true,
+
+	        //括号匹配
+	        matchBrackets: true,
+
+	        extraKeys: {"Ctrl-Space":"autocomplete"}   //ctrl-space唤起智能提示
+    });
+
+    return editor;
+}
+
 function addSingleChoice() {
 	addSingleChoiceCount++;
 	let name = "singleChoice" + addSingleChoiceCount;
@@ -128,17 +169,35 @@ function addShortAnswer() {
 }
 
 function addProgramming() {
+	let selectInnerHtml = "<select>";
+	for(var k in programmingTypeMode) {
+		selectInnerHtml = selectInnerHtml + "<option>" + k + "</option>";
+	}
+	selectInnerHtml = selectInnerHtml + "</select>";
+
 	addProgrammingCount++;
 	let content = `<div class="topic">题目` + addProgrammingCount + 
 					`：<input type="text" class="textInput"></div>
 					<div class="answer">
-						答案：<textarea></textarea>
+						<div class="programmingType">
+							答案：` + selectInnerHtml + `
+						</div>
+						<textarea id="programming` + addProgrammingCount + `"></textarea>
 					</div>`;
 
 	let section = document.createElement("section");
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addProgramming").append(section);
+
+	let editor = editorStyle("programming" + addProgrammingCount, "text/plain");
+	programingEditorArray.push(editor);
+
+	// 下拉框可选择代码类型，动态改变编辑器代码类型
+	$(section).find(".programmingType select").change(function(e) {
+		let selectType = $(getTarget(e)).find("option:selected").text();
+		editor.setOption("mode", programmingTypeMode[selectType]);
+	});
 }
 
 function getAllExercise(callback) {
@@ -297,10 +356,15 @@ function getProgrammingContent($content) {
 
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
-		let answer = $($content[i]).find(".answer textarea").val();
+
+		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
+		let mode = programmingTypeMode[programmingType];
+
+		let answer = programingEditorArray[i].getValue();
 		
 		allContent.push({
 			topic: topic,
+			programmingTypeMode: mode,
 			answer: answer
 		});
 	}
@@ -419,14 +483,17 @@ function savePraticesInData(contentObj) {
 			callback: function() {
 				for(var key in contentObj) {
 					let content = contentObj[key];
+					console.log(content);
 					for(let i=0, len=content.length; i<len; i++) {
 						(function(key) {
 							addPratice(content[i], function(praticeId) {
+								console.log(content[i]);
 								addPraticeInUnits({
 									praticeType: key,
 									praticeId: praticeId,
 									unitId: unitId,
 									callback: function(result) {
+										console.log(content[i]);
 										// callDataProcessingFn({
 										// 	data: {
 										// 		data: "units",
@@ -441,7 +508,7 @@ function savePraticesInData(contentObj) {
 										// });
 									}
 								});
-							});
+							}, true);
 						})(key);
 					}
 				}
@@ -536,12 +603,21 @@ function checkAllTextInputHasVal() {
 		}
 	}
 
-	let textarea = $(".add" + currentAddType + " textarea");
-	if (textarea.length > 0) {
-		for(let i=0, len=textarea.length; i<len; i++) {
-			if (!textarea[i].value) {
-				return false;
-			}
+	// let textarea = $(".add" + currentAddType + " textarea");
+	// console.log(textarea);
+	// if (textarea.length > 0) {
+	// 	for(let i=0, len=textarea.length; i<len; i++) {
+	// 		console.log(textarea[i].value);
+	// 		if (!textarea[i].value) {
+	// 			return false;
+	// 		}
+	// 	}
+	// }
+
+	for(let i=0, len=programingEditorArray.length; i<len; i++) {
+		console.log(programingEditorArray[i].getValue());
+		if (!programingEditorArray[i].getValue()) {
+			return false;
 		}
 	}
 

@@ -24,15 +24,17 @@ function showIndex(praticeType, index) {
 		$(".randomContent > .content > .showOneType").css("display", "none");
 		$(".randomContent > .content > ." + type).css("display", "block");
 
+		$(".randomContent > .content > ." + type + " .enter .modify").removeClass("disable");
+
 		findPraticesByType("random", function(result) {
 			findUnitById(result, function(data) {
 				let praticeCount = data[type].length;
 				$(".randomContent > .content > ." + type + " > .exerciseCount > .num")[0].innerHTML = praticeCount;
 				if (praticeCount === 0) {
-					$(".randomContent > .content > ." + type + " .enter input").addClass("disable");
+					$(".randomContent > .content > ." + type + " .enter .enterPratice").addClass("disable");
 				}
 				else {
-					$(".randomContent > .content > ." + type + " .enter input").removeClass("disable");
+					$(".randomContent > .content > ." + type + " .enter .enterPratice").removeClass("disable");
 				}
 			});
 		});
@@ -68,6 +70,8 @@ function showIndex(praticeType, index) {
  * @param count Number 【章节数|试卷数】
 */
 function showList(count, index) {
+	$(".addMore").css("display", "block");
+
 	let innerHtml = `<li value=-1>示例</li>`;
 	switch(currentPraticeType) {
 		case "chapter":
@@ -81,6 +85,7 @@ function showList(count, index) {
 			}
 			break;
 		case "random":
+			$(".addMore").css("display", "none");
 			innerHtml = randomPraticeListInnerHtml;
 			break;
 	}

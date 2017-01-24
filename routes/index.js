@@ -168,8 +168,8 @@ module.exports = function(app) {
 				renderContent.innerHtml = initInterface.doPraticeInterface;
 			}
 			else if (req.query.praticeType) {
-				renderContent.cssFilePath = ["stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["javascripts/addPraticeJS.js"];
+				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/addPraticeStyle.css"];
+				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/addPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.subjectName) {

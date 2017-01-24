@@ -242,6 +242,7 @@ function callDataProcessingFn(param) {
 	$.ajax({
 		url: "../callDataProcessing",
 		type: "POST",
+		async: false,
 		data: param.data,
 		success: function(result) {
 			param.success(result);
