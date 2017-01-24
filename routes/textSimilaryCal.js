@@ -19,7 +19,7 @@ segment.useDefault();
 // var jieba = require("nodejieba");
 
 // 调用k-means聚类算法
-var kMeans = require("kmeans-js");
+// var kMeans = require("kmeans-js");
 
 const nVal = 0.3;   // 名词比重
 const vVal = 0.3;   // 动词比重

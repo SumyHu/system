@@ -89,6 +89,7 @@ module.exports = function(app) {
 	app.get("/login", function(req, res) {
 		isLoginIn(req, res, function() {
 			res.render("comment", {
+				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["stylesheets/indexStyle.css"],
@@ -131,6 +132,7 @@ module.exports = function(app) {
 	app.get("/", function(req, res) {
 		isLoginIn(req, res, function() {
 			res.render("comment", {
+				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["stylesheets/indexStyle.css"],
@@ -140,9 +142,23 @@ module.exports = function(app) {
 		});
 	});
 
+	app.get("/modifyUserInfo", function(req, res) {
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				fullName: req.session.userId,
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				imageSrc: req.session.imageSrc,
+				cssFilePath: ["stylesheets/settingsStyle.css"],
+				scriptFilePath: ["javascripts/settingsJS.js"],
+				innerHtml: initInterface.settingsInterface
+			});
+		})
+	});
+
 	app.get("/pratice", function(req, res) {
 		isLoginIn(req, res, function() {
 			let renderContent = {
+				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc
 			}
@@ -168,6 +184,7 @@ module.exports = function(app) {
 	app.get("/doPratice", function(req, res) {
 		isLoginIn(req, res, function() {
 			res.render("comment", {
+				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"],

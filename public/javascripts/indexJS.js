@@ -11,13 +11,11 @@ function addSubjectInView(subjectName) {
 	addSubject.before(section);
 
 	$(section).hover(function(e) {
-		let target = getTarget(e);
-		$(target).find(".remove").css("opacity", 1);
-		$(target).find(".modify").css("opacity", 1);
+		$(this).find(".remove").css("opacity", 1);
+		$(this).find(".modify").css("opacity", 1);
 	}, function(e) {
-		let target = getTarget(e);
-		$(target).find(".remove").css("opacity", 0);
-		$(target).find(".modify").css("opacity", 0);
+		$(this).find(".remove").css("opacity", 0);
+		$(this).find(".modify").css("opacity", 0);
 	});
 }
 

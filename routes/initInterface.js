@@ -2,6 +2,21 @@ initInterface = {
 	indexInterface: `<section class="subject">
 						<div class="addSubject">+</div>
 					</section>`,
+	settingsInterface: `<section class="modifyContent">
+							<div class="showUserImg">
+								<div class="usernameInImg"></div>
+							</div>
+							<div class="username">用户名：<input type="text" class="textInput" readonly></div>
+							<div class="password">密码：
+								<input type="password" readonly>
+								<input type="button" class="modify">
+							</div>
+							<div class="forgetPasswordInfo">
+								<div class="info">忘记密码</div>
+								<input type="button" class="modify">
+							</div>
+							<div class="exit"><input type="button" value="注销" class="exitBtn"></div>
+						</section`,
 	praticeInterface: `<nav class="typeNav">
 							<div class="chapter">章节练习</div>
 							<div class="examination">考试模拟</div>
