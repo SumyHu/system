@@ -3,21 +3,41 @@ initInterface = {
 						<div class="addSubject">+</div>
 					</section>`,
 	settingsInterface: `<section class="settingsContent body">
-							<div class="userImgBlock">
-								<div class="showUserImg">
-								</div>
-								<input type="button" class="modify">
-							</div>
-							<div><span class="name">用户名：</span><span class="username"></span></div>
-							<div class="password"><span class="name">密码：</span>
-								<input type="password" value="00000000000" readonly class="passwordInput">
-								<input type="button" class="modify">
-							</div>
-							<div class="forgetPasswordInfo">
-								<div class="info">忘记密码</div>
-								<input type="button" class="modify">
-							</div>
-							<div class="exit"><input type="button" value="注销" class="exitBtn"></div>
+							<aside>
+								<ul>
+									<li class="generation">基本信息<input type="button" class="info" value="i"></li>
+									<li class="changeUserImg">用户头像<input type="button" class="modify"></li>
+									<li class="changePassword">修改密码<input type="button" class="modify"></li>
+									<li class="changeFindPassword">忘记密码<input type="button" class="modify"></li>
+								</ul>
+								<input type="button" value="注销" class="exitBtn">
+							</aside>
+							<section class="content">
+								<section class="generationInfo">
+									<div class="userImgBlock">
+										<div class="showUserImg">
+										</div>
+										<input type="button" class="modify">
+									</div>
+									<div><span class="name">用户名：</span><span class="username"></span></div>
+									<div class="password"><span class="name">密码：</span>
+										<input type="password" value="00000000000" readonly class="passwordInput">
+										<input type="button" class="modify">
+									</div>
+									<div class="findPasswordBlock">
+										<div class="findPassword">忘记密码</div>
+										<input type="button" class="modify">
+									</div>
+								</section>
+								<section class="UserImgInfo">
+									<div class="showUserImg">
+									</div>
+								</section>
+								<section class="passwordInfo">
+								</section>
+								<section class="findPasswordInfo">
+								</section>
+							</section>
 						</section>`,
 	praticeInterface: `<nav class="typeNav">
 							<div class="chapter">章节练习</div>

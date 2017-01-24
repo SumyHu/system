@@ -1,20 +1,72 @@
 .settingsContent {
-	width: 230px;
-	padding: 40px 50px;
-	border: 1px solid #fff;
-	border-radius: 20px;
+	top: 150px;
+	/*width: 40%;*/
+	padding: 40px 0;
 	font-family: "幼圆";
 	font-size: 23px;
 	color: #fff;
 }
 
-.settingsContent > div {
+.settingsContent aside {
+	width: 25%;
+	float: left;
+	text-align: center;
+}
+
+.settingsContent aside ul {
+	border: 1px solid #fff;
+	border-radius: 10px;
+}
+
+.settingsContent aside ul li {
+	height: 70px;
+	line-height: 70px;
+	transition: 0.5s all linear;
+	cursor: pointer;
+}
+
+.settingsContent aside ul li:hover {
+	background-color: rgba(249, 90, 78, 0.5);
+}
+
+.settingsContent aside ul li:first-child {
+	border-radius: 10px 10px 0 0;
+	background-color: rgba(249, 90, 78, 0.5);
+}
+
+.settingsContent aside ul li:last-child {
+	border-radius: 0 0 10px 10px;
+}
+
+.settingsContent aside ul li+li {
+	border-top: 1px solid #fff;
+}
+
+.settingsContent aside .modify, .info {
+	top: 23px !important;
+	float: right;
+	margin: 0 10px 0 0 !important;
+}
+
+.settingsContent aside .modify:hover {
+	background-color: #fff;
+}
+
+.content {
+	width: 58%;
+	padding: 30px 50px;
+	float: right;
+	border: 1px solid #fff;
+	border-radius: 10px;
+}
+
+.content > div {
 	height: 50px;
 	line-height: 50px;
 }
 
 .userImgBlock {
-	height: 100px !important;
+	height: 80px !important;
 	overflow: hidden;
 }
 
@@ -38,7 +90,7 @@
 
 .userImgBlock > .modify {
 	top: -23px;
-	left: 90px;
+	left: 225px;
 }
 
 .name {
@@ -54,17 +106,15 @@
 	color: #fff;
 }
 
-.info {
+.findPassword {
 	display: inline-block;
 	margin: 0 20px 0 0;
 }
 
 .exitBtn {
 	position: relative;
-	left: 50%;
+	width: 100px;
 	margin: 30px 0;
-	padding: 0 10px;
-	transform: translateX(-50%);
 	border-radius: 10px;
 	background: red;
 }
@@ -73,7 +123,7 @@
 	background: rgba(255, 0, 0, 0.5);
 }
 
-.modify {
+.info, .modify {
 	position: relative;
 	top: 5px;
 	width: 25px;
@@ -83,11 +133,17 @@
 	text-align: center;
 	line-height: 25px !important;
 	font-size: 25px !important;
+	background-color: #fff;
 	background-image: url("../image/pen.png");
 	background-size: 80%;
 	background-position: center center;
 	background-repeat: no-repeat;
 	transition: 0.1s all linear;
+}
+
+.info {
+	color: #000 !important;
+	background-image: none;
 }
 
 .modify:hover {

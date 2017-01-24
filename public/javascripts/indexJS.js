@@ -3,7 +3,7 @@
 */
 function addSubjectInView(subjectName) {
 	let section = document.createElement("section");
-	section.innerHTML = '<div><div class="subjectName">' + subjectName 
+	section.innerHTML = '<div><div class="subjectName" title="' + subjectName + '">' + subjectName 
 						+ '</div><input type="button" value="X" class="remove">'
 						+ '<input type="button" class="modify"></div>';
 
