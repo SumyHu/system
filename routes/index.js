@@ -142,7 +142,7 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get("/modifyUserInfo", function(req, res) {
+	app.get("/settings", function(req, res) {
 		isLoginIn(req, res, function() {
 			res.render("comment", {
 				fullName: req.session.userId,

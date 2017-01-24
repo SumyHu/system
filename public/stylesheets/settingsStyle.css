@@ -1,0 +1,95 @@
+.settingsContent {
+	width: 320px;
+	padding: 40px 50px;
+	border: 1px solid #fff;
+	border-radius: 20px;
+	font-family: "幼圆";
+	font-size: 23px;
+	color: #fff;
+}
+
+.settingsContent > div {
+	height: 50px;
+	line-height: 50px;
+}
+
+.userImgBlock {
+	height: 100px !important;
+	overflow: hidden;
+}
+
+.showUserImg {
+	display: inline-block;
+	position: relative;
+	left: 50%;
+	width: 60px;
+	height: 60px !important;
+	margin: 0 0 20px 0;
+	overflow: hidden;
+	border: 1px solid #fff;
+	border-radius: 50%;
+	/*background-image: url("../image/userImg1.png");*/
+	background-size: 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	transform: translateX(-50%);
+	cursor: pointer;
+}
+
+.userImgBlock > .modify {
+	top: -23px;
+	left: 140px;
+}
+
+.name {
+	display: inline-block;
+	width: 100px;
+}
+
+.passwordInput {
+	display: inline-block;
+	width: 80px;
+	border: none;
+	background: transparent;
+	color: #fff;
+}
+
+.info {
+	display: inline-block;
+	margin: 0 20px 0 0;
+}
+
+.exitBtn {
+	position: relative;
+	left: 50%;
+	margin: 30px 0;
+	padding: 0 10px;
+	transform: translateX(-50%);
+	border-radius: 10px;
+	background: red;
+}
+
+.exitBtn:hover {
+	background: rgba(255, 0, 0, 0.5);
+}
+
+.modify {
+	position: relative;
+	top: 5px;
+	width: 25px;
+	height: 25px !important;
+	margin: 10px 0;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 25px !important;
+	font-size: 25px !important;
+	background-image: url("../image/pen.png");
+	background-size: 80%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	transition: 0.1s all linear;
+}
+
+.modify:hover {
+	background-color: rgba(255, 255, 255, 0.5);
+}
