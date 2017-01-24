@@ -1,5 +1,5 @@
 .settingsContent {
-	width: 320px;
+	width: 230px;
 	padding: 40px 50px;
 	border: 1px solid #fff;
 	border-radius: 20px;
@@ -38,7 +38,7 @@
 
 .userImgBlock > .modify {
 	top: -23px;
-	left: 140px;
+	left: 90px;
 }
 
 .name {
