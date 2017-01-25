@@ -349,6 +349,7 @@ initInterface = {
 							</section>
 						</section>`,
 	doPraticeInterface: `<section class="praticeContent body">
+							<div class="showPraticeBlockIndex"></div>
 							<div class="showPraticeIndex"></div>
 							<div class="flip">
 								<input type="button" class="previous" value="<">

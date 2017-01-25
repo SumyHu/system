@@ -49,7 +49,8 @@ function editorStyle(id, mode) {
 function addSingleChoice() {
 	addSingleChoiceCount++;
 	let name = "singleChoice" + addSingleChoiceCount;
-	let content = `<div class="topic">题目` + addSingleChoiceCount + `：<input type="text" class="textInput"></div>
+	let content = `<input type="button" value="X" class="remove">
+					<div class="topic">题目<span class="topicNum">` + addSingleChoiceCount + `</span>：<input type="text" class="textInput"></div>
 					<div class="allChoices">
 						<div class="choice">
 							<span class="num">A</span>.
@@ -82,8 +83,9 @@ function addSingleChoice() {
 
 function addMultipleChoices() {
 	addMultipleChoicesCount++;
-	let content = `<div class="topic">题目` + addMultipleChoicesCount 
-					+ `：<input type="text" class="textInput"></div>
+	let content = `<input type="button" value="X" class="remove">
+					<div class="topic">题目<span class="topicNum">` + addMultipleChoicesCount 
+					+ `</span>：<input type="text" class="textInput"></div>
 					<div class="allChoices">
 						<div class="choice">
 							<span class="num">A</span>.
@@ -117,8 +119,9 @@ function addMultipleChoices() {
 function addTrueOrFalse() {
 	addTrueOrFalseCount++;
 	let name = "trueOrFalse" + addTrueOrFalseCount;
-	let content = `<div class="topic">题目` + addTrueOrFalseCount + 
-					`：<input type="text" class="textInput"></div>
+	let content = `<input type="button" value="X" class="remove">
+					<div class="topic">题目<span class="topicNum">` + addTrueOrFalseCount + 
+					`</span>：<input type="text" class="textInput"></div>
 					<div class="allChoices">
 						<div class="choice">
 							<span class="num true">T</span>.
@@ -140,8 +143,9 @@ function addTrueOrFalse() {
 
 function addFillInTheBlank() {
 	addFillInTheBlankCount++;
-	let content = `<div class="topic">题目` + addFillInTheBlankCount + 
-					`：<input type="text" class="textInput"></div>
+	let content = `<input type="button" value="X" class="remove">
+					<div class="topic">题目<span class="topicNum">` + addFillInTheBlankCount + 
+					`</span>：<input type="text" class="textInput"></div>
 					<div class="allBlank">
 						<div class="blank">
 							<span class="num">1.</span>
@@ -176,8 +180,9 @@ function addProgramming() {
 	selectInnerHtml = selectInnerHtml + "</select>";
 
 	addProgrammingCount++;
-	let content = `<div class="topic">题目` + addProgrammingCount + 
-					`：<input type="text" class="textInput"></div>
+	let content = `<input type="button" value="X" class="remove">
+					<div class="topic">题目<span class="topicNum">` + addProgrammingCount + 
+					`</span>：<input type="text" class="textInput"></div>
 					<div class="answer">
 						<div class="programmingType">
 							答案：` + selectInnerHtml + `
@@ -519,36 +524,36 @@ function savePraticesInData(contentObj) {
 
 /** 删除题目
 */
-function removePratice(id) {
-	callDataProcessingFn({
-		data: {
-			data: "pratices",
-			callFunction: "remove",
-			removeOpt: {
-				_id: id
-			}
-		},
-		success: function(data) {
-			let update = {};
-			update[praticeType+"Pratices"] = id;
-			$.ajax({
-				url: "../callDataProcessing",
-				type: "POST",
-				data: {
-					data: "subjects",
-					callFunction: "update",
-					updateOpt: {
-						subjectName: subjectName
-					},
-					operation: "pull",
-					update: update
-				},
-				success: function() {
-					console.log("remove success");
-				}
-			});
-		}
-	});
+function removePratice($target) {
+	$target.remove();
+
+
+	switch(currentAddType) {
+		case "SingleChoice":
+			addSingleChoiceCount--;
+			break;
+		case "MultipleChoices":
+			addMultipleChoicesCount--;
+			break;
+		case "TrueOrFalse":
+			addTrueOrFalseCount--;
+			break;
+		case "FillInTheBlank":
+			addFillInTheBlankCount--;
+			break;
+		case "ShortAnswer":
+			addShortAnswerCount--;
+			break;
+		case "Programming":
+			addProgrammingCount--;
+			programingEditorArray.splice($target.find(".topic .topicNum")[0].innerHTML-1, 1);
+			break;
+	}
+
+	let allTopicNum = $(".add" + currentAddType + " .topicNum");
+	for(let i=0, len=allTopicNum.length; i<len; i++) {
+		allTopicNum[i].innerHTML = i+1;
+	}
 }
 
 /** 存储添加的所有习题
@@ -577,7 +582,10 @@ function savePratices() {
 
 	let totalCount = SingleChoiceContentArr.length + MultipleChoicesContentArr.length + TrueOrFalseContentArr.length + FillInTheBlankContentArr.length + ProgrammingContentArr.length;
 
-	if (totalCount === 0) return;
+	if (totalCount === 0) {
+		window.location.href = "../pratice?subjectName=" + subjectName;
+		return;
+	}
 
 	// savePraticesInData(SingleChoiceContentArr, "SingleChoice");
 	// savePraticesInData(MultipleChoicesContentArr, "MultipleChoices");
@@ -591,6 +599,8 @@ function savePratices() {
 		FillInTheBlank: FillInTheBlankContentArr,
 		Programming: ProgrammingContentArr
 	});
+
+	window.location.href = "../pratice?subjectName=" + subjectName;
 }
 
 // 判断是否所有的空格都不为空
@@ -716,6 +726,9 @@ function bindEvent() {
 				break;
 			case "addOtherAnswer":
 				addMoreOtherAnswer($(getTarget(e)));
+				break;
+			case "remove":
+				removePratice($(getTarget(e)).parent());
 				break;
 		}
 	});

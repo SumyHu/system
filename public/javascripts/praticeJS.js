@@ -125,6 +125,82 @@ function showRandomPraticeListEnter(exerciseName) {
 	}
 }
 
+/** 将某个习题从以习题为单位的数据库中删除
+ * @param praticeId String 习题id
+ * @param callback Function 回调函数
+*/
+function removePratice(praticeId, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "pratices",
+			callFunction: "remove",
+			removeOpt: {
+				_id: praticeId
+			}
+		},
+		success: callback
+	});
+}
+
+/** 将某个单元从以单元为单位的数据库中删除
+ * @param unitId String 单元id
+ * @param callback Function 回调函数
+*/
+function removeUnit(unitId, callback) {
+	console.log('unitId: ' + unitId);
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "remove",
+			removeOpt: {
+				_id: unitId
+			}
+		},
+		success: callback
+	});
+}
+
+/** 将某个单元从以单元为单位的数据库中删除，并将该单元内的所以习题都从以习题为单位的数据库中删除
+ * @param unitId String 单元id
+*/
+function removeUnitAndAllPraticesInThisUnit(unitId) {
+	findUnitById(unitId, function(result) {
+		removeUnit(unitId, function() {});
+
+		console.log('find unit result', unitId, result);
+		if (!result) return;
+
+		console.log(result);
+
+		let SingleChoice = result.SingleChoice,
+			MultipleChoices = result.MultipleChoices,
+			TrueOrFalse = result.TrueOrFalse,
+			FillInTheBlank = result.FillInTheBlank,
+			ShortAnswer = result.ShortAnswer,
+			Programming = result.Programming;
+
+		SingleChoice.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		MultipleChoices.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		TrueOrFalse.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		FillInTheBlank.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		ShortAnswer.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+		});
+		Programming.forEach(function(praticeId, index, array) {
+			console.log(praticeId);
+			removePratice(praticeId, function() {});
+		});
+	});
+}
+
 function init() {
 	subjectName = getValueInUrl("subjectName");
 
@@ -165,6 +241,8 @@ function bindEvent() {
 	// 目录点击事件
 	$(".praticeContent > aside > ul").click(function(e) {
 		if (getTarget(e).className === "removeIndex") {
+			// $(".removeIndex").parent().remove();
+			// removeUnitAndAllPraticesInThisUnit();
 			return;
 		}
 		

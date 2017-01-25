@@ -198,3 +198,24 @@
 .answer > div {
 	margin: 20px 0;
 }
+
+.remove {
+	position: relative;
+	top: -20px;
+	left: 40px;
+	width: 20px;
+	height: 20px !important;
+	margin: 0;
+	padding: 0;
+	float: right;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 20px !important;
+	font-size: 20px !important;
+	background: red;
+	transition: 0.5s all linear;
+}
+
+.remove:hover {
+	background: rgba(255, 0, 0, 0.5);
+}
