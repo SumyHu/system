@@ -162,7 +162,12 @@ module.exports = function(app) {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc
 			}
-			if (req.query.index || req.query.type) {
+			if (req.query.operation === "modify") {
+				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/addPraticeStyle.css"];
+				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
+				renderContent.innerHtml = initInterface.addPraticeInterface;
+			}
+			else if (req.query.index || req.query.type) {
 				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"];
 				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;

@@ -129,7 +129,7 @@
 
 .enter {
 	position: relative;
-	top: 25px;
+	top: 50px;
 	width: 8%;
 	float: right;
 	right: 20px;
@@ -144,10 +144,6 @@
 	right: 20px;
 }
 
-.randomContent .enter {
-	top: 30%;
-}
-
 .enter input{
 	display: inline-block;
 	width: 60px;
@@ -157,16 +153,8 @@
 	background: rgba(67, 135, 253, 0.5);
 }
 
-.enter .modify {
-	background: red;
-}
-
 .enter input:hover {
 	background: rgba(67, 135, 253, 0.3);
-}
-
-.enter .modify:hover {
-	background: rgba(255, 0, 0, 0.5);
 }
 
 .disable {
@@ -193,23 +181,39 @@
 	line-height: 30px;
 }
 
-.removeIndex {
-	position: absolute;
+.removeIndex, .modifyBtn {
+	display: block;
+	/*position: absolute;*/
 	left: 157px;
-	width: 20px;
-	height: 20px !important;
+	width: 15px;
+	height: 15px !important;
+	margin: 6px 0 0 !important;
 	float: right;
 	margin: 0;
 	padding: 0;
 	border-radius: 50%;
 	text-align: center;
-	line-height: 20px !important;
-	font-size: 18px !important;
+	line-height: 15px !important;
+	font-size: 16px !important;
 	background: red;
 	/*opacity: 0;*/
 	transition: 0.1s all linear;
 }
 
+.modifyBtn {
+	/*top: 20px;*/
+	clear: both;
+	background-image: url("../image/pen.png");
+	background-size: 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-color: #fff;
+}
+
 .removeIndex:hover {
-	background: rgba(255, 0, 0, 0.5);
+	background-color: rgba(255, 0, 0, 0.5);
+}
+
+.modifyBtn:hover {
+	background-color: #dbd0d0;
 }

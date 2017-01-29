@@ -1,20 +1,5 @@
 let praticeTypeArr = ["SingleChoice", "MultipleChoices", "TrueOrFalse", "FillInTheBlank", "ShortAnswer", "Programming"];
 
-let praticeTypeChiness = {
-	chapter: "章节练习",
-	examination: "考试模拟",
-	random: "随机练习"
-}
-
-let typeChiness = {
-	SingleChoice: "单选题",
-	MultipleChoices: "多选题",
-	TrueOrFalse: "判断题",
-	FillInTheBlank: "填空题",
-	ShortAnswer: "简答题",
-	Programming: "编程题"
-}
-
 let subjectName, praticeType, selectIndex, type, allPraticeContent;
 
 let currentIndexArray = {};   // 存储当前所有类型的题目下标
@@ -200,7 +185,11 @@ function init() {
 	type = getValueInUrl("type");
 
 	if (praticeType !== "examination") {
-		$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + " — " + typeChiness[type];
+		let name;
+		if (praticeType === "chapter") {
+			name = "章节" + (Number(selectIndex)+1);
+		}
+		$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + "—" + name + " — " + typeChiness[type];
 	}
 	else {
 		$(".time")[0].innerHTML = "90 : 00";

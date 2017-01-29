@@ -1,3 +1,18 @@
+let praticeTypeChiness = {
+	chapter: "章节练习",
+	examination: "考试模拟",
+	random: "随机练习"
+}
+
+let typeChiness = {
+	SingleChoice: "单选题",
+	MultipleChoices: "多选题",
+	TrueOrFalse: "判断题",
+	FillInTheBlank: "填空题",
+	ShortAnswer: "简答题",
+	Programming: "编程题"
+}
+
 /** 兼容ie浏览器
 */
 function getEvent(e) {

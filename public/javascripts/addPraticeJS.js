@@ -22,6 +22,7 @@ function editorStyle(id, mode) {
 	var editor=CodeMirror.fromTextArea(document.getElementById(id), {
             mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
             lineNumbers: true,   // 显示行号
+            autofocus: true,
 
 	        //设置主题
 	        theme: "seti",
@@ -79,6 +80,7 @@ function addSingleChoice() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addSingleChoice").append(section);
+	return section;
 }
 
 function addMultipleChoices() {
@@ -114,6 +116,7 @@ function addMultipleChoices() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addMultipleChoices").append(section);
+	return section;
 }
 
 function addTrueOrFalse() {
@@ -139,6 +142,7 @@ function addTrueOrFalse() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addTrueOrFalse").append(section);
+	return section;
 }
 
 function addFillInTheBlank() {
@@ -159,6 +163,7 @@ function addFillInTheBlank() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addFillInTheBlank").append(section);
+	return section;
 }
 
 function addShortAnswer() {
@@ -203,6 +208,8 @@ function addProgramming() {
 		let selectType = $(getTarget(e)).find("option:selected").text();
 		editor.setOption("mode", programmingTypeMode[selectType]);
 	});
+
+	return section;
 }
 
 function getAllExercise(callback) {
@@ -654,6 +661,8 @@ function init() {
 	subjectName = getValueInUrl("subjectName");
 	praticeType = getValueInUrl("praticeType");
 
+	$(".time")[0].innerHTML = subjectName + " — " + praticeTypeChiness[praticeType];
+
 	// 正确显示当前添加题目的title
 	let count = 0;
 	getAllExercise(function(result) {
@@ -684,7 +693,10 @@ function bindEvent() {
 			showTips("存在题目没有勾选标准答案！", 1000);
 			return;
 		}
-		showSomePraticeType(getTarget(e).className);
+		let className = getTarget(e).className;
+		if (className !== "addPraticeToolbar") {
+			showSomePraticeType(className);
+		}
 	});
 
 	$(".addMore")[0].onclick = function() {

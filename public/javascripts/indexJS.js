@@ -230,6 +230,8 @@ function modifySubjectName($modifyTarget) {
 }
 
 function init() {
+	$(".time").css("display", "none");
+	
 	findAllSubject(function(result) {
 		console.log(result);
 		for(let i=0, len=result.length; i<len; i++) {

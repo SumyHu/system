@@ -1,7 +1,7 @@
 let subjectName, currentPraticeType = "chapter";
 
-let randomPraticeListInnerHtml = `<li value=0>单选题</li><li value=1>多选题</li><li value=2>判断题</li>
-                                  <li value=3>填空题</li><li value=4>简答题</li><li value=5>编程题</li>`;
+let randomPraticeListInnerHtml = `<li value=0>单选题<input type="button" class="modifyBtn"></li><li value=1>多选题<input type="button" class="modifyBtn"></li><li value=2>判断题<input type="button" class="modifyBtn"></li>
+                                  <li value=3>填空题<input type="button" class="modifyBtn"></li><li value=4>简答题<input type="button" class="modifyBtn"></li><li value=5>编程题<input type="button" class="modifyBtn"></li>`;
 
 let praticeTypeArr = ["SingleChoice", "MultipleChoices", "TrueOrFalse", "FillInTheBlank", "ShortAnswer", "Programming"];
 
@@ -23,8 +23,6 @@ function showIndex(praticeType, index) {
 		let type = praticeTypeArr[index];
 		$(".randomContent > .content > .showOneType").css("display", "none");
 		$(".randomContent > .content > ." + type).css("display", "block");
-
-		$(".randomContent > .content > ." + type + " .enter .modify").removeClass("disable");
 
 		findPraticesByType("random", function(result) {
 			findUnitById(result, function(data) {
@@ -76,12 +74,12 @@ function showList(count, index) {
 	switch(currentPraticeType) {
 		case "chapter":
 			for(let i=0; i<count; i++) {
-				innerHtml = innerHtml + `<li value=` + i + `>第` + (i+1) + `章 <input type="button" class="removeIndex" value="X"></li>`;
+				innerHtml = innerHtml + `<li value=` + i + `>第` + (i+1) + `章 <input type="button" class="removeIndex" value="X"><input type="button" class="modifyBtn"></li>`;
 			}
 			break;
 		case "examination":
 			for(let i=0; i<count; i++) {
-				innerHtml = innerHtml + `<li value=` + i + `>试卷` + (i+1) + ` <input type="button" class="removeIndex" value="X"></li>`;
+				innerHtml = innerHtml + `<li value=` + i + `>试卷` + (i+1) + ` <input type="button" class="removeIndex" value="X"><input type="button" class="modifyBtn"></li>`;
 			}
 			break;
 		case "random":
@@ -201,8 +199,26 @@ function removeUnitAndAllPraticesInThisUnit(unitId) {
 	});
 }
 
+function removeUnitFormSubject(unitId) {
+	let update = {};
+	update[currentPraticeType+"Pratices"] = unitId;
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "update",
+			updateOpt: {
+				subjectName: subjectName
+			},
+			operation: "pull",
+			update: update
+		}
+	});
+}
+
 function init() {
 	subjectName = getValueInUrl("subjectName");
+
+	$(".time")[0].innerHTML = subjectName;
 
 	findPraticesByType(currentPraticeType, function(data) {
 		showList(data.length, -1);
@@ -240,9 +256,29 @@ function bindEvent() {
 
 	// 目录点击事件
 	$(".praticeContent > aside > ul").click(function(e) {
+		let index = $(getTarget(e)).parent().val();
 		if (getTarget(e).className === "removeIndex") {
-			// $(".removeIndex").parent().remove();
-			// removeUnitAndAllPraticesInThisUnit();
+			showWin("确定删除？", function() {
+				findSubjectByName(subjectName, function(result) {
+					let unitId = result[currentPraticeType+"Pratices"][index];
+					removeUnitAndAllPraticesInThisUnit(unitId);
+					removeUnitFormSubject(unitId);
+				});
+				location.reload(true);
+			});
+			return;
+		}
+
+		if (getTarget(e).className === "modifyBtn") {
+			let locationHref;
+			if (currentPraticeType === "random") {
+				locationHref = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&type=" + praticeTypeArr[index] + "&operation=modify"
+			}
+			else {
+				locationHref = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&index=" + index + "&operation=modify";
+			}
+
+			window.location.href = locationHref;
 			return;
 		}
 		
@@ -280,12 +316,10 @@ function bindEvent() {
 				break;
 		}
 
-		console.log(target.className);
-
 		locationHref = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + queryParam;
-		if (target.className === "modify") {
-			locationHref = locationHref + "&operation=modify";
-		}
+		// if (target.className === "modify") {
+		// 	locationHref = locationHref + "&operation=modify";
+		// }
 		window.location.href = locationHref;
 	});
 
