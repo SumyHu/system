@@ -2,8 +2,13 @@ let currentAddType = "SingleChoice";
 
 let subjectName, praticeType;
 
+// 实际添加数目
 let addSingleChoiceCount = 0, addMultipleChoicesCount = 0, addTrueOrFalseCount = 0,
 	addFillInTheBlankCount = 0, addShortAnswerCount = 0, addProgrammingCount = 0;
+
+// 包括被删除的总数目
+let realSingleChoiceCount = 0, realMultipleChoicesCount = 0, realTrueOrFalseCount = 0,
+	realFillInTheBlankCount = 0, realShortAnswerCount = 0, realProgrammingCount = 0;
 
 let programmingTypeMode = {
 	text: "text/plain",
@@ -49,7 +54,8 @@ function editorStyle(id, mode) {
 
 function addSingleChoice() {
 	addSingleChoiceCount++;
-	let name = "singleChoice" + addSingleChoiceCount;
+	realSingleChoiceCount ++;
+	let name = "singleChoice" + realSingleChoiceCount;
 	let content = `<input type="button" value="X" class="remove">
 					<div class="topic">题目<span class="topicNum">` + addSingleChoiceCount + `</span>：<input type="text" class="textInput"></div>
 					<div class="allChoices">
@@ -121,7 +127,8 @@ function addMultipleChoices() {
 
 function addTrueOrFalse() {
 	addTrueOrFalseCount++;
-	let name = "trueOrFalse" + addTrueOrFalseCount;
+	realTrueOrFalseCount ++;
+	let name = "trueOrFalse" + realTrueOrFalseCount;
 	let content = `<input type="button" value="X" class="remove">
 					<div class="topic">题目<span class="topicNum">` + addTrueOrFalseCount + 
 					`</span>：<input type="text" class="textInput"></div>
@@ -185,6 +192,7 @@ function addProgramming() {
 	selectInnerHtml = selectInnerHtml + "</select>";
 
 	addProgrammingCount++;
+	realProgrammingCount ++;
 	let content = `<input type="button" value="X" class="remove">
 					<div class="topic">题目<span class="topicNum">` + addProgrammingCount + 
 					`</span>：<input type="text" class="textInput"></div>
@@ -192,7 +200,7 @@ function addProgramming() {
 						<div class="programmingType">
 							答案：` + selectInnerHtml + `
 						</div>
-						<textarea id="programming` + addProgrammingCount + `"></textarea>
+						<textarea id="programming` + realProgrammingCount + `"></textarea>
 					</div>`;
 
 	let section = document.createElement("section");
@@ -288,6 +296,7 @@ function addMoreOtherAnswer($addOtherAnswerBtn) {
  * @param $content Object 所要添加的全部content对象
 */
 function getChoiceContent($content) {
+	console.log($content);
 	if ($content.length === 0) return [];
 	let allContent = [], type;
 
@@ -358,6 +367,8 @@ function getFillInTheBlankContent($content) {
  * @param $content Object 所要添加的全部content对象
 */
 function getShortAnswerContent($content) {
+	console.log("test");
+	return [];
 }
 
 /** 获取所要添加的编程题内容
@@ -486,7 +497,11 @@ function addOneUnitInSubject(param) {
 	...
  }
 */
-function savePraticesInData(contentObj) {
+function savePraticesInData(contentObj, totalCount) {
+	if (totalCount === 0) {
+		return;
+	}
+
 	addUnit(function(unitId) {
 		addOneUnitInSubject({
 			unitType: praticeType + "Pratices",
@@ -520,7 +535,7 @@ function savePraticesInData(contentObj) {
 										// });
 									}
 								});
-							}, true);
+							});
 						})(key);
 					}
 				}
@@ -533,8 +548,7 @@ function savePraticesInData(contentObj) {
 */
 function removePratice($target) {
 	$target.remove();
-
-
+	
 	switch(currentAddType) {
 		case "SingleChoice":
 			addSingleChoiceCount--;
@@ -575,24 +589,23 @@ function savePratices() {
 	let ShortAnswerContent = $(".addShortAnswer > .content");
 	let ProgrammingContent = $(".addProgramming > .content");
 
+	console.log("hi");
+
 	SingleChoiceContentArr = getChoiceContent(SingleChoiceContent);
 	MultipleChoicesContentArr = getChoiceContent(MultipleChoicesContent);
 	TrueOrFalseContentArr = getChoiceContent(TrueOrFalseContent);
 	FillInTheBlankContentArr = getFillInTheBlankContent(FillInTheBlankContent);
+	// ShortAnswerContentArr = getShortAnswerContent(ShortAnswerContent);
 	ProgrammingContentArr = getProgrammingContent(ProgrammingContent);
 
 	console.log(SingleChoiceContentArr);
 	console.log(MultipleChoicesContentArr);
 	console.log(TrueOrFalseContentArr);
 	console.log(FillInTheBlankContentArr);
+	console.log(ShortAnswerContentArr);
 	console.log(ProgrammingContentArr);
 
-	let totalCount = SingleChoiceContentArr.length + MultipleChoicesContentArr.length + TrueOrFalseContentArr.length + FillInTheBlankContentArr.length + ProgrammingContentArr.length;
-
-	if (totalCount === 0) {
-		window.location.href = "../pratice?subjectName=" + subjectName;
-		return;
-	}
+	let totalCount = SingleChoiceContentArr.length + MultipleChoicesContentArr.length + TrueOrFalseContentArr.length + FillInTheBlankContentArr.length + ShortAnswerContentArr.length + ProgrammingContentArr.length;
 
 	// savePraticesInData(SingleChoiceContentArr, "SingleChoice");
 	// savePraticesInData(MultipleChoicesContentArr, "MultipleChoices");
@@ -604,8 +617,9 @@ function savePratices() {
 		MultipleChoices: MultipleChoicesContentArr,
 		TrueOrFalse: TrueOrFalseContentArr,
 		FillInTheBlank: FillInTheBlankContentArr,
+		ShortAnswer: ShortAnswerContentArr,
 		Programming: ProgrammingContentArr
-	});
+	}, totalCount);
 
 	window.location.href = "../pratice?subjectName=" + subjectName;
 }
@@ -740,6 +754,9 @@ function bindEvent() {
 				addMoreOtherAnswer($(getTarget(e)));
 				break;
 			case "remove":
+				// showWin("确定删除该习题？", function(e) {
+				// 	removePratice($(getTarget(e)).parent());
+				// });
 				removePratice($(getTarget(e)).parent());
 				break;
 		}

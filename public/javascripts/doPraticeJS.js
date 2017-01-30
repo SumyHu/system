@@ -189,7 +189,12 @@ function init() {
 		if (praticeType === "chapter") {
 			name = "章节" + (Number(selectIndex)+1);
 		}
-		$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + "—" + name + " — " + typeChiness[type];
+		if (name) {
+			$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + "—" + name + " — " + typeChiness[type];
+		}
+		else {
+			$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + " — " + typeChiness[type];
+		}
 	}
 	else {
 		$(".time")[0].innerHTML = "90 : 00";

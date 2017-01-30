@@ -26,7 +26,7 @@
 }
 
 .settingsContent aside ul li:hover {
-	background-color: rgba(249, 90, 78, 0.5);
+	background-color: rgba(249, 90, 78, 0.5) !important;
 }
 
 .settingsContent aside ul li:first-child {
@@ -60,7 +60,15 @@
 	border-radius: 10px;
 }
 
-.content > div {
+.content > section {
+	display: none;
+}
+
+.content > section:first-child {
+	display: block;
+}
+
+.content > section > div, .findPasswordInfo div {
 	height: 50px;
 	line-height: 50px;
 }
@@ -148,4 +156,34 @@
 
 .modify:hover {
 	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.selectPicture {
+	display: block;
+	position: relative;
+	left: 50%;
+	margin: 20px 0 0;
+	transform: translateX(-50%);
+}
+
+select {
+	width: 224px;
+	border-radius: 10px;
+	outline: none;
+	font-size: 23px;
+}
+
+.nextBtn, .confirm {
+	position: relative;
+	display: block;
+	left: 50%;
+	margin: 50px 0 0;
+	padding: 0 15px;
+	border-radius: 10px;
+	background: rgba(67, 135, 253, 0.5);
+	transform: translateX(-50%);
+}
+
+.secondStep {
+	display: none;
 }

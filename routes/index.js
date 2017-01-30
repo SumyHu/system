@@ -87,6 +87,9 @@ module.exports = function(app) {
 	// });
 
 	app.get("/login", function(req, res) {
+		if (req.query.exit) {
+			req.session.userId = "";
+		}
 		isLoginIn(req, res, function() {
 			res.render("comment", {
 				fullName: req.session.userId,

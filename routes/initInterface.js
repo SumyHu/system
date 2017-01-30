@@ -5,7 +5,7 @@ initInterface = {
 	settingsInterface: `<section class="settingsContent body">
 							<aside>
 								<ul>
-									<li class="generation">基本信息<input type="button" class="info" value="i"></li>
+									<li class="changeGeneration">基本信息<input type="button" class="info" value="i"></li>
 									<li class="changeUserImg">用户头像<input type="button" class="modify"></li>
 									<li class="changePassword">修改密码<input type="button" class="modify"></li>
 									<li class="changeFindPassword">忘记密码<input type="button" class="modify"></li>
@@ -20,7 +20,7 @@ initInterface = {
 										<input type="button" class="modify">
 									</div>
 									<div><span class="name">用户名：</span><span class="username"></span></div>
-									<div class="password"><span class="name">密码：</span>
+									<div class="passwordBlock"><span class="name">密码：</span>
 										<input type="password" value="00000000000" readonly class="passwordInput">
 										<input type="button" class="modify">
 									</div>
@@ -29,13 +29,49 @@ initInterface = {
 										<input type="button" class="modify">
 									</div>
 								</section>
-								<section class="UserImgInfo">
+								<section class="userImgInfo">
 									<div class="showUserImg">
 									</div>
+									<input type="file" class="selectPicture">
+									<input type="button" value="应用" class="confirm">
 								</section>
 								<section class="passwordInfo">
+									<div>原密码：<input type="password" class="textInput oldPassword"></div>
+									<div>新密码：<input type="password" class="textInput newPasswd"></div>
+									<input type="button" value="应用" class="confirm">
 								</section>
 								<section class="findPasswordInfo">
+									<section class="firstStep">
+										<div>密码：<input type="password" class="textInput passwordConfirm"></div>
+										<div><input type="button" value="next" class="nextBtn"></div>
+									</section>
+
+									<section class="secondStep">
+										<div>问题1：
+											<select class="select1">
+												<option>你父亲的名字是？</option>
+												<option>你QQ是？</option>
+											</select>
+										</div>
+										<div>答案：<input type="text" class="textInput answer1"></div>
+										<div>问题2：
+											<select class="select2">
+												<option>你母亲的名字是？</option>
+												<option>你手机号码是？</option>
+											</select>
+										</div>
+										<div>答案：<input type="text" class="textInput answer2"></div>
+										<div>问题3：
+											<select class="select3">
+												<option>你班主任的名字是？</option>
+												<option>你的宠物的名字是？</option>
+											</select>
+										</div>
+										<div>答案：<input type="text" class="textInput answer3"></div>
+										<div>
+											<input type="button" value="应用" class="confirm">
+										</div>
+									</section>
 								</section>
 							</section>
 						</section>`,
