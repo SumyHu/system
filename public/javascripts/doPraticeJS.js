@@ -90,11 +90,40 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
 										` + result.choices[i].choiceContent + `</label>
 								   </div>`;
 			}
+
 			sec.innerHTML = innerHtml + `</div>`;
+
+			if (praticeType !== "examination") {
+				sec.innerHTML = sec.innerHTML + `<div class="choiceAnswerBlock">
+											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+											<div class="answerContent">` + result.answer.join(",") + `</div>
+										</div>`;
+			}
+
 			$(section).append(sec);
 			$(".flip").before(section);
 			$(sec).css("display", "none");
 		});
+	});
+
+	$(".choiceAnswerBlock > .showAnswer").click(function(e) {
+		let $shortAnswer;
+		if (getTarget(e).className === "icon") {
+			$showAnswer = $(getTarget(e)).parent();
+		}
+		else {
+			$showAnswer = $(getTarget(e));
+		}
+		let $answerBlock = $showAnswer.parent(".choiceAnswerBlock");
+		let height = $answerBlock.css("height");
+		if (height === "35px") {
+			$showAnswer.find(".icon")[0].innerHTML = "︾";
+			$answerBlock.css("height", "80px");
+		}
+		else {
+			$showAnswer.find(".icon")[0].innerHTML = "︽";
+			$answerBlock.css("height", "35px");
+		}
 	});
 }
 
@@ -124,12 +153,32 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 								    </div>`;
 				}
 				sec.innerHTML = innerHtml + `</div>`;
+
+				if (praticeType !== "examination") {
+					let answer = result.answer, answerHtml = "";
+					for(let i=0, len=answer.length; i<len; i++) {
+						answerHtml = answerHtml + "<div>" + 	Number(Number(i)+1) + ". " + answer[i].join(" 或 ") + "</div>";
+					}
+
+					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
+												<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+												<div class="answerContent">` + answerHtml + `</div>
+											</div>`;
+				}
+
 				$(section).append(sec);
 				$(".flip").before(section);
 			}
 			else {
 				sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
+
+				if (praticeType !== "examination") {
+					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
+												<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+												<div class="answerContent">` + result.answer[0] + `</div>
+											</div>`;
+				}
 
 				$(section).append(sec);
 				$(".flip").before(section);
@@ -142,9 +191,30 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 				}
 
 				editorStyle(addPraticeType + 'Editor' + index, mode);
+
 			}
 			$(sec).css("display", "none");
 		});
+	});
+
+	$(".answerBlock > .showAnswer").click(function(e) {
+		let $shortAnswer;
+		if (getTarget(e).className === "icon") {
+			$showAnswer = $(getTarget(e)).parent();
+		}
+		else {
+			$showAnswer = $(getTarget(e));
+		}
+		let $answerBlock = $showAnswer.parent(".answerBlock");
+		let $answerContent = $answerBlock.find(".answerContent");
+		if ($answerContent.css("display") === "none") {
+			$showAnswer.find(".icon")[0].innerHTML = "︾";
+			$answerContent.css("display", "block");
+		}
+		else {
+			$showAnswer.find(".icon")[0].innerHTML = "︽";
+			$answerContent.css("display", "none");
+		}
 	});
 }
 
@@ -168,11 +238,24 @@ function changePraticeContent(index) {
 	$(".content").css("display", "none");
 	$($allContent[index]).css("display", "block");
 
+	if (index === 0 && type === hasContentTypeArr[0]) {
+		$(".previous").addClass("disable");
+	}
+	else {
+		$(".previous").removeClass("disable");
+	}
+
 	if (index === currentIndexArray[type].length-1 && type === hasContentTypeArr[hasContentTypeArr.length-1]) {
-		$(".next").val("提交");
+		if (praticeType === "examination") {
+			$(".next").val("提交");
+		}
+		else {
+			$(".next").addClass("disable");
+		}
 	}
 	else {
 		$(".next").val(">");
+		$(".next").removeClass("disable");
 	}
 }
 
@@ -281,9 +364,11 @@ function bindEvent() {
 
 	// 点击题目编号事件
 	$(".showPraticeIndex").click(function(e) {
-		let index = getTarget(e).innerHTML-1;
-		currentIndexArray[type].index = index;
-		changePraticeContent(index);
+		if (Number(getTarget(e).innerHTML)) {
+			let index = getTarget(e).innerHTML-1;
+			currentIndexArray[type].index = index;
+			changePraticeContent(index);
+		}
 	});
 
 	$(".previous").click(function() {
@@ -291,6 +376,8 @@ function bindEvent() {
 		$("body").animate({
 			scrollTop: 0
 		}, 300);
+
+		if ($(this).hasClass("disable")) return;
 
 		if (currentIndexArray[type].index === 0) {
 			for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
@@ -320,6 +407,8 @@ function bindEvent() {
 		$("body").animate({
 			scrollTop: 0
 		}, 300);
+
+		if ($(this).hasClass("disable")) return;
 
 		if (currentIndexArray[type].index === currentIndexArray[type].length-1) {
 			for(let i=0, len=hasContentTypeArr.length; i<len; i++) {

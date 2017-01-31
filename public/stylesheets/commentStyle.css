@@ -25,7 +25,7 @@ body {
 	transform: translateX(-50%);
 }
 
-input[type=button] {
+input[type=button], input[type=submit] {
 	height: 35px;
 	border: none;
 	outline: none;
@@ -308,4 +308,8 @@ footer div {
 .cancelBtn {
 	float: right;
 	border-radius: 0 0 20px 0;
+}
+
+.identity {
+	display: none;
 }

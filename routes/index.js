@@ -4,6 +4,9 @@ const exec = require('child_process').exec;
 const path = require('path');
 const iconv = require('iconv-lite');
 
+// 文件上传插件
+var multer = require('multer');
+
 // 用md5对密码进行加密
 const md = require("md5");
 
@@ -38,6 +41,19 @@ function isLoginIn(req, res, exitCallback) {
 }
 
 module.exports = function(app) {
+	var storage = multer.diskStorage({
+		destination: function(req, file, cb) {
+			cb(null, './public/upload');
+		},
+		filename: function(req, file, cb) {
+			cb(null, file.originalname);
+		}
+	});
+
+	var uploadImage = multer({
+		storage: storage
+	});
+
 	// 解决跨域问题
 	app.all("*", function(req, res, next) {
 	    res.header("Access-Control-Allow-Origin", "*");
@@ -49,42 +65,19 @@ module.exports = function(app) {
 	    else  next();
 	});
 
-	// app.get('/', function(req, res) {
-	// 	res.render('javaRunTest');
-	// });
-
-	// app.post('/', function(req, res)  {
-	// 	console.log(req.body.code);
-	// 	if (!fs.existsSync(javaCodePath)) {
-	//         fse.ensureFileSync(javaCodePath);
- //        }
- //        fs.writeFileSync(javaCodePath, 'public class javaCodeParser {'
- //        	+ req.body.code
- //        	+ 'public static void main(String[] args) {javaCodeParser instance = new javaCodeParser();System.out.println(instance.sum(1, 2));}}');
-
- //        var e = exec("javac javaCodeParser.java", {cwd: "./Test"}, function(err,stdout,stderr){
-	// 	    if(err) {
-	// 	    	console.log(11111,stderr);
-	// 	    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
-	// 	    	// var str1 = iconv.decode(stderr, "gbk");
-
-	// 	    	// let u1 = iconv.encode(stderr, "gbk").toString('gb2312');
-	// 	    	// let u2 = iconv.encode("你好", "gbk");
-	// 	    	// console.log(77777,u2);
-
-	// 	        res.send(stderr);
-	// 	    } else {	
-	// 		    exec("java javaCodeParser", {cwd: "./Test"}, function(err, stdout, stderr) {
-	// 	        	if (err) {
-	// 	        		res.send(stderr);
-	// 	        	} else {
-	// 	        		res.send(stdout);
-	// 	        	} 
-	//         	});     
-	// 	    }
-	// 	});
-	// 	e.stderr.setEncoding('utf8');
-	// });
+	app.post('/uploadImage',uploadImage.single('uploadImage'), function (req, res) {
+		console.log(req.file);
+		if (req.file == undefined) {
+			res.redirect('/');
+		}
+		else {
+			var uploadImage = req.file.path.substring(7).replace(/\\/g, '/');
+			buildData.usersObj.update({_id: req.session.userId}, "set", {imageSrc: uploadImage}, function(data) {
+				req.session.imageSrc = uploadImage;
+				res.redirect('/');
+			});
+		}
+	});
 
 	app.get("/login", function(req, res) {
 		if (req.query.exit) {
@@ -93,6 +86,7 @@ module.exports = function(app) {
 		isLoginIn(req, res, function() {
 			res.render("comment", {
 				fullName: req.session.userId,
+				identity: req.session.identity,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["stylesheets/indexStyle.css"],
@@ -116,6 +110,7 @@ module.exports = function(app) {
 				}
 				else {
 					req.session.userId = req.body.userId;
+					req.session.identity = req.body.identity;
 					req.session.imageSrc = data.imageSrc;
 					res.send({success: "login success!"});
 				}
@@ -124,7 +119,6 @@ module.exports = function(app) {
 	});
 
 	app.get("/register", function(req, res) {
-		// buildData["usersObj"].remove("11111111111",function() {});
 		res.render("register");
 	});
 
@@ -137,6 +131,7 @@ module.exports = function(app) {
 			res.render("comment", {
 				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["stylesheets/indexStyle.css"],
 				scriptFilePath: ["javascripts/indexJS.js"],
@@ -150,6 +145,7 @@ module.exports = function(app) {
 			res.render("comment", {
 				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["stylesheets/settingsStyle.css"],
 				scriptFilePath: ["javascripts/settingsJS.js"],
@@ -163,6 +159,7 @@ module.exports = function(app) {
 			let renderContent = {
 				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
 				imageSrc: req.session.imageSrc
 			}
 			if (req.query.operation === "modify") {
@@ -194,6 +191,7 @@ module.exports = function(app) {
 			res.render("comment", {
 				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"],
 				scriptFilePath: ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
@@ -311,10 +309,6 @@ module.exports = function(app) {
 		// }
 
 		// res.send(result.toString());
-	});
-
-	app.get("/translater", function(req, res) {
-		res.render("translater");
 	});
 
 	app.post("/callDataProcessing", function(req, res) {

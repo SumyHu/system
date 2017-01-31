@@ -1,9 +1,147 @@
-function changeUserImg() {
+let userId, identity, imageSrc;
+
+$.imageFileVisible = function(options) {     
+
+	// 默认选项
+
+	var defaults = {    
+
+		//包裹图片的元素
+
+		wrapSelector: null,    
+
+		//<input type=file />元素
+
+		fileSelector:  null ,
+
+		errorMessage: "不是图片，请重新选择！"
+
+	};    
+
+	// Extend our default options with those provided.    
+
+	var opts = $.extend(defaults, options);
+
+	$(opts.fileSelector).on("change",function(e){
+		var file = this.files[0];
+
+		if (!this.files[0]) {
+			return;
+		}
+
+		var imageType = /image.*/;
+
+		if (file.type.match(imageType)) {
+
+				var reader = new FileReader();
+
+				reader.onload = function(){
+					imageSrc = reader.result;
+
+					$(opts.wrapSelector).css("background", "url('" + imageSrc + "') no-repeat");
+					$(opts.wrapSelector).css("background-size", "100%");
+				}
+
+				reader.readAsDataURL(file);
+
+		}else{
+			alert(opts.errorMessage);
+
+		}
+
+	});
 }
 
-function changePassword() {}
+function changePassword() {
+	let oldPassword = $(".oldPassword").val();
+	let newPassword = $(".newPassword").val();
+	let newPasswordConfirm = $(".newPasswordConfirm").val();
 
-function changeFindPassword() {}
+	if (!oldPassword) {
+		showTips("请输入原密码！", 1000);
+		return;
+	}
+
+	if (!newPassword) {
+		showTips("请输入新密码！", 1000);
+		return;
+	}
+
+	if (newPassword !== newPasswordConfirm) {
+		showTips("新密码不一致，请重新输入！", 1000);
+		return;
+	}
+
+	$.ajax({
+		url: "../login",
+		type: "POST",
+		data: {
+			userId: userId,
+			identity: identity,
+			password: oldPassword
+		},
+		success: function(result) {
+			if (result.success) {
+				callDataProcessingFn({
+					data: {
+						data: "users",
+						callFunction: "update",
+						updateOpt: {
+							_id: userId
+						},
+						operation: "set",
+						update: {
+							password: newPassword
+						}
+					},
+					success: function() {
+						window.location.href = "../login?exit=true";
+					}
+				});
+			}
+			else {
+				showTips("密码不正确！", 1000);
+			}
+		}
+	});
+}
+
+function changeFindPassword() {
+	let textInput = $(".secondStep .textInput");
+	for(let i=0, len=textInput.length; i<len; i++) {
+		if (!textInput[i].value) {
+			showTips("请将信息填写完整！", 1000);
+			return;
+		}
+	}
+
+	let checkContent = [];
+	for(let i=1, len=textInput.length; i<=len; i++) {
+		let question = $(".select" + i).find("option:selected").text();
+		let answer = textInput[i-1].value;
+		checkContent.push({
+			question: question,
+			answer: answer
+		});
+	}
+
+	callDataProcessingFn({
+		data: {
+			data: "users",
+			callFunction: "update",
+			updateOpt: {
+				_id: userId
+			},
+			operation: "set",
+			update: {
+				checkContent: checkContent
+			}
+		},
+		success: function(result) {
+			showTips("修改成功！", 1000);
+		}
+	});
+}
 
 function showSettingsContent(changeContentName) {
 	$(".settingsContent > aside > ul > li").css("background-color", "#333");
@@ -14,6 +152,9 @@ function showSettingsContent(changeContentName) {
 }
 
 function init() {
+	userId = $(".showUsername")[0].id;
+	identity = $(".identity")[0].id;
+
 	// 显示用户头像
 	$(".showUserImg").css("background-image", $(".userImg").css("background-image"));
 
@@ -22,6 +163,11 @@ function init() {
 }
 
 function bindEvent() {
+	$.imageFileVisible({
+		wrapSelector: ".userImgInfo > .showUserImg", 
+		fileSelector: ".uploadImage",
+	});
+
 	$(".settingsContent > aside > ul").click(function(e) {
 		let blockClassName;
 		if (getTarget(e).className === "modify") {
@@ -49,10 +195,34 @@ function bindEvent() {
 			case "passwordInfo":
 				changePassword();
 				break;
-			case "secondStep":
-				changeFindPassword();
-				break;
 		}
+	});
+
+	$(".nextBtn").click(function() {
+		let password = $(".passwordConfirm").val();
+		if (!password) {
+			showTips("请输入密码！", 1000);
+			return;
+		}
+
+		$.ajax({
+			url: "../login",
+			type: "POST",
+			data: {
+				userId: userId,
+				identity: identity,
+				password: password
+			},
+			success: function(result) {
+				if (result.success) {
+					$(".firstStep").css("display", "none");
+					$(".secondStep").css("display", "block");
+				}
+				else {
+					showTips("密码错误！", 1000);
+				}
+			}
+		});
 	});
 
 	$(".exitBtn").click(function() {

@@ -1,4 +1,4 @@
-let subjectName, currentPraticeType = "chapter";
+let subjectName, currentPraticeType = "chapter", identity;
 
 let randomPraticeListInnerHtml = `<li value=0>单选题<input type="button" class="modifyBtn"></li><li value=1>多选题<input type="button" class="modifyBtn"></li><li value=2>判断题<input type="button" class="modifyBtn"></li>
                                   <li value=3>填空题<input type="button" class="modifyBtn"></li><li value=4>简答题<input type="button" class="modifyBtn"></li><li value=5>编程题<input type="button" class="modifyBtn"></li>`;
@@ -68,7 +68,12 @@ function showIndex(praticeType, index) {
  * @param count Number 【章节数|试卷数】
 */
 function showList(count, index) {
-	$(".addMore").css("display", "block");
+	if (identity !== "teacher") {
+		$(".addMore").css("display", "none");
+	}
+	else {
+		$(".addMore").css("display", "block");
+	}
 
 	let innerHtml = `<li value=-1>示例</li>`;
 	switch(currentPraticeType) {
@@ -94,6 +99,11 @@ function showList(count, index) {
 	}
 	$(".praticeContent > aside > ul > li").removeClass("select");
 	$($(".praticeContent > aside > ul > li")[index]).addClass("select");
+
+	if (identity !== "teacher") {
+		$(".removeIndex").css("display", "none");
+		$(".modifyBtn").css("display", "none");
+	}
 }
 
 /** 显示随机练习某个目录的入口
@@ -216,6 +226,8 @@ function removeUnitFormSubject(unitId) {
 }
 
 function init() {
+	identity = $(".identity")[0].id;
+
 	subjectName = getValueInUrl("subjectName");
 
 	$(".time")[0].innerHTML = subjectName;

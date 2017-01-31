@@ -1,3 +1,5 @@
+let identity;
+
 /** 在界面中添加某个科目
  * @param subjectName String 科目名称
 */
@@ -17,6 +19,11 @@ function addSubjectInView(subjectName) {
 		$(this).find(".remove").css("opacity", 0);
 		$(this).find(".modify").css("opacity", 0);
 	});
+
+	if (identity !== "teacher") {
+		$(".remove").css("display", "none");
+		$(".modify").css("display", "none");
+	}
 }
 
 /** 在界面和数据库中添加某个科目
@@ -230,6 +237,11 @@ function modifySubjectName($modifyTarget) {
 }
 
 function init() {
+	identity = $(".identity")[0].id;
+	if (identity !== "teacher") {
+		$(".addSubject").css("display", "none");
+	}
+
 	$(".time").css("display", "none");
 	
 	findAllSubject(function(result) {

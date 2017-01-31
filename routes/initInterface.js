@@ -32,12 +32,15 @@ initInterface = {
 								<section class="userImgInfo">
 									<div class="showUserImg">
 									</div>
-									<input type="file" class="selectPicture">
-									<input type="button" value="应用" class="confirm">
+									<form action="/uploadImage" method="post" enctype="multipart/form-data">
+										<input type="file" class="uploadImage" name="uploadImage">
+										<input type="submit" value="应用" class="confirm">
+									</form>
 								</section>
 								<section class="passwordInfo">
 									<div>原密码：<input type="password" class="textInput oldPassword"></div>
-									<div>新密码：<input type="password" class="textInput newPasswd"></div>
+									<div>新密码：<input type="password" class="textInput newPassword"></div>
+									<div>密码确认：<input type="password" class="textInput newPasswordConfirm"></div>
 									<input type="button" value="应用" class="confirm">
 								</section>
 								<section class="findPasswordInfo">

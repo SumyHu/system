@@ -1,10 +1,10 @@
 .praticeContent {
 	top: 150px;
-	font-size: 23px;
+	font-size: 21px;
 	color: #fff;
 }
 
-.title, .answer > div {
+.title, .answer > div, .choiceAnswerBlock {
 	height: 35px;
 	padding: 15px 20px;
 	border: 1px dashed #000;
@@ -13,7 +13,6 @@
 }
 
 .longAnswer > div {
-	padding: 15px 0;
 	border: none;
 }
 
@@ -21,7 +20,7 @@
 	margin: 0 0 30px;
 }
 
-.answer div {
+.answer > div, .choiceAnswerBlock {
 	margin: 10px 0;
 }
 
@@ -120,4 +119,42 @@
 
 .showPraticeIndex > div:hover, .showPraticeBlockIndex > div:hover {
 	background: rgba(249, 90, 78, 0.8) !important;
+}
+
+.disable {
+	background: #dbd0d0 !important;
+	color: #000 !important;
+}
+
+.answerBlock, .choiceAnswerBlock {
+	overflow: hidden;
+	background: #000 !important;
+}
+
+.answerBlock {
+	margin: 20px 0;
+}
+
+.choiceAnswerBlock {
+	transition: 0.3s all linear;
+}
+
+.answerBlock > div {
+	margin: 25px;
+}
+
+.showAnswer {
+	cursor: pointer;
+}
+
+.icon {
+	margin: 0 30px;
+}
+
+.answerBlock > .answerContent {
+	display: none;
+}
+
+.choiceAnswerBlock > .answerContent {
+	margin: 10px 0;
 }
