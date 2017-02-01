@@ -150,6 +150,23 @@ function removePratice(praticeId, callback) {
 	});
 }
 
+function removePraticeInRandomUnit(randomUnitId, type, praticeId) {
+	let update = {};
+	update[type] = praticeId;
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "update",
+			updateOpt: {
+				_id: randomUnitId
+			},
+			operation: "pull",
+			update: update
+		},
+		success: function() {}
+	});
+}
+
 /** 将某个单元从以单元为单位的数据库中删除
  * @param unitId String 单元id
  * @param callback Function 回调函数
@@ -180,6 +197,11 @@ function removeUnitAndAllPraticesInThisUnit(unitId) {
 
 		console.log(result);
 
+		let randomUnitId;
+		findSubjectByName(subjectName, function(result) {
+			randomUnitId = result.randomPratices;
+		});
+
 		let SingleChoice = result.SingleChoice,
 			MultipleChoices = result.MultipleChoices,
 			TrueOrFalse = result.TrueOrFalse,
@@ -189,22 +211,28 @@ function removeUnitAndAllPraticesInThisUnit(unitId) {
 
 		SingleChoice.forEach(function(praticeId, index, array) {
 			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "SingleChoice", praticeId)
 		});
 		MultipleChoices.forEach(function(praticeId, index, array) {
 			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "MultipleChoices", praticeId)
 		});
 		TrueOrFalse.forEach(function(praticeId, index, array) {
 			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "TrueOrFalse", praticeId)
 		});
 		FillInTheBlank.forEach(function(praticeId, index, array) {
 			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "FillInTheBlank", praticeId)
 		});
 		ShortAnswer.forEach(function(praticeId, index, array) {
 			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "ShortAnswer", praticeId)
 		});
 		Programming.forEach(function(praticeId, index, array) {
 			console.log(praticeId);
 			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "Programming", praticeId)
 		});
 	});
 }

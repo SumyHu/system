@@ -63,6 +63,17 @@ input[type=button], input[type=submit] {
 	transition: 0.5s all linear;
 }
 
+.toolbarDisable {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 150px;
+	background: rgba(255, 255, 255, 0.2);
+	z-index: 200;
+}
+
 .toolbar {
 	position: fixed;
 	top: 0;
@@ -171,11 +182,14 @@ input[type=button], input[type=submit] {
 
 .tab {
 	position: fixed;
-	top: 82px;
+	/*top: 82px;
 	width: 80px;
-	height: 80px;
+	height: 80px;*/
+	top: 90px;
+	width: 60px;
+	height: 60px;
 	background: url(../image/tab.png);
-	background-size: 100%;
+	background-size: 120%;
 	background-position: center center;
 	background-repeat: no-repeat;
 	cursor: pointer;
@@ -188,7 +202,7 @@ input[type=button], input[type=submit] {
 	height: 0;
 	opacity: 0;
 	overflow: hidden;
-	padding: 5px 20px;
+	padding: 3px 20px;
 	border-bottom: 1px solid #fff;
 	font-size: 18px;
 	color: #fff;

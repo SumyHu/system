@@ -502,6 +502,11 @@ function savePraticesInData(contentObj, totalCount) {
 		return;
 	}
 
+	let randomUnitId;
+	findSubjectByName(subjectName, function(result) {
+		randomUnitId = result.randomPratices;
+	});
+
 	addUnit(function(unitId) {
 		addOneUnitInSubject({
 			unitType: praticeType + "Pratices",
@@ -521,18 +526,16 @@ function savePraticesInData(contentObj, totalCount) {
 									unitId: unitId,
 									callback: function(result) {
 										console.log(content[i]);
-										// callDataProcessingFn({
-										// 	data: {
-										// 		data: "units",
-										// 		callFunction: "find",
-										// 		findOpt: {
-										// 			_id: unitId
-										// 		}
-										// 	},
-										// 	success: function(result) {
-										// 		console.log(i);
-										// 	}
-										// });
+									}
+								});
+
+								// 将习题添加进随机练习里面
+								addPraticeInUnits({
+									praticeType: key,
+									praticeId: praticeId,
+									unitId: randomUnitId,
+									callback: function(result) {
+										console.log(content[i]);
 									}
 								});
 							});

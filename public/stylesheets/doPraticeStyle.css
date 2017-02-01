@@ -1,5 +1,6 @@
 .praticeContent {
-	top: 150px;
+	top: 170px;
+	margin: 0 0 80px 0;
 	font-size: 21px;
 	color: #fff;
 }
@@ -122,7 +123,7 @@
 }
 
 .disable {
-	background: #dbd0d0 !important;
+	background-color: #dbd0d0 !important;
 	color: #000 !important;
 }
 

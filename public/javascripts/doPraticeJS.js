@@ -6,6 +6,12 @@ let currentIndexArray = {};   // 存储当前所有类型的题目下标
 
 let hasContentTypeArr = [];   // 存储当前有题目的类型名
 
+// 当练习类型为考试模拟时，进行正确答案和考生答案存储及匹配
+let examinationCorrectAnswer = {}, examinationStudentAnswer = {};
+
+// 记录Programing添加的editor，用于后面判断editor是否都不为空
+let programingEditorArray = [];
+
 /** 实现代码编辑器样式
  * @param id String textarea的id
  * @param mode String 代码类型
@@ -34,6 +40,7 @@ function editorStyle(id, mode) {
 
 	        extraKeys: {"Ctrl-Space":"autocomplete"}   //ctrl-space唤起智能提示
     });
+    return editor;
 }
 
 // 当练习类型为考试模拟时，添加类型块索引
@@ -59,6 +66,49 @@ function addPraticeIndex(count) {
 	}
 }
 
+function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
+	findPraticesById(praticeId, function(result) {
+		let sec = document.createElement("section");
+		sec.className = "content";
+		let showIndex = index+1, inputType;
+
+		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
+						 <div class="answer">`;
+
+		if (addPraticeType === "MultipleChoices") {
+			inputType = "checkbox";
+		}
+		else {
+			inputType = "radio";
+		}
+		for(let i=0, len=result.choices.length; i<len; i++) {
+			innerHtml = innerHtml
+							+ `<div>
+									<input type="` + inputType + `" id="` + addPraticeType + showIndex + i + `" name="` + addPraticeType +  showIndex + `">
+									<label for="` + addPraticeType + showIndex + i + `">
+										<span class="num">` + result.choices[i].num + `</span>
+									` + result.choices[i].choiceContent + `</label>
+							   </div>`;
+		}
+
+		sec.innerHTML = innerHtml + `</div>`;
+
+		if (praticeType !== "examination") {
+			sec.innerHTML = sec.innerHTML + `<div class="choiceAnswerBlock">
+										<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+										<div class="answerContent">` + result.answer.join(",") + `</div>
+									</div>`;
+		}
+		else {
+			examinationCorrectAnswer[addPraticeType].push(result.answer);
+		}
+
+		$(section).append(sec);
+		$(".flip").before(section);
+		$(sec).css("display", "none");
+	});
+}
+
 /** 添加选择类型的题目在界面上
  * @param praticeIdArr Array 习题id集合
  * @param addPraticeType String 要添加的习题类型
@@ -66,45 +116,28 @@ function addPraticeIndex(count) {
 function addChoicePratices(praticeIdArr, addPraticeType) {
 	let section = document.createElement("section");
 	section.className = addPraticeType;
-	praticeIdArr.forEach(function(praticeId, index, array) {
-		findPraticesById(praticeId, function(result) {
-			let sec = document.createElement("section");
-			sec.className = "content";
-			let showIndex = index+1;
-
-			let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
-							 <div class="answer">`;
-
-			if (addPraticeType === "MultipleChoices") {
-				inputType = "checkbox";
-			}
-			else {
-				inputType = "radio";
-			}
-			for(let i=0, len=result.choices.length; i<len; i++) {
-				innerHtml = innerHtml
-								+ `<div>
-										<input type="` + inputType + `" id="` + addPraticeType + showIndex + i + `" name="` + addPraticeType +  showIndex + `">
-										<label for="` + addPraticeType + showIndex + i + `">
-											<span class="num">` + result.choices[i].num + `</span>
-										` + result.choices[i].choiceContent + `</label>
-								   </div>`;
-			}
-
-			sec.innerHTML = innerHtml + `</div>`;
-
-			if (praticeType !== "examination") {
-				sec.innerHTML = sec.innerHTML + `<div class="choiceAnswerBlock">
-											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent">` + result.answer.join(",") + `</div>
-										</div>`;
-			}
-
-			$(section).append(sec);
-			$(".flip").before(section);
-			$(sec).css("display", "none");
+	if (praticeType === "random") {
+		let count = 0;
+		let length = praticeIdArr.length;
+		let tempArr = [];
+		for(let i=0, len=praticeIdArr.length; i<len; i++) {
+			tempArr.push(praticeIdArr[i]);
+		}
+		while(count < length) {
+			let randomNum = parseInt(Math.random()*tempArr.length);
+			addChoicePraticesContent(section, tempArr[randomNum], count, addPraticeType);
+			tempArr.splice(randomNum, 1);
+			count++;
+		}
+	}
+	else {
+		if (praticeType === "examination") {
+			examinationCorrectAnswer[addPraticeType] = [];
+		}
+		praticeIdArr.forEach(function(praticeId, index, array) {
+			addChoicePraticesContent(section, praticeId, index, addPraticeType);
 		});
-	});
+	}
 
 	$(".choiceAnswerBlock > .showAnswer").click(function(e) {
 		let $shortAnswer;
@@ -127,6 +160,76 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
 	});
 }
 
+function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) {
+	findPraticesById(praticeId, function(result) {
+		console.log(result);
+		let sec = document.createElement("section");
+		sec.className = "content";
+		let showIndex = index+1;
+
+		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
+						 <div class="answer">`;
+
+		if (addPraticeType === "FillInTheBlank") {
+			for(let i=1, len=result.answer.length; i<=len; i++) {
+				innerHtml = innerHtml
+							+ `<div>
+									<span class="num">` + i + `</span>
+									<input type="text" class="textInput">
+							    </div>`;
+			}
+			sec.innerHTML = innerHtml + `</div>`;
+
+			if (praticeType !== "examination") {
+				let answer = result.answer, answerHtml = "";
+				for(let i=0, len=answer.length; i<len; i++) {
+					answerHtml = answerHtml + "<div>" + 	Number(Number(i)+1) + ". " + answer[i].join(" 或 ") + "</div>";
+				}
+
+				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
+											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+											<div class="answerContent">` + answerHtml + `</div>
+										</div>`;
+			}
+			else {
+				examinationCorrectAnswer[addPraticeType].push(result.answer);
+			}
+
+			$(section).append(sec);
+			$(".flip").before(section);
+		}
+		else {
+			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
+						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
+
+			if (praticeType !== "examination") {
+				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
+											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+											<div class="answerContent">` + result.answer[0] + `</div>
+										</div>`;
+			}
+			else {
+				examinationCorrectAnswer[addPraticeType].push(result.answer);
+			}
+
+			$(section).append(sec);
+			$(".flip").before(section);
+
+			$(".answer").addClass("longAnswer");
+
+			let mode = "text/plain";
+			if (addPraticeType === "Programming") {
+				mode = result.programmingTypeMode;
+			}
+
+			let editor = editorStyle(addPraticeType + 'Editor' + index, mode);
+			programingEditorArray.push(editor);
+
+		}
+		$(sec).css("display", "none");
+	});
+}
+
 /** 添加非选择类型的题目
  * @param praticeIdArray Array 习题id集合
  * @param addPraticeType String 要添加的习题类型
@@ -134,68 +237,29 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
 function addNotChoicePratices(praticeIdArr, addPraticeType) {
 	let section = document.createElement("section");
 	section.className = addPraticeType;
-	praticeIdArr.forEach(function(praticeId, index, array) {
-		findPraticesById(praticeId, function(result) {
-			console.log(result);
-			let sec = document.createElement("section");
-			sec.className = "content";
-			let showIndex = index+1;
 
-			let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
-							 <div class="answer">`;
-
-			if (addPraticeType === "FillInTheBlank") {
-				for(let i=1, len=result.answer.length; i<=len; i++) {
-					innerHtml = innerHtml
-								+ `<div>
-										<span class="num">` + i + `</span>
-										<input type="text" class="textInput">
-								    </div>`;
-				}
-				sec.innerHTML = innerHtml + `</div>`;
-
-				if (praticeType !== "examination") {
-					let answer = result.answer, answerHtml = "";
-					for(let i=0, len=answer.length; i<len; i++) {
-						answerHtml = answerHtml + "<div>" + 	Number(Number(i)+1) + ". " + answer[i].join(" 或 ") + "</div>";
-					}
-
-					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
-												<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-												<div class="answerContent">` + answerHtml + `</div>
-											</div>`;
-				}
-
-				$(section).append(sec);
-				$(".flip").before(section);
-			}
-			else {
-				sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
-							 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
-
-				if (praticeType !== "examination") {
-					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
-												<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-												<div class="answerContent">` + result.answer[0] + `</div>
-											</div>`;
-				}
-
-				$(section).append(sec);
-				$(".flip").before(section);
-
-				$(".answer").addClass("longAnswer");
-
-				let mode = "text/plain";
-				if (addPraticeType === "Programming") {
-					mode = result.programmingTypeMode;
-				}
-
-				editorStyle(addPraticeType + 'Editor' + index, mode);
-
-			}
-			$(sec).css("display", "none");
+	if (praticeType === "random") {
+		let count = 0;
+		let length = praticeIdArr.length;
+		let tempArr = [];
+		for(let i=0, len=praticeIdArr.length; i<len; i++) {
+			tempArr.push(praticeIdArr[i]);
+		}
+		while(count < length) {
+			let randomNum = parseInt(Math.random()*tempArr.length);
+			addNotChoicePraticesContent(section, tempArr[randomNum], count, addPraticeType);
+			tempArr.splice(randomNum, 1);
+			count++;
+		}
+	}
+	else {
+		if (praticeType === "examination") {
+			examinationCorrectAnswer[addPraticeType] = [];
+		}
+		praticeIdArr.forEach(function(praticeId, index, array) {
+			addNotChoicePraticesContent(section, praticeId, index, addPraticeType)
 		});
-	});
+	}
 
 	$(".answerBlock > .showAnswer").click(function(e) {
 		let $shortAnswer;
@@ -259,6 +323,118 @@ function changePraticeContent(index) {
 	}
 }
 
+function getChoiceAnswer(getType) {
+	examinationStudentAnswer[getType] = [];
+
+	let inputType = "radio";
+	if (getType === "MultipleChoices") {
+		inputType = "checkbox";
+	}
+
+	let allContent = $("." + getType + " > .content");
+	for(let i=0, len=allContent.length; i<len; i++) {
+		examinationStudentAnswer[getType].push([]);
+		let currentIndex = examinationStudentAnswer[getType].length-1;
+
+		let allAnswer = $(allContent[i]).find(".answer input[type=" + inputType + "]");
+		for(let j=0, len1=allAnswer.length; j<len1; j++) {
+			if (allAnswer[j].checked) {
+				let label = $(allContent[i]).find(".answer .num")[j].innerHTML;
+				examinationStudentAnswer[getType][currentIndex].push(label);
+			}
+		}
+	}
+}
+
+function getNotChoiceAnswer(getType) {
+	examinationStudentAnswer[getType] = [];
+
+	if (getType === "FillInTheBlank") {
+		let allContent = $("." + getType + " > .content");
+		for(let i=0, len=allContent.length; i<len; i++) {
+			examinationStudentAnswer[getType].push([]);
+			let currentIndex = examinationStudentAnswer[getType].length-1;
+
+			let allAnswer = $(allContent[i]).find(".answer .textInput");
+			for(let j=0, len1=allAnswer.length; j<len1; j++) {
+				examinationStudentAnswer[getType][currentIndex].push(allAnswer[j].value);
+			}
+		}
+	}
+	else if (getType === "Programming") {
+		for(let i=0, len=programingEditorArray.length; i<len; i++) {
+			examinationStudentAnswer[getType].push([programingEditorArray[i].getValue()]);
+		}
+	}
+}
+
+function getAllAnswer() {
+	getChoiceAnswer("SingleChoice");
+	getChoiceAnswer("MultipleChoices");
+	getChoiceAnswer("TrueOrFalse");
+	getNotChoiceAnswer("FillInTheBlank");
+	getNotChoiceAnswer("shortAnswer");
+	getNotChoiceAnswer("Programming");
+
+	console.log(examinationCorrectAnswer);
+	console.log(examinationStudentAnswer);
+}
+
+function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score) {
+	let totalScore = 0;
+	outer: for(let i=0, len=choiceCorrectAnswer.length; i<len; i++) {
+		if (choiceCorrectAnswer[i].length !== choiceStudentAnswer[i].length) {
+			totalScore += 0;
+			continue;
+		}
+		for(let j=0, len1=choiceCorrectAnswer[i].length; j<len1; j++) {
+			if (choiceCorrectAnswer[i][j] !== choiceStudentAnswer[i][j]) {
+				totalScore += 0;
+				continue outer;
+			}
+		}
+		totalScore += score;
+		console.log("choice: " + i + ", score: " + score);
+	}
+}
+
+function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, score) {
+	let totalScore = 0;
+	outer: for(let i=0, len=FillInTheBlankCorrectAnswer.length; i<len; i++) {
+		for(let j=0, len1=FillInTheBlankCorrectAnswer[i].length; j<len1; j++) {
+			for(let t=0, len2=FillInTheBlankCorrectAnswer[i][j].length; t<len2; t++) {
+				if (FillInTheBlankStudentAnswer[i][j][0] === FillInTheBlankCorrectAnswer[i][j][t]) {
+					totalScore += score/len1;
+					console.log(i, j, score/len1);
+					break;
+				}
+			}
+		}
+	}
+}
+
+function checkAnswer() {
+	getAllAnswer();
+
+	let SingleChoiceCorrectAnswer = examinationCorrectAnswer.SingleChoice,
+		SingleChoiceStudentAnswer = examinationStudentAnswer.SingleChoice,
+		MultipleChoicesCorrectAnswer = examinationCorrectAnswer.MultipleChoices,
+		MultipleChoicesStudentAnswer = examinationStudentAnswer.MultipleChoices,
+		TrueOrFalseCorrectAnswer = examinationCorrectAnswer.TrueOrFalse,
+		TrueOrFalseStudentAnswer = examinationStudentAnswer.TrueOrFalse,
+		FillInTheBlankCorrectAnswer = examinationCorrectAnswer.FillInTheBlank,
+		FillInTheBlankStudentAnswer = examinationStudentAnswer.FillInTheBlank,
+		ShortAnswerCorrectAnswer = examinationCorrectAnswer.ShortAnswer,
+		ShortAnswerStudentAnswer = examinationStudentAnswer.ShortAnswer,
+		ProgrammingCorrectAnswer = examinationCorrectAnswer.Programming,
+		ProgrammingStudentAnswer = examinationStudentAnswer.Programming;
+
+	checkChoiceAnswer(SingleChoiceCorrectAnswer, SingleChoiceStudentAnswer, 1);
+	checkChoiceAnswer(MultipleChoicesCorrectAnswer, MultipleChoicesStudentAnswer, 2);
+	checkChoiceAnswer(TrueOrFalseCorrectAnswer, TrueOrFalseStudentAnswer, 3);
+	checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, 2);
+}
+
 function init() {
 	$(".time").css("display", "block");
 
@@ -280,7 +456,48 @@ function init() {
 		}
 	}
 	else {
-		$(".time")[0].innerHTML = "90 : 00";
+		// 考试模拟，将导航栏盖上蒙层
+		$(".toolbarDisable").css("display", "block");
+
+		$(".time")[0].innerHTML = "<span class='hours'>02</span>:<span class='minutes'>00</span>:<span class='seconds'>00</span>";
+
+		// 考试模拟时计时开始
+		var countdown = setInterval(function() {
+			let hours = $(".hours")[0].innerHTML, minutes = $(".minutes")[0].innerHTML, seconds = $(".seconds")[0].innerHTML;
+			if (seconds === "00" && minutes === "00" && hours === "00") {
+				clearInterval(countdown);
+				return;
+			}
+
+			if (seconds === "00") {
+				seconds = "59";
+
+				if (minutes === "00") {
+					minutes = "59";
+					hours = Number(hours)-1;
+					if (hours < 10) {
+						hours = "0" + hours;
+					}
+					$(".hours")[0].innerHTML = hours;
+				}
+				else {
+					minutes = Number(minutes)-1;
+					if (minutes < 10) {
+						minutes = "0" + minutes;
+					}
+				}
+
+				$(".minutes")[0].innerHTML = minutes;
+			}
+			else {
+				seconds = Number(seconds)-1;
+				if (seconds < 10) {
+					seconds = "0" + seconds;
+				}
+			}
+
+			$(".seconds")[0].innerHTML = seconds;
+		}, 1000);
 	}
 
 	findSubjectByName(subjectName, function(result) {
@@ -399,7 +616,9 @@ function bindEvent() {
 
 	$(".next").click(function() {
 		if (this.value === "提交") {
-			showWin("是否确定提交答案？（提交后将不能修改）", function() {});
+			showWin("是否确定提交答案？（提交后将不能修改）", function() {
+				checkAnswer();
+			});
 			return;
 		}
 

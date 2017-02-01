@@ -365,6 +365,13 @@ savePraticesInData = function(contentObj, totalCount) {
 	console.log(contentObj);
 	console.log(removePraticeArr);
 
+	let randomUnitId;
+	if (praticeType !== "random") {
+		findSubjectByName(subjectName, function(result) {
+			randomUnitId = result.randomPratices;
+		});
+	}
+
 	for(var k in typeChiness) {
 		console.log(k);
 		let praticeArr = contentObj[k];
@@ -399,6 +406,16 @@ savePraticesInData = function(contentObj, totalCount) {
 							callback: function(result) {
 							}
 						});
+
+						if (randomUnitId) {
+							addPraticeInUnits({
+								praticeType: key,
+								praticeId: praticeId,
+								unitId: randomUnitId,
+								callback: function(result) {
+								}
+							});
+						}
 					});
 				})(k);
 			}
@@ -432,5 +449,20 @@ savePraticesInData = function(contentObj, totalCount) {
 			},
 			success: function() {}
 		});
+
+		if (randomUnitId) {
+			callDataProcessingFn({
+				data: {
+					data: "units",
+					callFunction: "update",
+					updateOpt: {
+						_id: randomUnitId
+					},
+					operation: "pull",
+					update: update
+				},
+				success: function() {}
+			});
+		}
 	}
 }
