@@ -44,21 +44,41 @@
 	position: relative;
 	width: 150px;
 	left: 50%;
-	margin: 50px 0 0 0;
+	margin: 50px 0;
 	overflow: hidden;
 	transform: translateX(-50%);
 }
 
-.previous, .next {
+.previous, .next, .runningBtn {
 	/*width: 40px;*/
-	height: 40px;
+	height: 40px !important;
 	padding: 0 15px;
 	border-radius: 5px;
 	background: rgba(67, 135, 253, 0.5);
 }
 
+.runningBtn {
+	margin: 20px 0 0;
+	color: #000 !important;
+	background: orange;
+}
+
 .previous:hover, .next:hover {
 	background: rgba(67, 135, 253, 0.3);
+}
+
+.runningBtn:hover {
+	background: rgba(255, 165, 0, 0.7);
+}
+
+.runningResult {
+	margin: 20px 0 0;
+	padding: 20px;
+	background: #000;
+}
+
+.runningContent {
+	margin: 20px 0 0;
 }
 
 .previous {

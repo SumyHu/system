@@ -29,7 +29,7 @@ var participle = require("./participle");
 
 // var jieba = require("nodejieba");
 
-const javaCodePath = path.join(__dirname, "../Test/javaCodeParser.java");
+const javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java");
 
 function isLoginIn(req, res, exitCallback) {
 	if (req.session.userId) {
@@ -164,17 +164,17 @@ module.exports = function(app) {
 			}
 			if (req.query.operation === "modify") {
 				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
+				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.index || req.query.type) {
 				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"];
-				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"];
+				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;
 			}
 			else if (req.query.praticeType) {
 				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/addPraticeJS.js"];
+				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.subjectName) {
@@ -200,43 +200,13 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get("/exercise", function(req, res) {
-		res.render("exercise");
-	});
-
-	app.post("/exercise", function(req, res) {
-		var filePath;
-		switch(req.query.type) {
-			case "javaScript":
-				filePath = path.join(__dirname, "../exercise/javaScriptExercise.json");
-				break;
-			case "java":
-				filePath = path.join(__dirname, "../exercise/javaExercise.json");
-				break;
-			case "c_c++":
-				filePath = path.join(__dirname, "../exercise/c_c++Exercise.json");
-				break;
-		}
-		fs.readFile(filePath, function(err, data) {
-			if (!err) {
-				// res.send("success");
-				res.send(data);
-			}
-			else {
-				res.send(err);
-			}
-		});
-	});
-
-	app.post("/javaTest", function(req, res)  {
+	app.post("/javaRunning", function(req, res)  {
 		if (!fs.existsSync(javaCodePath)) {
 	        fse.ensureFileSync(javaCodePath);
         }
-        fs.writeFileSync(javaCodePath, 'public class javaCodeParser {'
-        	+ req.body.code
-        	+ 'public static void main(String[] args) {javaCodeParser instance = new javaCodeParser();System.out.println(instance.sum(1, 2));}}');
+        fs.writeFileSync(javaCodePath, req.body.code);
 
-        var e = exec("javac javaCodeParser.java", {cwd: "./Test"}, function(err,stdout,stderr){
+        var e = exec("javac Main.java", {cwd: "./programmingRunningFile"}, function(err,stdout,stderr){
 		    if(err) {
 		    	// console.log(11111,stderr);
 		    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
@@ -245,19 +215,17 @@ module.exports = function(app) {
 		    	// let u1 = iconv.encode(stderr, "gbk").toString('gb2312');
 		    	// let u2 = iconv.encode("你好", "gbk");
 		    	// console.log(77777,u2);
+		    	console.log(stderr);
 
-		        res.send(stderr);
+		        res.send({error: stderr});
 		    } else {	
-			    exec("java javaCodeParser", {cwd: "./Test"}, function(err, stdout, stderr) {
+			    exec("java Main", {cwd: "./Test"}, function(err, stdout, stderr) {
 		        	if (err) {
-		        		res.send(stderr);
+		        		console.log(stderr);
+		        		res.send({error: stderr});
 		        	} else {
-		        		if (stdout == 3) {
-		        			res.send("编译通过");
-		        		}
-		        		else {
-		        			res.send("编译不通过");
-		        		}
+		        		console.log(stdout);
+		        		res.send({success: stdout});
 		        	} 
 	        	});     
 		    }

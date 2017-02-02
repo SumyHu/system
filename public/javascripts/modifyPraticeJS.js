@@ -145,7 +145,7 @@ function showAllProgrammingContent(praticeIdArr) {
 				}
 				$(section).find(".programmingType > select").find("option")[modeIndex].selected = true;
 
-				let answer = result.answer[0], editor = programingEditorArray[programingEditorArray.length-1];
+				let answer = result.answer[0], editor = programingEditorArray[programingEditorArray.length-1].editor;
 
 				$(section).find("textarea").val(answer);
 				editor.setOption("mode", result.programmingTypeMode);
@@ -255,7 +255,7 @@ function getProgrammingContent($content) {
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];
 
-		let answer = programingEditorArray[i].getValue();
+		let answer = programingEditorArray[i].editor.getValue();
 		
 		allContent.push({
 			topic: topic,

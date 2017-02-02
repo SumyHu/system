@@ -202,6 +202,14 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
 
+			if (addPraticeType === "Programming") {
+				sec.innerHTML = sec.innerHTML + `<input type="button" value="调试" class="runningBtn">
+												<div class="runningResult">
+													<div class="runningTitle">调试结果：</div>
+													<div class="runningContent"></div>
+												</div>`;
+			}
+
 			if (praticeType !== "examination") {
 				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
 											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
@@ -260,6 +268,8 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 			addNotChoicePraticesContent(section, praticeId, index, addPraticeType)
 		});
 	}
+
+	$(".runningBtn").click(function(e) {});
 
 	$(".answerBlock > .showAnswer").click(function(e) {
 		let $shortAnswer;

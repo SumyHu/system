@@ -134,11 +134,11 @@
 	font-size: 20px;
 }
 
-.topic {
+.topic, .input > div, .output > div {
 	margin: 0 0 25px 0;
 }
 
-.topic > .textInput {
+.topic > .textInput, .input .textInput, .output .textInput {
 	width: 50%;
 }
 
@@ -172,7 +172,7 @@
 	transition: all 0.5s linear;
 }
 
-.addOtherAnswer:hover {
+.addOtherAnswer:hover, .addInputType:hover {
 	background: rgba(67, 135, 253, 0.3);
 }
 
@@ -220,4 +220,47 @@
 
 .remove:hover {
 	background: rgba(255, 0, 0, 0.5);
+}
+
+.runningBtn {
+	/*width: 40px;*/
+	height: 40px !important;
+	/*margin: 20px 0 0;*/
+	padding: 0 15px;
+	border-radius: 5px;
+	color: #000 !important;
+	background: orange;
+}
+
+.runningBtn:hover {
+	background: rgba(255, 165, 0, 0.7);
+}
+
+.runningResult {
+	margin: 20px 0 0;
+	padding: 20px;
+	background: #000;
+}
+
+.runningContent {
+	margin: 20px 0 0;
+}
+
+.addInputType {
+	width: 20px;
+	height: 20px !important;
+	padding: 0;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 20px !important;
+	background: rgba(67, 135, 253, 0.5);
+}
+
+.inputType {
+	padding: 20px;
+	border: 1px solid #fff;
+}
+
+.inputType label {
+	margin: 0 5px 0 0;
 }

@@ -10,6 +10,8 @@ let addSingleChoiceCount = 0, addMultipleChoicesCount = 0, addTrueOrFalseCount =
 let realSingleChoiceCount = 0, realMultipleChoicesCount = 0, realTrueOrFalseCount = 0,
 	realFillInTheBlankCount = 0, realShortAnswerCount = 0, realProgrammingCount = 0;
 
+let selectInputTypeCount = 0;
+
 let programmingTypeMode = {
 	text: "text/plain",
 	ecmascript: "application/ecmascript",
@@ -184,6 +186,17 @@ function addShortAnswer() {
 	// $(".addShortAnswerCount").append(section);
 }
 
+function selectInputType(count) {
+	return `<input type="radio" id="int` + count + `" name="selectInputType` + count + `" checked><label for="int` + count + `">int</label><input type="radio" id="float` + count + `" name="selectInputType` + count + `"><label for="float` + count + `">float</label>
+	<input type="radio" id="double` + count + `" name="selectInputType` + count + `"><label for="double` + count + `">double</label>
+	<input type="radio" id="String` + count + `" name="selectInputType` + count + `"><label for="String` + count + `">String</label>
+	<input type="radio" id="char` + count + `" name="selectInputType` + count + `"><label for="char` + count + `">char</label>
+	<input type="radio" id="boolean` + count + `" name="selectInputType` + count + `"><label for="boolean` + count + `">boolean</label>
+	<input type="radio" id="Array` + count + `" name="selectInputType` + count + `"><label for="Array` + count + `">Array</label>
+	<input type="radio" id="Object` + count + `" name="selectInputType` + count + `"><label for="Object` + count + `">Object</label>
+	<input type="radio" id="Function` + count + `" name="selectInputType` + count + `"><label for="Function` + count + `">Function</label>`
+}
+
 function addProgramming() {
 	let selectInnerHtml = "<select>";
 	for(var k in programmingTypeMode) {
@@ -196,11 +209,26 @@ function addProgramming() {
 	let content = `<input type="button" value="X" class="remove">
 					<div class="topic">题目<span class="topicNum">` + addProgrammingCount + 
 					`</span>：<input type="text" class="textInput"></div>
+					<div class="input">
+						<div class="description">输入描述：<input class="textInput"></div>
+						<div class="example">输入样例：<input class="textInput"></div>
+						<div class="inputType">输入类型（按照输入顺序选择）：<input type="button" value="+" class="addInputType"></div>
+					</div>
+					<div class="output">
+						<div class="description">输出描述：<input class="textInput"></div>
+						<div class="example">输出样例：<input class="textInput"></div>
+						<div class="inputType">输出类型：` + selectInputType(0) + `</div>
+					</div>
 					<div class="answer">
 						<div class="programmingType">
 							答案：` + selectInnerHtml + `
 						</div>
 						<textarea id="programming` + realProgrammingCount + `"></textarea>
+					</div>
+					<input type="button" value="运行" class="runningBtn">
+					<div class="runningResult">
+						<div class="runningTitle">运行结果：</div>
+						<div class="runningContent"></div>
 					</div>`;
 
 	let section = document.createElement("section");
@@ -209,7 +237,17 @@ function addProgramming() {
 	$(".addProgramming").append(section);
 
 	let editor = editorStyle("programming" + addProgrammingCount, "text/plain");
-	programingEditorArray.push(editor);
+	programingEditorArray.push({
+		editor: editor,
+		textareaId: "programming" + realProgrammingCount
+	});
+
+	$(section).find(".addInputType").click(function(e) {
+		let div = document.createElement("div");
+		div.className = "selectInputType";
+		div.innerHTML = selectInputType(++selectInputTypeCount);
+		$(getTarget(e)).before(div);
+	});
 
 	// 下拉框可选择代码类型，动态改变编辑器代码类型
 	$(section).find(".programmingType select").change(function(e) {
@@ -383,7 +421,7 @@ function getProgrammingContent($content) {
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];
 
-		let answer = programingEditorArray[i].getValue();
+		let answer = programingEditorArray[i].editor.getValue();
 		
 		allContent.push({
 			topic: topic,
@@ -649,8 +687,8 @@ function checkAllTextInputHasVal() {
 	// }
 
 	for(let i=0, len=programingEditorArray.length; i<len; i++) {
-		console.log(programingEditorArray[i].getValue());
-		if (!programingEditorArray[i].getValue()) {
+		console.log(programingEditorArray[i].editor.getValue());
+		if (!programingEditorArray[i].editor.getValue()) {
 			return false;
 		}
 	}
@@ -672,6 +710,34 @@ function checkMultipleChoicesAnswerExit() {
 	}
 
 	return false;
+}
+
+function runningProgramming($programmingContent) {
+	let textareaId = $programmingContent.find(".answer textarea")[0].id, editor;
+	for(let i=0, len=programingEditorArray.length; i<len; i++) {
+		if (programingEditorArray[i].textareaId === textareaId) {
+			editor = programingEditorArray[i].editor;
+			break;
+		}
+	}
+	let editorContent = editor.getValue();
+
+	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
+	switch(programmingLanguage) {
+		case "java":
+			let result = javaRunning(editorContent);
+			if (result.error) {
+				result = result.error;
+			}
+			else {
+				result = result.success;
+			}
+			$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = result;
+			break;
+		case "javascript":
+			break;
+
+	}
 }
 
 function init() {
@@ -761,6 +827,9 @@ function bindEvent() {
 				// 	removePratice($(getTarget(e)).parent());
 				// });
 				removePratice($(getTarget(e)).parent());
+				break;
+			case "runningBtn":
+				runningProgramming($(getTarget(e)).parent());
 				break;
 		}
 	});
