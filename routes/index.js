@@ -219,7 +219,7 @@ module.exports = function(app) {
 
 		        res.send({error: stderr});
 		    } else {	
-			    exec("java Main", {cwd: "./Test"}, function(err, stdout, stderr) {
+			    exec("java Main", {cwd: "./programmingRunningFile"}, function(err, stdout, stderr) {
 		        	if (err) {
 		        		console.log(stderr);
 		        		res.send({error: stderr});
