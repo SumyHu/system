@@ -1,6 +1,7 @@
 const fs = require("fs");
 const fse = require('fs-extra');
 const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
 const path = require('path');
 const iconv = require('iconv-lite');
 
@@ -200,13 +201,29 @@ module.exports = function(app) {
 		});
 	});
 
+	app.get("/javaRunTest", function(req, res) {
+		res.render("javaRunTest");
+	})
+
 	app.post("/javaRunning", function(req, res)  {
 		if (!fs.existsSync(javaCodePath)) {
 	        fse.ensureFileSync(javaCodePath);
         }
         fs.writeFileSync(javaCodePath, req.body.code);
 
-        var e = exec("javac Main.java", {cwd: "./programmingRunningFile"}, function(err,stdout,stderr){
+        var e = exec("javac -encoding utf-8 Main.java", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
+        	console.log(err);
+	    	// exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
+	    	// 	console.log("inner");
+	     //    	if (err) {
+	     //    		console.log(2, stderr);
+	     //    		res.send({error: stderr});
+	     //    	} else {
+	     //    		console.log("test");
+	     //    		console.log(stdout);
+	     //    		res.send({success: stdout});
+	     //    	} 
+      //   	});     
 		    if(err) {
 		    	// console.log(11111,stderr);
 		    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
@@ -215,20 +232,44 @@ module.exports = function(app) {
 		    	// let u1 = iconv.encode(stderr, "gbk").toString('gb2312');
 		    	// let u2 = iconv.encode("你好", "gbk");
 		    	// console.log(77777,u2);
-		    	console.log(stderr);
+		    	console.log(1, stderr);
 
 		        res.send({error: stderr});
 		    } else {	
-			    exec("java Main", {cwd: "./programmingRunningFile"}, function(err, stdout, stderr) {
+			    let e = exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
+			    	console.log("in", stdout);
 		        	if (err) {
-		        		console.log(stderr);
+		        		console.log(2, stderr);
 		        		res.send({error: stderr});
 		        	} else {
+		        		console.log("test");
 		        		console.log(stdout);
 		        		res.send({success: stdout});
 		        	} 
-	        	});     
+	        	});
+
+	        	e.stdout.pipe(process.stdout); 
+	        	e.stdin.write("2\n4");
+	        	e.stdin.end();     
 		    }
+		    // if (!err) {
+		    // 	console.log(stderr);
+		    // 	let e = exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
+			   //  	console.log("in");
+		    //     	if (err) {
+		    //     		console.log(2, stderr);
+		    //     		res.send({error: stderr});
+		    //     	} else {
+		    //     		console.log("test");
+		    //     		console.log(stdout);
+		    //     		res.send({success: stdout});
+		    //     	} 
+	     //    	});
+	     //    	e.stdout.pipe(process.stdout); 
+	     //    	e.stdin.write("2 4");
+	     //    	e.stdin.end();
+	        	// console.log(e.stdin.end());    
+		    // }
 		});
 		e.stderr.setEncoding('utf8');
 	});
