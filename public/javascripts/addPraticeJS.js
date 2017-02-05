@@ -186,15 +186,18 @@ function addShortAnswer() {
 	// $(".addShortAnswerCount").append(section);
 }
 
+function basicInputType(count, Prefix, firstInputChecked) {
+	let prefix = Prefix ? Prefix : "";
+	return `<input type="radio" id="` + prefix + `Number` + count + `" name="selectInputType` + count + `" checked=` + firstInputChecked + ` value="Number"><label for="` + prefix + `Number` + count + `">Number</label><input type="radio" id="` + prefix + `int` + count + `" name="selectInputType` + count + `" value="int"><label for="` + prefix + `int` + count + `">int</label><input type="radio" id="` + prefix + `float` + count + `" name="selectInputType` + count + `" value="float"><label for="` + prefix + `float` + count + `">float</label>
+	<input type="radio" id="` + prefix + `double` + count + `" name="selectInputType` + count + `" value="double"><label for="` + prefix + `double` + count + `">double</label>
+	<input type="radio" id="` + prefix + `String` + count + `" name="selectInputType` + count + `" value="String"><label for="` + prefix + `String` + count + `">String</label>
+	<input type="radio" id="` + prefix + `char` + count + `" name="selectInputType` + count + `" value="char"><label for="` + prefix + `char` + count + `">char</label>
+	<input type="radio" id="` + prefix + `boolean` + count + `" name="selectInputType` + count + `" value="boolean"><label for="` + prefix + `boolean` + count + `">boolean</label>`;
+}
+
 function selectInputType(count) {
-	return `<input type="radio" id="int` + count + `" name="selectInputType` + count + `" checked><label for="int` + count + `">int</label><input type="radio" id="float` + count + `" name="selectInputType` + count + `"><label for="float` + count + `">float</label>
-	<input type="radio" id="double` + count + `" name="selectInputType` + count + `"><label for="double` + count + `">double</label>
-	<input type="radio" id="String` + count + `" name="selectInputType` + count + `"><label for="String` + count + `">String</label>
-	<input type="radio" id="char` + count + `" name="selectInputType` + count + `"><label for="char` + count + `">char</label>
-	<input type="radio" id="boolean` + count + `" name="selectInputType` + count + `"><label for="boolean` + count + `">boolean</label>
-	<input type="radio" id="Array` + count + `" name="selectInputType` + count + `"><label for="Array` + count + `">Array</label>
-	<input type="radio" id="Object` + count + `" name="selectInputType` + count + `"><label for="Object` + count + `">Object</label>
-	<input type="radio" id="Function` + count + `" name="selectInputType` + count + `"><label for="Function` + count + `">Function</label>`
+	return basicInputType(count) + `<input type="radio" id="Array` + count + `" name="selectInputType` + count + `" value="Array"><label for="Array` + count + `">Array</label>`
+		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count, "array-", true) + `】</div>`;
 }
 
 function addProgramming() {
@@ -240,6 +243,16 @@ function addProgramming() {
 	programingEditorArray.push({
 		editor: editor,
 		textareaId: "programming" + realProgrammingCount
+	});
+
+	$(section).change(function(e) {
+		let target = getTarget(e);
+		if (target.id.indexOf("Array") === 0) {
+			$(target).parent().find(".arrayChildType").css("display", "block");
+		}
+		else {
+			$(target).parent().find(".arrayChildType").css("display", "none");
+		}
 	});
 
 	$(section).find(".addInputType").click(function(e) {
@@ -409,6 +422,41 @@ function getShortAnswerContent($content) {
 	return [];
 }
 
+function getProgrammingObj($objTarget) {
+	let obj = {};
+
+	obj.description = objTarget.find(".description > .textInput").val();
+	obj.example = objTarget.find(".example > .textInput").val();
+
+	let selectInputType = objTarget.find(".inputType > .selectInputType"), selectInputTypeArray = [];
+	for(let i=0, len=selectInputType.length; i<len; i++) {
+		let allRadio = $(selectInputType[i]).find("input[type=radio");
+		for(let j=0, len1=allRadio.length; j<len1; j++) {
+			if (allRadio[j].checked) {
+				let value = allRadio[j].value;
+				if (value === "Array") {
+					let childInputType = $(selectInputType[i]).find(".childInputType > input[type=radio");
+					for(let t=0, len2=childInputType.length; t<len2; t++) {
+						if (childInputType[t].checked) {
+							selectInputType.push({
+								thisType: allRadio[j].value,
+								childType: childInputType[t].value
+							});
+							break;
+						}
+					}
+				}
+				else {
+					selectInputTypeArray.push(allRadio[j].value);
+				}
+				break;
+			}
+		}
+	}
+
+	return obj;
+}
+
 /** 获取所要添加的编程题内容
  * @param $content Object 所要添加的全部content对象
 */
@@ -417,6 +465,8 @@ function getProgrammingContent($content) {
 
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
+
+		let inputObj = getProgrammingObj($($content[i]).find(".input")), outputObj = getProgrammingObj($($content[i]).find(".output"));
 
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];

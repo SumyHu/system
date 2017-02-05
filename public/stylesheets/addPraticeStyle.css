@@ -264,3 +264,11 @@
 .inputType label {
 	margin: 0 5px 0 0;
 }
+
+.selectInputType {
+	margin: 15px 0;
+}
+
+.arrayChildType {
+	display: none;
+}

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const fse = require('fs-extra');
 const exec = require('child_process').exec;
-const execSync = require('child_process').execSync;
+const spawn = require('child_process').spawn;
 const path = require('path');
 const iconv = require('iconv-lite');
 
@@ -211,19 +211,7 @@ module.exports = function(app) {
         }
         fs.writeFileSync(javaCodePath, req.body.code);
 
-        var e = exec("javac -encoding utf-8 Main.java", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
-        	console.log(err);
-	    	// exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
-	    	// 	console.log("inner");
-	     //    	if (err) {
-	     //    		console.log(2, stderr);
-	     //    		res.send({error: stderr});
-	     //    	} else {
-	     //    		console.log("test");
-	     //    		console.log(stdout);
-	     //    		res.send({success: stdout});
-	     //    	} 
-      //   	});     
+        exec("javac -encoding utf-8 Main.java", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
 		    if(err) {
 		    	// console.log(11111,stderr);
 		    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
@@ -248,30 +236,32 @@ module.exports = function(app) {
 		        	} 
 	        	});
 
-	        	e.stdout.pipe(process.stdout); 
-	        	e.stdin.write("2\n4");
-	        	e.stdin.end();     
+        		// let inputTypeArray = req.body.inputType;
+	        	// for(let i=0; i<100; i++) {
+	        	// 	setTimeout(function() {
+	        	// 		for(let i= 0, len=inputTypeArray.length; i<len; i++) {
+	        	// 			if (inputTypeArray[i] === "int" || inputTypeArray[i] === "float" || inputTypeArray[i] === "double") {
+		        // 				let random = Math.random()*200;
+	        	// 			}
+	        	// 			setTimeout(function() {}, 300*i);
+			       //  	}
+	        	// 	}, (inputTypeArray.length-1)*300+10);
+	        	// }
+
+	        	// e.stdout.pipe(process.stdout); 
+	        	e.stdin.write("12\n");
+	        	setTimeout(function() {
+		        	e.stdin.write("5\n");
+	        	}, 300);
+	        	setTimeout(function() {
+		        	e.stdin.write("100\n");
+	        	}, 600);
+	        	setTimeout(function() {
+		        	e.stdin.write("1000\n");
+	        	}, 900);
 		    }
-		    // if (!err) {
-		    // 	console.log(stderr);
-		    // 	let e = exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
-			   //  	console.log("in");
-		    //     	if (err) {
-		    //     		console.log(2, stderr);
-		    //     		res.send({error: stderr});
-		    //     	} else {
-		    //     		console.log("test");
-		    //     		console.log(stdout);
-		    //     		res.send({success: stdout});
-		    //     	} 
-	     //    	});
-	     //    	e.stdout.pipe(process.stdout); 
-	     //    	e.stdin.write("2 4");
-	     //    	e.stdin.end();
-	        	// console.log(e.stdin.end());    
-		    // }
 		});
-		e.stderr.setEncoding('utf8');
+		// e.stderr.setEncoding('utf8');
 	});
 
 	app.get("/shortAnswerCheck", function(req, res) {
