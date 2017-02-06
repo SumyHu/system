@@ -227,7 +227,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 
 			let mode = "text/plain";
 			if (addPraticeType === "Programming") {
-				mode = result.programmingTypeMode;
+				mode = result.answer[0].programmingTypeMode;
 			}
 
 			let editor = editorStyle(addPraticeType + 'Editor' + index, mode);

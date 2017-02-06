@@ -188,7 +188,11 @@ function addShortAnswer() {
 
 function basicInputType(count, Prefix, firstInputChecked) {
 	let prefix = Prefix ? Prefix : "";
-	return `<input type="radio" id="` + prefix + `Number` + count + `" name="selectInputType` + count + `" checked=` + firstInputChecked + ` value="Number"><label for="` + prefix + `Number` + count + `">Number</label><input type="radio" id="` + prefix + `int` + count + `" name="selectInputType` + count + `" value="int"><label for="` + prefix + `int` + count + `">int</label><input type="radio" id="` + prefix + `float` + count + `" name="selectInputType` + count + `" value="float"><label for="` + prefix + `float` + count + `">float</label>
+	let checked = false;
+	if (firstInputChecked) {
+		checked = true;
+	}
+	return `<input type="radio" id="` + prefix + `Number` + count + `" name="selectInputType` + count + (firstInputChecked ? '" checked' : '"') + ` value="Number"><label for="` + prefix + `Number` + count + `">Number</label><input type="radio" id="` + prefix + `int` + count + `" name="selectInputType` + count + `" value="int"><label for="` + prefix + `int` + count + `">int</label><input type="radio" id="` + prefix + `float` + count + `" name="selectInputType` + count + `" value="float"><label for="` + prefix + `float` + count + `">float</label>
 	<input type="radio" id="` + prefix + `double` + count + `" name="selectInputType` + count + `" value="double"><label for="` + prefix + `double` + count + `">double</label>
 	<input type="radio" id="` + prefix + `String` + count + `" name="selectInputType` + count + `" value="String"><label for="` + prefix + `String` + count + `">String</label>
 	<input type="radio" id="` + prefix + `char` + count + `" name="selectInputType` + count + `" value="char"><label for="` + prefix + `char` + count + `">char</label>
@@ -197,7 +201,7 @@ function basicInputType(count, Prefix, firstInputChecked) {
 
 function selectInputType(count) {
 	return basicInputType(count) + `<input type="radio" id="Array` + count + `" name="selectInputType` + count + `" value="Array"><label for="Array` + count + `">Array</label>`
-		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count, "array-", true) + `】</div>`;
+		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count+1, "array-", true) + `】</div>`;
 }
 
 function addProgramming() {
@@ -220,7 +224,7 @@ function addProgramming() {
 					<div class="output">
 						<div class="description">输出描述：<input class="textInput"></div>
 						<div class="example">输出样例：<input class="textInput"></div>
-						<div class="inputType">输出类型：` + selectInputType(0) + `</div>
+						<div class="inputType">输出类型：<div class="selectInputType">` + selectInputType(0) + `</div></div>
 					</div>
 					<div class="answer">
 						<div class="programmingType">
@@ -258,7 +262,8 @@ function addProgramming() {
 	$(section).find(".addInputType").click(function(e) {
 		let div = document.createElement("div");
 		div.className = "selectInputType";
-		div.innerHTML = selectInputType(++selectInputTypeCount);
+		selectInputTypeCount += 2;
+		div.innerHTML = selectInputType(selectInputTypeCount);
 		$(getTarget(e)).before(div);
 	});
 
@@ -425,20 +430,20 @@ function getShortAnswerContent($content) {
 function getProgrammingObj($objTarget) {
 	let obj = {};
 
-	obj.description = objTarget.find(".description > .textInput").val();
-	obj.example = objTarget.find(".example > .textInput").val();
+	obj.description = $objTarget.find(".description > .textInput").val();
+	obj.example = $objTarget.find(".example > .textInput").val();
 
-	let selectInputType = objTarget.find(".inputType > .selectInputType"), selectInputTypeArray = [];
+	let selectInputType = $objTarget.find(".inputType > .selectInputType"), selectInputTypeArray = [];
 	for(let i=0, len=selectInputType.length; i<len; i++) {
-		let allRadio = $(selectInputType[i]).find("input[type=radio");
+		let allRadio = $(selectInputType[i]).find("input[type=radio]");
 		for(let j=0, len1=allRadio.length; j<len1; j++) {
 			if (allRadio[j].checked) {
 				let value = allRadio[j].value;
 				if (value === "Array") {
-					let childInputType = $(selectInputType[i]).find(".childInputType > input[type=radio");
+					let childInputType = $(selectInputType[i]).find(".arrayChildType > input[type=radio]");
 					for(let t=0, len2=childInputType.length; t<len2; t++) {
 						if (childInputType[t].checked) {
-							selectInputType.push({
+							selectInputTypeArray.push({
 								thisType: allRadio[j].value,
 								childType: childInputType[t].value
 							});
@@ -454,6 +459,8 @@ function getProgrammingObj($objTarget) {
 		}
 	}
 
+	obj.type = selectInputTypeArray;
+
 	return obj;
 }
 
@@ -468,6 +475,8 @@ function getProgrammingContent($content) {
 
 		let inputObj = getProgrammingObj($($content[i]).find(".input")), outputObj = getProgrammingObj($($content[i]).find(".output"));
 
+		console.log(inputObj, outputObj);
+
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];
 
@@ -475,8 +484,13 @@ function getProgrammingContent($content) {
 		
 		allContent.push({
 			topic: topic,
-			programmingTypeMode: mode,
-			answer: answer
+			// programmingTypeMode: mode,
+			answer: {
+				input: inputObj,
+				output: outputObj,
+				content: answer,
+				programmingTypeMode: mode
+			}
 		});
 	}
 
@@ -603,11 +617,9 @@ function savePraticesInData(contentObj, totalCount) {
 			callback: function() {
 				for(var key in contentObj) {
 					let content = contentObj[key];
-					console.log(content);
 					for(let i=0, len=content.length; i<len; i++) {
 						(function(key) {
 							addPratice(content[i], function(praticeId) {
-								console.log(content[i]);
 								addPraticeInUnits({
 									praticeType: key,
 									praticeId: praticeId,
@@ -680,8 +692,6 @@ function savePratices() {
 	let ShortAnswerContent = $(".addShortAnswer > .content");
 	let ProgrammingContent = $(".addProgramming > .content");
 
-	console.log("hi");
-
 	SingleChoiceContentArr = getChoiceContent(SingleChoiceContent);
 	MultipleChoicesContentArr = getChoiceContent(MultipleChoicesContent);
 	TrueOrFalseContentArr = getChoiceContent(TrueOrFalseContent);
@@ -737,7 +747,6 @@ function checkAllTextInputHasVal() {
 	// }
 
 	for(let i=0, len=programingEditorArray.length; i<len; i++) {
-		console.log(programingEditorArray[i].editor.getValue());
 		if (!programingEditorArray[i].editor.getValue()) {
 			return false;
 		}

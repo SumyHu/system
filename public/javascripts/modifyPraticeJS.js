@@ -115,6 +115,53 @@ function showAllFillInTheBlankContent(praticeIdArr) {
 */
 function showAllShortAnswerContent(praticeIdArr) {}
 
+function showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType) {
+	console.log("inputType", inputType);
+	let allRadio = $selectInputTypeDiv.find("> input[type=radio]");
+	for(let i=0, len=allRadio.length; i<len; i++) {
+		if (allRadio[i].value === inputType) {
+			allRadio[i].checked = true;
+			break;
+		}
+	}
+}
+
+function showSelectTypeInProgramming($selectInputTypeDiv, type) {
+	let inputType, childType;
+	if (type.childType) {
+		childType = type.childType;
+		inputType = type.thisType;
+		$selectInputTypeDiv.find(".arrayChildType").css("display", "block");
+		
+		showBasicSelectTypeInProgramming($selectInputTypeDiv.find(".arrayChildType"), childType);
+	}
+	else {
+		inputType = type;
+	}
+	showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType);
+}
+
+function showProgrammingObjContent(objContent, $section) {
+	$section.find(".description > .textInput").val(objContent.description);
+	$section.find(".example > .textInput").val(objContent.example);
+
+	let className = $section[0].className;
+	let inputTypeDiv = $section.find(".inputType");
+	if (className === "input") {
+		for(let i=0, len=objContent.type.length; i<len; i++) {
+			let div = document.createElement("div");
+			div.className = "selectInputType";
+			selectInputTypeCount += 2;
+			div.innerHTML = selectInputType(selectInputTypeCount);
+			$section.find(".addInputType").before(div);
+			showSelectTypeInProgramming($(div), objContent.type[i]);
+		}
+	}
+	else {
+		showSelectTypeInProgramming(inputTypeDiv.find(".selectInputType"), objContent.type[0]);
+	}
+}
+
 /** 显示所有编程题内容
  * @param praticeIdArr Array 习题id集合
 */
@@ -129,13 +176,17 @@ function showAllProgrammingContent(praticeIdArr) {
 				}
 			},
 			success: function(result) {
+				console.log(result);
 				let section = addProgramming();
 
 				section.id = praticeIdArr[i];
 
 				$(section).find(".topic > .textInput").val(result.topic);
 
-				let mode = result.programmingTypeMode, modeIndex=0;
+				showProgrammingObjContent(result.answer[0].input, $(section).find(".input"));
+				showProgrammingObjContent(result.answer[0].output, $(section).find(".output"));
+
+				let mode = result.answer[0].programmingTypeMode, modeIndex=0;
 				for(var k in programmingTypeMode) {
 					if (programmingTypeMode[k] === mode) {
 						mode = k;
@@ -145,10 +196,10 @@ function showAllProgrammingContent(praticeIdArr) {
 				}
 				$(section).find(".programmingType > select").find("option")[modeIndex].selected = true;
 
-				let answer = result.answer[0], editor = programingEditorArray[programingEditorArray.length-1].editor;
+				let answer = result.answer[0].content, editor = programingEditorArray[programingEditorArray.length-1].editor;
 
 				$(section).find("textarea").val(answer);
-				editor.setOption("mode", result.programmingTypeMode);
+				editor.setOption("mode", result.answer[0].programmingTypeMode);
 				editor.setValue(answer);
 				setTimeout(function() {
 					editor.refresh();
@@ -252,6 +303,10 @@ function getProgrammingContent($content) {
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
 
+		let inputObj = getProgrammingObj($($content[i]).find(".input")), outputObj = getProgrammingObj($($content[i]).find(".output"));
+
+		console.log(inputObj, outputObj);
+
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];
 
@@ -259,8 +314,13 @@ function getProgrammingContent($content) {
 		
 		allContent.push({
 			topic: topic,
-			programmingTypeMode: mode,
-			answer: answer
+			// programmingTypeMode: mode,
+			answer: {
+				input: inputObj,
+				output: outputObj,
+				content: answer,
+				programmingTypeMode: mode
+			}
 		});
 
 		if ($content[i].id) {
@@ -377,6 +437,7 @@ savePraticesInData = function(contentObj, totalCount) {
 		let praticeArr = contentObj[k];
 		for(let i=0, len=praticeArr.length; i<len; i++) {
 			let praticeContent = praticeArr[i];
+			console.log(praticeContent);
 			if (praticeContent.id) {
 				callDataProcessingFn({
 					data: {
@@ -388,9 +449,8 @@ savePraticesInData = function(contentObj, totalCount) {
 						operation: "set",
 						update: {
 							topic: praticeContent.topic,
-							programmingTypeMode: praticeContent.programmingTypeMode,
 							choices: praticeContent.choices,
-							answer: praticeContent.answer
+							answer: [praticeContent.answer]
 						}
 					},
 					success: function() {}
