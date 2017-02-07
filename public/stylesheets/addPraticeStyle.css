@@ -201,7 +201,7 @@
 	margin: 20px 0;
 }
 
-.remove {
+.remove, .removeSelectType {
 	position: relative;
 	top: -20px;
 	left: 40px;
@@ -218,8 +218,14 @@
 	transition: 0.5s all linear;
 }
 
-.remove:hover {
+.remove:hover, .removeSelectType:hover {
 	background: rgba(255, 0, 0, 0.5);
+}
+
+.removeSelectType {
+	display: inline-block;
+	top: 5px;
+	left: 0;
 }
 
 .runningBtn {

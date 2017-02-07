@@ -127,18 +127,15 @@ function showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType) {
 }
 
 function showSelectTypeInProgramming($selectInputTypeDiv, type) {
-	let inputType, childType;
+	let inputType = type.thisType, childType;
+	showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType);
+
 	if (type.childType) {
 		childType = type.childType;
-		inputType = type.thisType;
-		$selectInputTypeDiv.find(".arrayChildType").css("display", "block");
+		$selectInputTypeDiv.find(".arrayChildType").css("display", "inline-block");
 		
 		showBasicSelectTypeInProgramming($selectInputTypeDiv.find(".arrayChildType"), childType);
 	}
-	else {
-		inputType = type;
-	}
-	showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType);
 }
 
 function showProgrammingObjContent(objContent, $section) {
@@ -151,15 +148,21 @@ function showProgrammingObjContent(objContent, $section) {
 		for(let i=0, len=objContent.type.length; i<len; i++) {
 			let div = document.createElement("div");
 			div.className = "selectInputType";
-			selectInputTypeCount += 2;
 			div.innerHTML = selectInputType(selectInputTypeCount);
 			$section.find(".addInputType").before(div);
 			showSelectTypeInProgramming($(div), objContent.type[i]);
+			selectInputTypeCount += 2;
 		}
 	}
 	else {
 		showSelectTypeInProgramming(inputTypeDiv.find(".selectInputType"), objContent.type[0]);
+		inputTypeDiv.find(".removeSelectType").css("display", "none");
 	}
+
+	$section.find(".removeSelectType").click(function(e) {
+		let selectInputType = $(getTarget(e)).parent();
+		selectInputType.remove();
+	});
 }
 
 /** 显示所有编程题内容
@@ -208,6 +211,11 @@ function showAllProgrammingContent(praticeIdArr) {
 			}
 		});
 	}
+}
+
+function selectInputType(count) {
+	return basicInputType(count) + `<input type="radio" id="Array` + count + `" name="selectInputType` + count + `" value="Array"><label for="Array` + count + `">Array</label>`
+		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count+1, "array-", true) + `】</div><input type="button" value="X" class="removeSelectType">`;
 }
 
 /** 获取所要添加的选择题内容
@@ -315,12 +323,12 @@ function getProgrammingContent($content) {
 		allContent.push({
 			topic: topic,
 			// programmingTypeMode: mode,
-			answer: {
+			answer: [{
 				input: inputObj,
 				output: outputObj,
 				content: answer,
 				programmingTypeMode: mode
-			}
+			}]
 		});
 
 		if ($content[i].id) {
@@ -437,7 +445,7 @@ savePraticesInData = function(contentObj, totalCount) {
 		let praticeArr = contentObj[k];
 		for(let i=0, len=praticeArr.length; i<len; i++) {
 			let praticeContent = praticeArr[i];
-			console.log(praticeContent);
+			console.log(praticeContent.answer);
 			if (praticeContent.id) {
 				callDataProcessingFn({
 					data: {
@@ -450,10 +458,12 @@ savePraticesInData = function(contentObj, totalCount) {
 						update: {
 							topic: praticeContent.topic,
 							choices: praticeContent.choices,
-							answer: [praticeContent.answer]
+							answer: praticeContent.answer
 						}
 					},
-					success: function() {}
+					success: function(result) {
+						console.log(result);
+					}
 				});
 			}
 			else {

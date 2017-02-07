@@ -34,6 +34,7 @@ module.exports = function(model) {
 		 * @param callback Function 回调函数
 		*/
 		save: function(data, callback) {
+			// console.log(data["answer"]);
 			if (data && data["password"]) {
 				data["password"] = md(data["password"]);
 			}

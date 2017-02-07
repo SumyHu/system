@@ -224,7 +224,7 @@ function addProgramming() {
 					<div class="output">
 						<div class="description">输出描述：<input class="textInput"></div>
 						<div class="example">输出样例：<input class="textInput"></div>
-						<div class="inputType">输出类型：<div class="selectInputType">` + selectInputType(0) + `</div></div>
+						<div class="inputType">输出类型：<div class="selectInputType">` + selectInputType(selectInputTypeCount) + `</div></div>
 					</div>
 					<div class="answer">
 						<div class="programmingType">
@@ -242,6 +242,7 @@ function addProgramming() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addProgramming").append(section);
+	selectInputTypeCount += 2;
 
 	let editor = editorStyle("programming" + addProgrammingCount, "text/plain");
 	programingEditorArray.push({
@@ -262,9 +263,9 @@ function addProgramming() {
 	$(section).find(".addInputType").click(function(e) {
 		let div = document.createElement("div");
 		div.className = "selectInputType";
-		selectInputTypeCount += 2;
 		div.innerHTML = selectInputType(selectInputTypeCount);
 		$(getTarget(e)).before(div);
+		selectInputTypeCount += 2;
 	});
 
 	// 下拉框可选择代码类型，动态改变编辑器代码类型
@@ -452,7 +453,7 @@ function getProgrammingObj($objTarget) {
 					}
 				}
 				else {
-					selectInputTypeArray.push(allRadio[j].value);
+					selectInputTypeArray.push({thisType: allRadio[j].value});
 				}
 				break;
 			}
@@ -475,8 +476,6 @@ function getProgrammingContent($content) {
 
 		let inputObj = getProgrammingObj($($content[i]).find(".input")), outputObj = getProgrammingObj($($content[i]).find(".output"));
 
-		console.log(inputObj, outputObj);
-
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];
 
@@ -485,12 +484,12 @@ function getProgrammingContent($content) {
 		allContent.push({
 			topic: topic,
 			// programmingTypeMode: mode,
-			answer: {
+			answer: [{
 				input: inputObj,
 				output: outputObj,
 				content: answer,
 				programmingTypeMode: mode
-			}
+			}]
 		});
 	}
 
@@ -502,6 +501,7 @@ function getProgrammingContent($content) {
  * @param callback Function 回调函数
 */
 function addPratice(contentObj, callback) {
+	console.log(contentObj);
 	callDataProcessingFn({
 		data: {
 			data: "pratices",

@@ -168,7 +168,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 		let showIndex = index+1;
 
 		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
-						 <div class="answer">`;
+						<div class="answer">`;
 
 		if (addPraticeType === "FillInTheBlank") {
 			for(let i=1, len=result.answer.length; i<=len; i++) {
@@ -199,7 +199,30 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			$(".flip").before(section);
 		}
 		else {
+			let inputContent = result.answer[0].input, outputContent = result.answer[0].output;
+			let inputType = [], outputType = "";
+			for(let i=0, len=inputContent.type.length; i<len; i++) {
+				inputType.push(inputContent.type[i].thisType);
+				if (inputContent.type[i].childType) {
+					inputType[inputType.length-1] += "(" + inputContent.type[i].childType + ")";
+				}
+			}
+			outputType = outputContent.type[0].thisType;
+			if (outputContent.type[0].childType) {
+				outputType += "(" + outputContent.type[0].childType + ")";
+			}
+
 			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
+							<div class="inputBlock">
+								<div class="description">输入要求：` + inputContent.description + `</div>
+								<div class="example">输入样例：` + inputContent.example + `</div>
+								<div class="inputType">输入类型（按照输入顺序）：` + inputType.join("、") + `</div>
+							</div>
+							<div class="outputBlock">
+								<div class="description">输出要求：` + outputContent.description + `</div>
+								<div class="example">输出样例：` + outputContent.example + `</div>
+								<div class="inputType">输出类型：` + outputType + `</div>
+							</div>
 						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
 
 			if (addPraticeType === "Programming") {
