@@ -188,10 +188,7 @@ function addShortAnswer() {
 
 function basicInputType(count, Prefix, firstInputChecked) {
 	let prefix = Prefix ? Prefix : "";
-	let checked = false;
-	if (firstInputChecked) {
-		checked = true;
-	}
+
 	return `<input type="radio" id="` + prefix + `Number` + count + `" name="selectInputType` + count + (firstInputChecked ? '" checked' : '"') + ` value="Number"><label for="` + prefix + `Number` + count + `">Number</label><input type="radio" id="` + prefix + `int` + count + `" name="selectInputType` + count + `" value="int"><label for="` + prefix + `int` + count + `">int</label><input type="radio" id="` + prefix + `float` + count + `" name="selectInputType` + count + `" value="float"><label for="` + prefix + `float` + count + `">float</label>
 	<input type="radio" id="` + prefix + `double` + count + `" name="selectInputType` + count + `" value="double"><label for="` + prefix + `double` + count + `">double</label>
 	<input type="radio" id="` + prefix + `String` + count + `" name="selectInputType` + count + `" value="String"><label for="` + prefix + `String` + count + `">String</label>
@@ -201,7 +198,7 @@ function basicInputType(count, Prefix, firstInputChecked) {
 
 function selectInputType(count) {
 	return basicInputType(count) + `<input type="radio" id="Array` + count + `" name="selectInputType` + count + `" value="Array"><label for="Array` + count + `">Array</label>`
-		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count+1, "array-", true) + `】</div>`;
+		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count+1, "array-", true) + `】</div><input type="button" value="X" class="removeSelectType">`;
 }
 
 function addProgramming() {
@@ -243,6 +240,8 @@ function addProgramming() {
 	section.innerHTML = content;
 	$(".addProgramming").append(section);
 	selectInputTypeCount += 2;
+
+	$(section).find(".inputType").find(".removeSelectType").css("display", "none");
 
 	let editor = editorStyle("programming" + addProgrammingCount, "text/plain");
 	programingEditorArray.push({
@@ -436,10 +435,11 @@ function getProgrammingObj($objTarget) {
 
 	let selectInputType = $objTarget.find(".inputType > .selectInputType"), selectInputTypeArray = [];
 	for(let i=0, len=selectInputType.length; i<len; i++) {
-		let allRadio = $(selectInputType[i]).find("input[type=radio]");
+		let allRadio = $(selectInputType[i]).find("> input[type=radio]");
 		for(let j=0, len1=allRadio.length; j<len1; j++) {
 			if (allRadio[j].checked) {
 				let value = allRadio[j].value;
+				console.log(allRadio[j]);
 				if (value === "Array") {
 					let childInputType = $(selectInputType[i]).find(".arrayChildType > input[type=radio]");
 					for(let t=0, len2=childInputType.length; t<len2; t++) {
@@ -731,6 +731,8 @@ function checkAllTextInputHasVal() {
 
 	for(let i=0, len=allTextInput.length; i<len; i++) {
 		if (!allTextInput[i].value) {
+			let parentClassName = $(allTextInput[i]).parent()[0].className;
+			if (parentClassName === "description" || parentClassName === "example") continue;
 			return false;
 		}
 	}
@@ -771,6 +773,32 @@ function checkMultipleChoicesAnswerExit() {
 	return false;
 }
 
+/** 将运行按钮的状态改为不可点击状态
+ * @param $runningBtn jQuery Object 运行按钮
+*/
+function changeRunningBtnToDisableStatus($runningBtn, milltime) {
+	$runningBtn.addClass("disable");
+	let runningBtnInitValue = $runningBtn.val();
+	let time = milltime/1000;
+	$runningBtn.val(runningBtnInitValue + "(" + time + ")");
+
+	let interval = setInterval(function() {
+		time -= 1;
+
+		if (time === 0) {
+			clearInterval(interval);
+			$runningBtn.removeClass("disable");
+			$runningBtn.val(runningBtnInitValue);
+		}
+		else {
+			$runningBtn.val(runningBtnInitValue + "(" + time + ")");
+		}
+	}, 1000);
+}
+
+/** 进行代码运行
+ * @param $programmingContent jQuery Object 该编程题目块
+*/
 function runningProgramming($programmingContent) {
 	let textareaId = $programmingContent.find(".answer textarea")[0].id, editor;
 	for(let i=0, len=programingEditorArray.length; i<len; i++) {
@@ -781,22 +809,13 @@ function runningProgramming($programmingContent) {
 	}
 	let editorContent = editor.getValue();
 
-	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
-	switch(programmingLanguage) {
-		case "java":
-			let result = javaRunning(editorContent);
-			if (result.error) {
-				result = result.error;
-			}
-			else {
-				result = result.success;
-			}
-			$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = result;
-			break;
-		case "javascript":
-			break;
+	let inputObj = getProgrammingObj($programmingContent.find(".input")), 
+		outputObj = getProgrammingObj($programmingContent.find(".output"));
 
-	}
+	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
+
+	let result = runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type);
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
 }
 
 function init() {
@@ -888,7 +907,11 @@ function bindEvent() {
 				removePratice($(getTarget(e)).parent());
 				break;
 			case "runningBtn":
-				runningProgramming($(getTarget(e)).parent());
+				let $target = $(getTarget(e));
+				if (!$target.hasClass("disable")) {
+					changeRunningBtnToDisableStatus($target, 15000);
+					runningProgramming($(getTarget(e)).parent());
+				}
 				break;
 		}
 	});

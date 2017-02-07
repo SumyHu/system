@@ -222,43 +222,46 @@ module.exports = function(app) {
 		    	// console.log(77777,u2);
 		    	console.log(1, stderr);
 
-		        res.send({error: stderr});
+		        res.send(stderr);
 		    } else {	
 			    let e = exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
-			    	console.log("in", stdout);
 		        	if (err) {
 		        		console.log(2, stderr);
-		        		res.send({error: stderr});
+		        		res.send("选择的参数类型与实际不符！");
 		        	} else {
-		        		console.log("test");
 		        		console.log(stdout);
-		        		res.send({success: stdout});
+		        		res.send("编译通过，能正常运行！");
 		        	} 
 	        	});
 
-        		// let inputTypeArray = req.body.inputType;
-	        	// for(let i=0; i<100; i++) {
-	        	// 	setTimeout(function() {
-	        	// 		for(let i= 0, len=inputTypeArray.length; i<len; i++) {
-	        	// 			if (inputTypeArray[i] === "int" || inputTypeArray[i] === "float" || inputTypeArray[i] === "double") {
-		        // 				let random = Math.random()*200;
-	        	// 			}
-	        	// 			setTimeout(function() {}, 300*i);
-			       //  	}
-	        	// 	}, (inputTypeArray.length-1)*300+10);
-	        	// }
+	        	e.stdout.pipe(process.stdout); 
+        		let inputValueArray = req.body.inputValue;
+	        	if (inputValueArray) {
+	        		for(let i=0; i<inputValueArray.length; i++) {
+		        		setTimeout(function() {
+		        			console.log(inputValueArray[i]);
+		        			e.stdin.write(inputValueArray[i] + "\n");
+		        		}, 500*i);
+		        	}
+		        	setTimeout(function() {
+		        		e.stdin.end();
+		        	}, 500*inputValueArray.length);
+	        	}
+	        	else {
+	        		e.stdin.end();
+	        	}
+	        	
 
-	        	// e.stdout.pipe(process.stdout); 
-	        	e.stdin.write("12\n");
-	        	setTimeout(function() {
-		        	e.stdin.write("5\n");
-	        	}, 300);
-	        	setTimeout(function() {
-		        	e.stdin.write("100\n");
-	        	}, 600);
-	        	setTimeout(function() {
-		        	e.stdin.write("1000\n");
-	        	}, 900);
+	        	// e.stdin.write("12\n");
+	        	// setTimeout(function() {
+		        // 	e.stdin.write("5\n");
+	        	// }, 300);
+	        	// setTimeout(function() {
+		        // 	e.stdin.write("100\n");
+	        	// }, 600);
+	        	// setTimeout(function() {
+		        // 	e.stdin.write("1000\n");
+	        	// }, 900);
 		    }
 		});
 		// e.stderr.setEncoding('utf8');

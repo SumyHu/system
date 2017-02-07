@@ -36,6 +36,11 @@ input[type=button], input[type=submit] {
 	transition: 0.3s all linear;
 }
 
+.disable {
+	background-color: #dbd0d0 !important;
+	color: #000 !important;
+}
+
 .textInput {
 	display: inline-block;
 	width: 250px;

@@ -60,6 +60,7 @@ function getRandomArray(arrayChildType) {
 }
 
 function javaRunning(code, inputValue) {
+	console.log(code);
 	let result;
 	$.ajax({
 		url: "../javaRunning",
@@ -110,20 +111,20 @@ function getRandomValue(type, childType) {
 	}
 }
 
-function runningCode(mode, code, inputTypeArray) {
+function runningCode(mode, code, inputTypeArray, outputArray) {
 	let inputValue = [];
 	for(let i=0, len=inputTypeArray.length; i<len; i++) {
 		if (inputTypeArray[i].childType) {
 			inputValue.push(getRandomValue(inputTypeArray[i].thisType, inputTypeArray[i].childType));
 		}
 		else {
-			inputValue.push(getRandomValue(inputTypeArray[i]));
+			inputValue.push(getRandomValue(inputTypeArray[i].thisType));
 		}
 	}
 
 	switch(mode) {
 		case "java":
-			javaRunning(code, inputValue);
+			return javaRunning(code, inputValue);
 			break;
 		case "javascript":
 			javascriptRunning(code, inputValue);

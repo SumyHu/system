@@ -157,11 +157,6 @@
 	background: rgba(67, 135, 253, 0.3);
 }
 
-.disable {
-	background: #dbd0d0 !important;
-	color: #000 !important;
-}
-
 .chapterContent {
 	/*display: none;*/
 }

@@ -13,12 +13,16 @@
 	background: rgba(34, 34, 34, 0.6);
 }
 
-.inputBlock, .outputBlock {
+.inputBlock, .outputBlock, .programmingTypeMode {
 	margin: 20px 0;
 	padding: 0 20px;
 	border: 1px dashed #000;
 	background: rgba(34, 34, 34, 0.6);
 	font-size: 18px;
+}
+
+.programmingTypeMode {
+	padding: 15px 20px;
 }
 
 .inputBlock > div, .outputBlock > div {
@@ -152,11 +156,6 @@
 
 .showPraticeIndex > div:hover, .showPraticeBlockIndex > div:hover {
 	background: rgba(249, 90, 78, 0.8) !important;
-}
-
-.disable {
-	background-color: #dbd0d0 !important;
-	color: #000 !important;
 }
 
 .answerBlock, .choiceAnswerBlock {

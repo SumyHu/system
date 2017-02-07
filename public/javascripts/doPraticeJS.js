@@ -1,5 +1,15 @@
 let praticeTypeArr = ["SingleChoice", "MultipleChoices", "TrueOrFalse", "FillInTheBlank", "ShortAnswer", "Programming"];
 
+let programmingTypeMode = {
+	text: "text/plain",
+	ecmascript: "application/ecmascript",
+	javascript: "application/javascript",
+	json: "application/json",
+	typescript: "application/typescript",
+	c: "text/x-c",
+	java: "text/x-java"
+}
+
 let subjectName, praticeType, selectIndex, type, allPraticeContent;
 
 let currentIndexArray = {};   // 存储当前所有类型的题目下标
@@ -201,28 +211,41 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 		else {
 			let inputContent = result.answer[0].input, outputContent = result.answer[0].output;
 			let inputType = [], outputType = "";
-			for(let i=0, len=inputContent.type.length; i<len; i++) {
-				inputType.push(inputContent.type[i].thisType);
-				if (inputContent.type[i].childType) {
-					inputType[inputType.length-1] += "(" + inputContent.type[i].childType + ")";
+			if (inputContent.type) {
+				for(let i=0, len=inputContent.type.length; i<len; i++) {
+					inputType.push(inputContent.type[i].thisType);
+					if (inputContent.type[i].childType) {
+						inputType[inputType.length-1] += "(" + inputContent.type[i].childType + ")";
+					}
 				}
 			}
-			outputType = outputContent.type[0].thisType;
-			if (outputContent.type[0].childType) {
-				outputType += "(" + outputContent.type[0].childType + ")";
+		
+			if (outputContent.type) {
+				outputType = outputContent.type[0].thisType;
+				if (outputContent.type[0].childType) {
+					outputType += "(" + outputContent.type[0].childType + ")";
+				}
+			}
+
+			let modeChiness = result.answer[0].programmingTypeMode, showMode;
+			for(var k in programmingTypeMode) {
+				if (programmingTypeMode[k] === modeChiness) {
+					showMode = k;
+				}
 			}
 
 			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							<div class="inputBlock">
 								<div class="description">输入要求：` + inputContent.description + `</div>
 								<div class="example">输入样例：` + inputContent.example + `</div>
-								<div class="inputType">输入类型（按照输入顺序）：` + inputType.join("、") + `</div>
+								<div class="inputType">输入类型（按照输入顺序）：<span class="inputTypeContent">` + inputType.join("、") + `</span></div>
 							</div>
 							<div class="outputBlock">
 								<div class="description">输出要求：` + outputContent.description + `</div>
 								<div class="example">输出样例：` + outputContent.example + `</div>
-								<div class="inputType">输出类型：` + outputType + `</div>
+								<div class="inputType">输出类型：<span class="inputTypeContent">` + outputType + `</span></div>
 							</div>
+							<div class="programmingTypeMode">编程语言：<span class="mode">` + showMode + `</span></div>
 						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
 
 			if (addPraticeType === "Programming") {
@@ -234,10 +257,12 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			}
 
 			if (praticeType !== "examination") {
-				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
+				if (addPraticeType === "Programming") {
+					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
 											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent">` + result.answer[0] + `</div>
+											<div class="answerContent"><pre>` + result.answer[0].content + `</pre></div>
 										</div>`;
+				}
 			}
 			else {
 				examinationCorrectAnswer[addPraticeType].push(result.answer);
@@ -254,7 +279,10 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			}
 
 			let editor = editorStyle(addPraticeType + 'Editor' + index, mode);
-			programingEditorArray.push(editor);
+			programingEditorArray.push({
+				textareaId: addPraticeType + "Editor" + index,
+				editor:editor
+			});
 
 		}
 		$(sec).css("display", "none");
@@ -396,7 +424,7 @@ function getNotChoiceAnswer(getType) {
 	}
 	else if (getType === "Programming") {
 		for(let i=0, len=programingEditorArray.length; i<len; i++) {
-			examinationStudentAnswer[getType].push([programingEditorArray[i].getValue()]);
+			examinationStudentAnswer[getType].push([programingEditorArray[i].editor.getValue()]);
 		}
 	}
 }
@@ -466,6 +494,52 @@ function checkAnswer() {
 	checkChoiceAnswer(MultipleChoicesCorrectAnswer, MultipleChoicesStudentAnswer, 2);
 	checkChoiceAnswer(TrueOrFalseCorrectAnswer, TrueOrFalseStudentAnswer, 3);
 	checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, 2);
+}
+
+/** 将运行按钮的状态改为不可点击状态
+ * @param $runningBtn jQuery Object 运行按钮
+*/
+function changeRunningBtnToDisableStatus($runningBtn, milltime) {
+	$runningBtn.addClass("disable");
+	let runningBtnInitValue = $runningBtn.val();
+	let time = milltime/1000;
+	$runningBtn.val(runningBtnInitValue + "(" + time + ")");
+
+	let interval = setInterval(function() {
+		time -= 1;
+
+		if (time === 0) {
+			clearInterval(interval);
+			$runningBtn.removeClass("disable");
+			$runningBtn.val(runningBtnInitValue);
+		}
+		else {
+			$runningBtn.val(runningBtnInitValue + "(" + time + ")");
+		}
+	}, 1000);
+}
+
+/** 进行代码运行
+ * @param $programmingContent jQuery Object 该编程题目块
+*/
+function runningProgramming($programmingContent) {
+	console.log($programmingContent[0]);
+	let textareaId = $programmingContent.find(".longAnswer textarea")[0].id, editor;
+	for(let i=0, len=programingEditorArray.length; i<len; i++) {
+		if (programingEditorArray[i].textareaId === textareaId) {
+			editor = programingEditorArray[i].editor;
+			break;
+		}
+	}
+	let editorContent = editor.getValue();
+
+	let inputType = $programmingContent.find(".inputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、"), 
+		outputType = $programmingContent.find(".outputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、");
+
+	let programmingLanguage = $(".programmingTypeMode > .mode")[0].innerHTML;
+
+	let result = runningCode(programmingLanguage, editorContent, inputType, outputType);
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
 }
 
 function init() {
@@ -676,5 +750,13 @@ function bindEvent() {
 		}
 
 		changePraticeContent(++currentIndexArray[type].index);
+	});
+
+	$(".runningBtn").click(function(e) {
+		let $target = $(getTarget(e));
+		if (!$target.hasClass("disable")) {
+			changeRunningBtnToDisableStatus($target, 15000);
+			runningProgramming($(getTarget(e)).parent());
+		}
 	});
 }
