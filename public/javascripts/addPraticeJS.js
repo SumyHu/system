@@ -221,7 +221,7 @@ function addProgramming() {
 					<div class="output">
 						<div class="description">输出描述：<input class="textInput"></div>
 						<div class="example">输出样例：<input class="textInput"></div>
-						<div class="inputType">输出类型：<div class="selectInputType">` + selectInputType(selectInputTypeCount) + `</div></div>
+						<div class="inputType">输出类型（按照输出顺序选择）：<input type="button" value="+" class="addInputType"></div>
 					</div>
 					<div class="answer">
 						<div class="programmingType">
@@ -239,9 +239,6 @@ function addProgramming() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addProgramming").append(section);
-	selectInputTypeCount += 2;
-
-	$(section).find(".inputType").find(".removeSelectType").css("display", "none");
 
 	let editor = editorStyle("programming" + addProgrammingCount, "text/plain");
 	programingEditorArray.push({
@@ -265,6 +262,11 @@ function addProgramming() {
 		div.innerHTML = selectInputType(selectInputTypeCount);
 		$(getTarget(e)).before(div);
 		selectInputTypeCount += 2;
+
+		$(section).find(".removeSelectType").click(function(e) {
+			let selectInputType = $(getTarget(e)).parent();
+			selectInputType.remove();
+		});
 	});
 
 	// 下拉框可选择代码类型，动态改变编辑器代码类型
@@ -475,6 +477,7 @@ function getProgrammingContent($content) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
 
 		let inputObj = getProgrammingObj($($content[i]).find(".input")), outputObj = getProgrammingObj($($content[i]).find(".output"));
+		console.log(inputObj, outputObj);
 
 		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
 		let mode = programmingTypeMode[programmingType];
@@ -796,6 +799,18 @@ function changeRunningBtnToDisableStatus($runningBtn, milltime) {
 	}, 1000);
 }
 
+/** 检测是否所有代码都能成功运行
+*/
+function checkAllProgrammingRunningSuccess() {
+	let allProgrammingContent = $(".addProgramming > .content");
+	for(let i=0, len=allProgrammingContent.length; i<len; i++) {
+		let runningContent = $(allProgrammingContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
+		if (runningContent !== "编译通过，能正常运行！") {
+			return false;
+		}
+	}
+}
+
 /** 进行代码运行
  * @param $programmingContent jQuery Object 该编程题目块
 */
@@ -815,6 +830,12 @@ function runningProgramming($programmingContent) {
 	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
 
 	let result = runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type);
+	if (result.success) {
+		result = result.success;
+	}
+	else {
+		result = result.error;
+	}
 	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
 }
 
@@ -954,6 +975,10 @@ function bindEvent() {
 			showTips("存在没有填写的空格！", 1000);
 			return;
 		}
+		// if (!checkAllProgrammingRunningSuccess()) {
+		// 	showTips("请确保所有编译都能成功运行！", 1000);
+		// 	return;
+		// }
 		if (this.value === "提交") {
 			showWin("确定提交所添加的所有习题？", function() {
 				savePratices();

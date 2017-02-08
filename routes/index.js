@@ -222,25 +222,29 @@ module.exports = function(app) {
 		    	// console.log(77777,u2);
 		    	console.log(1, stderr);
 
-		        res.send(stderr);
+		        res.send({error: stderr});
 		    } else {	
+        		let inputValueArray = req.body.inputValue, endStatus = false, error, inputCount = 0;
+
 			    let e = exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
 		        	if (err) {
 		        		console.log(2, stderr);
-		        		res.send("选择的参数类型与实际不符！");
+		        		res.send({error: "选择的参数类型与实际不符！"});
 		        	} else {
 		        		console.log(stdout);
-		        		res.send("编译通过，能正常运行！");
+		        		res.send({success: "编译通过，能正常运行！", inputCount: inputCount});
 		        	} 
 	        	});
 
-	        	e.stdout.pipe(process.stdout); 
-        		let inputValueArray = req.body.inputValue;
+	        	e.stdout.pipe(process.stdout);
 	        	if (inputValueArray) {
 	        		for(let i=0; i<inputValueArray.length; i++) {
 		        		setTimeout(function() {
 		        			console.log(inputValueArray[i]);
-		        			e.stdin.write(inputValueArray[i] + "\n");
+		        			if (!endStatus) {
+			        			e.stdin.write(inputValueArray[i] + "\n");
+			        			inputCount++;
+		        			}
 		        		}, 500*i);
 		        	}
 		        	setTimeout(function() {
@@ -250,6 +254,10 @@ module.exports = function(app) {
 	        	else {
 	        		e.stdin.end();
 	        	}
+
+	        	e.stdin.on('end', function() {
+				    endStatus = true;
+				});
 	        	
 
 	        	// e.stdin.write("12\n");

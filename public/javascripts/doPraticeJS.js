@@ -210,7 +210,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 		}
 		else {
 			let inputContent = result.answer[0].input, outputContent = result.answer[0].output;
-			let inputType = [], outputType = "";
+			let inputType = [], outputType = [];
 			if (inputContent.type) {
 				for(let i=0, len=inputContent.type.length; i<len; i++) {
 					inputType.push(inputContent.type[i].thisType);
@@ -221,9 +221,11 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			}
 		
 			if (outputContent.type) {
-				outputType = outputContent.type[0].thisType;
-				if (outputContent.type[0].childType) {
-					outputType += "(" + outputContent.type[0].childType + ")";
+				for(let i=0, len=outputContent.type.length; i<len; i++) {
+					outputType.push(outputContent.type[i].thisType);
+					if (outputContent.type[i].childType) {
+						outputType[outputType.length-1] += "(" + outputContent.type[i].childType + ")";
+					}
 				}
 			}
 
@@ -236,14 +238,14 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 
 			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							<div class="inputBlock">
-								<div class="description">输入要求：` + inputContent.description + `</div>
-								<div class="example">输入样例：` + inputContent.example + `</div>
-								<div class="inputType">输入类型（按照输入顺序）：<span class="inputTypeContent">` + inputType.join("、") + `</span></div>
+								<div class="description">输入要求：` + (inputContent.description ? inputContent.description : "无") + `</div>
+								<div class="example">输入样例：` + (inputContent.example ? inputContent.example : "无") + `</div>
+								<div class="inputType">输入类型（按照输入顺序）：` + (inputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + inputType.join("、") + `</span></div>
 							</div>
 							<div class="outputBlock">
-								<div class="description">输出要求：` + outputContent.description + `</div>
-								<div class="example">输出样例：` + outputContent.example + `</div>
-								<div class="inputType">输出类型：<span class="inputTypeContent">` + outputType + `</span></div>
+								<div class="description">输出要求：` + (inputContent.description ? inputContent.description : "无") + `</div>
+								<div class="example">输出样例：` + (inputContent.example ? inputContent.example : "无") + `</div>
+								<div class="inputType">输出类型（按照输出顺序）：` + (outputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + outputType.join("、") + `</span></div>
 							</div>
 							<div class="programmingTypeMode">编程语言：<span class="mode">` + showMode + `</span></div>
 						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
@@ -536,10 +538,75 @@ function runningProgramming($programmingContent) {
 	let inputType = $programmingContent.find(".inputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、"), 
 		outputType = $programmingContent.find(".outputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、");
 
+	let inputTypeArray = [], outputTypeArray = [];
+	for(let i=0, len=inputType.length; i<len; i++) {
+		if (inputType[i].indexOf("(") > -1) {
+			let temp = inputType[i].split("(");
+			inputTypeArray.push({
+				thisType: temp[0],
+				childType: temp[1].substr(0, temp[1].length-1)
+			});
+		}
+		else {
+			inputTypeArray.push({
+				thisType: inputType[i]
+			});
+		}
+	}
+
+	for(let i=0, len=outputType.length; i<len; i++) {
+		if (outputType[i].indexOf("(") > -1) {
+			let temp = outputType[i].split("(");
+			outputTypeArray.push({
+				thisType: temp[0],
+				childType: temp[1].substr(0, temp[1].length-1)
+			});
+		}
+		else {
+			outputTypeArray.push({
+				thisType: inputType[i]
+			});
+		}
+	}
+
 	let programmingLanguage = $(".programmingTypeMode > .mode")[0].innerHTML;
 
-	let result = runningCode(programmingLanguage, editorContent, inputType, outputType);
-	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
+	let answerCode;
+	if ($programmingContent.find(".answerBlock").length > 0) {
+		answerCode = $programmingContent.find(".answerBlock > .answerContent > pre")[0].innerHTML;
+	}
+	else {
+		let titleNum = $programmingContent.find(".title > .titleNum")[0].innerHTML;
+		findSubjectByName(subjectName, function(allUnits) {
+			let unitId = allUnits[praticeType + "Pratices"][selectIndex];
+			findUnitById(unitId, function(allTypePratices) {
+				let praticeId = allTypePratices[type][titleNum-1];
+				findPraticesById(praticeId, function(result) {
+					answerCode = result.answer[0].content;
+				});
+			});
+		});
+	}
+
+	let result = runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray), showResult;
+	console.log(result);
+	if (result.success) {
+		if (result.inputCount === inputTypeArray.length) {
+			let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray);
+			showResult = "编译通过率：" + rightCount + "%";
+		}
+		else {
+			showResult = "编译不通过！";
+		}
+	}
+	else {
+		showResult = result.error;
+		if (showResult === "选择的参数类型与实际不符！") {
+			showResult = "编译不通过！";
+		}
+	}
+
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
 }
 
 function init() {

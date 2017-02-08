@@ -146,19 +146,13 @@ function showProgrammingObjContent(objContent, $section) {
 	let inputTypeDiv = $section.find(".inputType");
 
 	if (objContent.type) {
-		if (className === "input") {
-			for(let i=0, len=objContent.type.length; i<len; i++) {
-				let div = document.createElement("div");
-				div.className = "selectInputType";
-				div.innerHTML = selectInputType(selectInputTypeCount);
-				$section.find(".addInputType").before(div);
-				showSelectTypeInProgramming($(div), objContent.type[i]);
-				selectInputTypeCount += 2;
-			}
-		}
-		else {
-			showSelectTypeInProgramming(inputTypeDiv.find(".selectInputType"), objContent.type[0]);
-			inputTypeDiv.find(".removeSelectType").css("display", "none");
+		for(let i=0, len=objContent.type.length; i<len; i++) {
+			let div = document.createElement("div");
+			div.className = "selectInputType";
+			div.innerHTML = selectInputType(selectInputTypeCount);
+			$section.find(".addInputType").before(div);
+			showSelectTypeInProgramming($(div), objContent.type[i]);
+			selectInputTypeCount += 2;
 		}
 	}
 
