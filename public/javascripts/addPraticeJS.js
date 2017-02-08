@@ -830,8 +830,14 @@ function runningProgramming($programmingContent) {
 	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
 
 	let result = runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type);
-	if (result.success) {
-		result = result.success;
+	console.log(result);
+	if (!result.error) {
+		if (result.inputCount === inputObj.type.length) {
+			result = "编译通过，能正常运行！";
+		}
+		else {
+			result = "选择的参数类型与实际不符！";
+		}
 	}
 	else {
 		result = result.error;

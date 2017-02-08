@@ -70,7 +70,6 @@ function javaRunning(code, inputValue) {
 			inputValue: inputValue
 		},
 		success: function(res) {
-			console.log(res);
 			result = res;
 		}
 	});
@@ -132,16 +131,6 @@ function runningCode(mode, code, inputTypeArray, outputArray) {
 }
 
 function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeArray, outputArray) {
-	let inputValue = [];
-	for(let i=0, len=inputTypeArray.length; i<len; i++) {
-		if (inputTypeArray[i].childType) {
-			inputValue.push(getRandomValue(inputTypeArray[i].thisType, inputTypeArray[i].childType));
-		}
-		else {
-			inputValue.push(getRandomValue(inputTypeArray[i].thisType));
-		}
-	}
-
 	let runningFn;
 	switch(mode) {
 		case "java":
@@ -153,10 +142,24 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 	}
 
 	let rightCount = 0;
-	for(let i=0; i<100; i++) {
+	for(let i=0; i<20; i++) {
+		let inputValue = [];
+		for(let i=0, len=inputTypeArray.length; i<len; i++) {
+			if (inputTypeArray[i].childType) {
+				inputValue.push(getRandomValue(inputTypeArray[i].thisType, inputTypeArray[i].childType));
+			}
+			else {
+				inputValue.push(getRandomValue(inputTypeArray[i].thisType));
+			}
+		}
+		
 		let result1 = runningFn(correctCode, inputValue);
 		let result2 = runningFn(studentCode, inputValue);
-		if (result1 == result2) rightCount++;
+		if (result1.success && result2.success) {
+			console.log(result1.success, result2.success);
+			if (result1.success == result2.success) rightCount++;
+		}
 	}
+	console.log(rightCount);
 	return rightCount;
 }

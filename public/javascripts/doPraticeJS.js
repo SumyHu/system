@@ -590,10 +590,10 @@ function runningProgramming($programmingContent) {
 
 	let result = runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray), showResult;
 	console.log(result);
-	if (result.success) {
+	if (!result.error) {
 		if (result.inputCount === inputTypeArray.length) {
 			let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray);
-			showResult = "编译通过率：" + rightCount + "%";
+			showResult = "编译通过率：" + rightCount/20*100 + "%";
 		}
 		else {
 			showResult = "编译不通过！";

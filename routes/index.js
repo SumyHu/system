@@ -232,7 +232,7 @@ module.exports = function(app) {
 		        		res.send({error: "选择的参数类型与实际不符！"});
 		        	} else {
 		        		console.log(stdout);
-		        		res.send({success: "编译通过，能正常运行！", inputCount: inputCount});
+		        		res.send({success: stdout, inputCount: inputCount});
 		        	} 
 	        	});
 
