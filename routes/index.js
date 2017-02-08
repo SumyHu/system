@@ -245,11 +245,11 @@ module.exports = function(app) {
 			        			e.stdin.write(inputValueArray[i] + "\n");
 			        			inputCount++;
 		        			}
-		        		}, 500*i);
+		        		}, 2200*i);
 		        	}
 		        	setTimeout(function() {
 		        		e.stdin.end();
-		        	}, 500*inputValueArray.length);
+		        	}, 2200*inputValueArray.length);
 	        	}
 	        	else {
 	        		e.stdin.end();

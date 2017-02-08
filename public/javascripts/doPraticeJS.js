@@ -588,25 +588,52 @@ function runningProgramming($programmingContent) {
 		});
 	}
 
-	let result = runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray), showResult;
-	console.log(result);
-	if (!result.error) {
-		if (result.inputCount === inputTypeArray.length) {
-			let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray);
-			showResult = "编译通过率：" + rightCount/20*100 + "%";
+	// let result = runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray), showResult;
+	// console.log(result);
+	// if (!result.error) {
+	// 	if (result.inputCount === inputTypeArray.length) {
+	// 		let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray);
+	// 		showResult = "编译通过率：" + rightCount/20*100 + "%";
+	// 	}
+	// 	else {
+	// 		showResult = "编译不通过！";
+	// 	}
+	// }
+	// else {
+	// 	showResult = result.error;
+	// 	if (showResult === "选择的参数类型与实际不符！") {
+	// 		showResult = "编译不通过！";
+	// 	}
+	// }
+
+	// $programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+
+	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function(result) {
+		let showResult = "正在运行中...";
+		if (!result.error) {
+			if (result.inputCount === inputTypeArray.length) {
+				let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray, function(rightCount) {
+					console.log(rightCount);
+					showResult = "编译通过率：" + rightCount/20*100 + "%";
+					$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+					$programmingContent.find(".runningBtn").removeClass("disable");
+				});
+			}
+			else {
+				showResult = "编译不通过！";
+				$programmingContent.find(".runningBtn").removeClass("disable");
+			}
 		}
 		else {
-			showResult = "编译不通过！";
+			showResult = result.error;
+			if (showResult === "选择的参数类型与实际不符！") {
+				showResult = "编译不通过！";
+			}
+			$programmingContent.find(".runningBtn").removeClass("disable");
 		}
-	}
-	else {
-		showResult = result.error;
-		if (showResult === "选择的参数类型与实际不符！") {
-			showResult = "编译不通过！";
-		}
-	}
 
-	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+		$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+	})
 }
 
 function init() {
@@ -822,7 +849,8 @@ function bindEvent() {
 	$(".runningBtn").click(function(e) {
 		let $target = $(getTarget(e));
 		if (!$target.hasClass("disable")) {
-			changeRunningBtnToDisableStatus($target, 15000);
+			// changeRunningBtnToDisableStatus($target, 15000);
+			$target.addClass("disable");
 			runningProgramming($(getTarget(e)).parent());
 		}
 	});

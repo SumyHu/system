@@ -801,15 +801,15 @@ function changeRunningBtnToDisableStatus($runningBtn, milltime) {
 
 /** 检测是否所有代码都能成功运行
 */
-function checkAllProgrammingRunningSuccess() {
-	let allProgrammingContent = $(".addProgramming > .content");
-	for(let i=0, len=allProgrammingContent.length; i<len; i++) {
-		let runningContent = $(allProgrammingContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
-		if (runningContent !== "编译通过，能正常运行！") {
-			return false;
-		}
-	}
-}
+// function checkAllProgrammingRunningSuccess() {
+// 	let allProgrammingContent = $(".addProgramming > .content");
+// 	for(let i=0, len=allProgrammingContent.length; i<len; i++) {
+// 		let runningContent = $(allProgrammingContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
+// 		if (runningContent !== "编译通过，能正常运行！") {
+// 			return false;
+// 		}
+// 	}
+// }
 
 /** 进行代码运行
  * @param $programmingContent jQuery Object 该编程题目块
@@ -829,20 +829,39 @@ function runningProgramming($programmingContent) {
 
 	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
 
-	let result = runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type);
-	console.log(result);
-	if (!result.error) {
-		if (result.inputCount === inputObj.type.length) {
-			result = "编译通过，能正常运行！";
+	// let result = runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type);
+	// console.log(result);
+	// if (!result.error) {
+	// 	if (result.inputCount === inputObj.type.length) {
+	// 		result = "编译通过，能正常运行！";
+	// 	}
+	// 	else {
+	// 		result = "选择的参数类型与实际不符！";
+	// 	}
+	// }
+	// else {
+	// 	result = result.error;
+	// }
+	// $programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
+
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "正在运行中...";
+
+	runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type, function(result) {
+		console.log(result);
+		if (!result.error) {
+			if (result.inputCount === inputObj.type.length) {
+				result = "编译通过，能正常运行！";
+			}
+			else {
+				result = "选择的参数类型与实际不符！";
+			}
 		}
 		else {
-			result = "选择的参数类型与实际不符！";
+			result = result.error;
 		}
-	}
-	else {
-		result = result.error;
-	}
-	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
+		$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
+		$programmingContent.find(".runningBtn").removeClass("disable");
+	});
 }
 
 function init() {
@@ -936,7 +955,8 @@ function bindEvent() {
 			case "runningBtn":
 				let $target = $(getTarget(e));
 				if (!$target.hasClass("disable")) {
-					changeRunningBtnToDisableStatus($target, 15000);
+					// changeRunningBtnToDisableStatus($target, 15000);
+					$target.addClass("disable");
 					runningProgramming($(getTarget(e)).parent());
 				}
 				break;

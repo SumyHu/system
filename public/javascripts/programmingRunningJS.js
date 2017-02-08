@@ -59,21 +59,22 @@ function getRandomArray(arrayChildType) {
 	}
 }
 
-function javaRunning(code, inputValue) {
-	let result;
+function javaRunning(code, inputValue, successCallback) {
+	// let result;
 	$.ajax({
 		url: "../javaRunning",
 		type: "POST",
-		async: false,
+		// async: false,
 		data: {
 			code: code,
 			inputValue: inputValue
 		},
 		success: function(res) {
-			result = res;
+			// result = res;
+			successCallback(res);
 		}
 	});
-	return result;
+	// return result;
 }
 
 function javascriptRunning(code) {
@@ -109,7 +110,7 @@ function getRandomValue(type, childType) {
 	}
 }
 
-function runningCode(mode, code, inputTypeArray, outputArray) {
+function runningCode(mode, code, inputTypeArray, outputArray, callback) {
 	let inputValue = [];
 	for(let i=0, len=inputTypeArray.length; i<len; i++) {
 		if (inputTypeArray[i].childType) {
@@ -122,15 +123,17 @@ function runningCode(mode, code, inputTypeArray, outputArray) {
 
 	switch(mode) {
 		case "java":
-			return javaRunning(code, inputValue);
+			// return javaRunning(code, inputValue)
+			javaRunning(code, inputValue, callback);
 			break;
 		case "javascript":
-			javascriptRunning(code, inputValue);
+			// javascriptRunning(code, inputValue);
+			javascriptRunning(code, inputValue, callback);
 			break;
 	}
 }
 
-function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeArray, outputArray) {
+function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeArray, outputArray, callback) {
 	let runningFn;
 	switch(mode) {
 		case "java":
@@ -141,7 +144,7 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 			break;
 	}
 
-	let rightCount = 0;
+	let rightCount = 0, runCount = 0;
 	for(let i=0; i<20; i++) {
 		let inputValue = [];
 		for(let i=0, len=inputTypeArray.length; i<len; i++) {
@@ -153,13 +156,29 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 			}
 		}
 		
-		let result1 = runningFn(correctCode, inputValue);
-		let result2 = runningFn(studentCode, inputValue);
-		if (result1.success && result2.success) {
-			console.log(result1.success, result2.success);
-			if (result1.success == result2.success) rightCount++;
-		}
+		// let result1 = runningFn(correctCode, inputValue);
+		// let result2 = runningFn(studentCode, inputValue);
+		// if (result1.success && result2.success) {
+		// 	console.log(result1.success, result2.success);
+		// 	if (result1.success == result2.success) rightCount++;
+		// }
+		runningFn(correctCode, inputValue, function(result1) {
+			console.log(inputValue);
+			runningFn(studentCode, inputValue, function(result2) {
+				runCount++;
+				console.log(inputValue);
+				console.log(result1, result2);
+				if (result1.success && result2.success) {
+					console.log(result1.success, result2.success);
+					if (result1.success === result2.success) rightCount++;
+				}
+
+				if (runCount === 20) {
+					callback(rightCount);
+				}
+			});
+		});
 	}
-	console.log(rightCount);
-	return rightCount;
+	// console.log(rightCount);
+	// return rightCount;
 }
