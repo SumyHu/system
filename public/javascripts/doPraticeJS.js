@@ -243,8 +243,8 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 								<div class="inputType">输入类型（按照输入顺序）：` + (inputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + inputType.join("、") + `</span></div>
 							</div>
 							<div class="outputBlock">
-								<div class="description">输出要求：` + (inputContent.description ? inputContent.description : "无") + `</div>
-								<div class="example">输出样例：` + (inputContent.example ? inputContent.example : "无") + `</div>
+								<div class="description">输出要求：` + (outputContent.description ? outputContent.description : "无") + `</div>
+								<div class="example">输出样例：` + (outputContent.example ? outputContent.example : "无") + `</div>
 								<div class="inputType">输出类型（按照输出顺序）：` + (outputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + outputType.join("、") + `</span></div>
 							</div>
 							<div class="programmingTypeMode">编程语言：<span class="mode">` + showMode + `</span></div>

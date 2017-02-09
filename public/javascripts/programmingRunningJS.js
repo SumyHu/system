@@ -1,3 +1,5 @@
+let commentJs;
+
 function getRandomNumber(numberType, numberLength) {
 	let random = Math.random()*numberLength;
 	switch(numberType) {
@@ -26,7 +28,7 @@ function getRandomString() {
 }
 
 function getRandomBoolean() {
-	let random = getRandomNumber("int", 1);
+	let random = getRandomNumber("int", 2);
 	if (random === 0) {
 		return true;
 	}
@@ -57,6 +59,25 @@ function getRandomArray(arrayChildType) {
 			array.push(getChildFn());
 		}
 	}
+	return array;
+}
+
+function getRandomValue(type, childType) {
+	switch(type) {
+		case "int":
+		case "float":
+		case "double":
+		case "Number":
+			return getRandomNumber(type, 1000);
+		case "char":
+			return getRandomChar();
+		case "String":
+			return getRandomString();
+		case "boolean":
+			return getRandomBoolean();
+		case "Array":
+			return getRandomArray(childType);
+	}
 }
 
 function javaRunning(code, inputValue, successCallback) {
@@ -78,35 +99,22 @@ function javaRunning(code, inputValue, successCallback) {
 }
 
 function javascriptRunning(code) {
-	// try {
-	// 	var n = eval("(" + textarea.val() + ")(2, 3)");
-	// 	if (n === 5) {
-	// 		runResult.innerHTML = "编译通过";
-	// 		return true;
-	// 	}
-	// 	else {
-	// 		runResult.innerHTML = "编译结果不正确";
-	// 	}
-	// } catch(e) {
-	// 	runResult.innerHTML = e;
-	// }
-}
+	if (!commentJs) {
+		$.ajax({
+			url: "../readCommentJS",
+			type: "POST",
+			async: false,
+			success: function(result) {
+				commentJs = result;
+			}
+		});
+	}
 
-function getRandomValue(type, childType) {
-	switch(type) {
-		case "int":
-		case "float":
-		case "double":
-		case "Number":
-			return getRandomNumber(type, 1000);
-		case "char":
-			return getRandomChar();
-		case "String":
-			return getRandomString();
-		case "boolean":
-			return getRandomBoolean();
-		case "Array":
-			return getRandomArray(childType);
+	try {
+		var res = eval(commentJs + "\n" + code);
+		return {success: res};
+	} catch(e) {
+		return {error: e};
 	}
 }
 
@@ -123,11 +131,9 @@ function runningCode(mode, code, inputTypeArray, outputArray, callback) {
 
 	switch(mode) {
 		case "java":
-			// return javaRunning(code, inputValue)
 			javaRunning(code, inputValue, callback);
 			break;
 		case "javascript":
-			// javascriptRunning(code, inputValue);
 			javascriptRunning(code, inputValue, callback);
 			break;
 	}

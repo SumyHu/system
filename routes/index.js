@@ -30,7 +30,10 @@ var participle = require("./participle");
 
 // var jieba = require("nodejieba");
 
-const javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java");
+const javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java"),
+	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
+
+let commentJs;
 
 function isLoginIn(req, res, exitCallback) {
 	if (req.session.userId) {
@@ -261,6 +264,10 @@ module.exports = function(app) {
 		    }
 		});
 		// e.stderr.setEncoding('utf8');
+	});
+
+	app.post("/readCommentJS", function(req, res) {
+		res.send(fs.readFileSync(commentJsPath, "utf8"));
 	});
 
 	app.get("/shortAnswerCheck", function(req, res) {
