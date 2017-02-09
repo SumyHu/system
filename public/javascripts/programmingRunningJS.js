@@ -133,52 +133,51 @@ function runningCode(mode, code, inputTypeArray, outputArray, callback) {
 	}
 }
 
+function runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback) {
+	javaRunning(correctCode, inputValue[runCount], function(result1) {
+		javaRunning(studentCode, inputValue[runCount], function(result2) {
+			runCount++;
+			console.log(runCount);
+			console.log(result1, result2);
+			if (result1.success && result2.success) {
+				console.log(result1.success, result2.success);
+				if (result1.success === result2.success) rightCount++;
+			}
+			else {
+				runCount--;   // 该次结果作废
+			}
+
+			if(runCount !== 20) {
+				runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
+			}
+			else {
+				callback(rightCount);
+			}
+		});
+	});
+}
+
 function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeArray, outputArray, callback) {
-	let runningFn;
+	let inputValue = [];
+	for(let i=0; i<20; i++) {
+		inputValue[inputValue.length] = [];
+		for(let i=0, len=inputTypeArray.length; i<len; i++) {
+			if (inputTypeArray[i].childType) {
+				inputValue[inputValue.length-1].push(getRandomValue(inputTypeArray[i].thisType, inputTypeArray[i].childType));
+			}
+			else {
+				inputValue[inputValue.length-1].push(getRandomValue(inputTypeArray[i].thisType));
+			}
+		}
+	}
+
+	let runningFn, rightCount = 0, runCount = 0;
 	switch(mode) {
 		case "java":
-			runningFn = javaRunning;
+			runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 		case "javascript":
 			runningFn = javascriptRunning;
 			break;
 	}
-
-	let rightCount = 0, runCount = 0;
-	for(let i=0; i<20; i++) {
-		let inputValue = [];
-		for(let i=0, len=inputTypeArray.length; i<len; i++) {
-			if (inputTypeArray[i].childType) {
-				inputValue.push(getRandomValue(inputTypeArray[i].thisType, inputTypeArray[i].childType));
-			}
-			else {
-				inputValue.push(getRandomValue(inputTypeArray[i].thisType));
-			}
-		}
-		
-		// let result1 = runningFn(correctCode, inputValue);
-		// let result2 = runningFn(studentCode, inputValue);
-		// if (result1.success && result2.success) {
-		// 	console.log(result1.success, result2.success);
-		// 	if (result1.success == result2.success) rightCount++;
-		// }
-		runningFn(correctCode, inputValue, function(result1) {
-			console.log(inputValue);
-			runningFn(studentCode, inputValue, function(result2) {
-				runCount++;
-				console.log(inputValue);
-				console.log(result1, result2);
-				if (result1.success && result2.success) {
-					console.log(result1.success, result2.success);
-					if (result1.success === result2.success) rightCount++;
-				}
-
-				if (runCount === 20) {
-					callback(rightCount);
-				}
-			});
-		});
-	}
-	// console.log(rightCount);
-	// return rightCount;
 }

@@ -231,7 +231,7 @@ module.exports = function(app) {
 		        		console.log(2, stderr);
 		        		res.send({error: "选择的参数类型与实际不符！"});
 		        	} else {
-		        		console.log(stdout);
+		        		console.log("stdout", stdout);
 		        		res.send({success: stdout, inputCount: inputCount});
 		        	} 
 	        	});
@@ -245,11 +245,11 @@ module.exports = function(app) {
 			        			e.stdin.write(inputValueArray[i] + "\n");
 			        			inputCount++;
 		        			}
-		        		}, 2200*i);
+		        		}, 320*i);
 		        	}
 		        	setTimeout(function() {
 		        		e.stdin.end();
-		        	}, 2200*inputValueArray.length);
+		        	}, 320*inputValueArray.length);
 	        	}
 	        	else {
 	        		e.stdin.end();
@@ -258,18 +258,6 @@ module.exports = function(app) {
 	        	e.stdin.on('end', function() {
 				    endStatus = true;
 				});
-	        	
-
-	        	// e.stdin.write("12\n");
-	        	// setTimeout(function() {
-		        // 	e.stdin.write("5\n");
-	        	// }, 300);
-	        	// setTimeout(function() {
-		        // 	e.stdin.write("100\n");
-	        	// }, 600);
-	        	// setTimeout(function() {
-		        // 	e.stdin.write("1000\n");
-	        	// }, 900);
 		    }
 		});
 		// e.stderr.setEncoding('utf8');

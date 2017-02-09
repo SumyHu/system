@@ -572,21 +572,16 @@ function runningProgramming($programmingContent) {
 	let programmingLanguage = $(".programmingTypeMode > .mode")[0].innerHTML;
 
 	let answerCode;
-	if ($programmingContent.find(".answerBlock").length > 0) {
-		answerCode = $programmingContent.find(".answerBlock > .answerContent > pre")[0].innerHTML;
-	}
-	else {
-		let titleNum = $programmingContent.find(".title > .titleNum")[0].innerHTML;
-		findSubjectByName(subjectName, function(allUnits) {
-			let unitId = allUnits[praticeType + "Pratices"][selectIndex];
-			findUnitById(unitId, function(allTypePratices) {
-				let praticeId = allTypePratices[type][titleNum-1];
-				findPraticesById(praticeId, function(result) {
-					answerCode = result.answer[0].content;
-				});
+	let titleNum = $programmingContent.find(".title > .titleNum")[0].innerHTML;
+	findSubjectByName(subjectName, function(allUnits) {
+		let unitId = allUnits[praticeType + "Pratices"][selectIndex];
+		findUnitById(unitId, function(allTypePratices) {
+			let praticeId = allTypePratices[type][titleNum-1];
+			findPraticesById(praticeId, function(result) {
+				answerCode = result.answer[0].content;
 			});
 		});
-	}
+	});
 
 	// let result = runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray), showResult;
 	// console.log(result);
@@ -607,6 +602,11 @@ function runningProgramming($programmingContent) {
 	// }
 
 	// $programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+
+	if (!editorContent) {
+		showTips("请输入代码！", 1000);
+		return;
+	}
 
 	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function(result) {
 		let showResult = "正在运行中...";
