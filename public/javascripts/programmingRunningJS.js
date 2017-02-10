@@ -7,9 +7,8 @@ function getRandomNumber(numberType, numberLength) {
 			return parseInt(random);
 		case "float":
 		case "double":
-			return parseFloat(random);
 		case "Number":
-			return random;
+			return parseFloat(random).toFixed(4);
 	}
 }
 
@@ -96,8 +95,6 @@ function getRandomValueWithCounts(counts, inputTypeArray) {
 	return inputValue;
 }
 
-let read_line = getRandomValue;
-
 let javascriptPrintResult = "";
 function print() {
 	let argumentsArray = [];
@@ -125,17 +122,19 @@ function javaRunning(code, inputValue, successCallback) {
 	// return result;
 }
 
-function javascriptRunning(code, callback) {
-	javascriptPrintResult = "";
-	try {
-		var res = eval(code + "\n (function() {return javascriptPrintResult;})()");
-		callback({success: res});
-	} catch(e) {
-		callback({error: e});
-	}
+function javascriptRunning(code, inputValue, callback) {
+	$.ajax ({
+		url: "javascriptRunning",
+		type: "POST",
+		data: {
+			code: code,
+			inputValue: inputValue
+		},
+		success: callback
+	});
 }
 
-function runningCode(mode, code, inputTypeArray, outputArray, callback) {
+function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 	let inputValue = [];
 	for(let i=0, len=inputTypeArray.length; i<len; i++) {
 		if (inputTypeArray[i].childType) {
@@ -151,7 +150,7 @@ function runningCode(mode, code, inputTypeArray, outputArray, callback) {
 			javaRunning(code, inputValue, callback);
 			break;
 		case "javascript":
-			javascriptRunning(code, callback);
+			javascriptRunning(code, inputValue, callback);
 			break;
 	}
 }
@@ -160,8 +159,6 @@ function runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, r
 	javaRunning(correctCode, inputValue[runCount], function(result1) {
 		javaRunning(studentCode, inputValue[runCount], function(result2) {
 			runCount++;
-			console.log(runCount);
-			console.log(result1, result2);
 			if (result1.success && result2.success) {
 				console.log(result1.success, result2.success);
 				if (result1.success === result2.success) rightCount++;
@@ -180,14 +177,21 @@ function runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, r
 	});
 }
 
-function runingJavascriptsCompare(correctCode, studentCode, runCount, rightCount, callback) {
-	for(let i=0; i<runCount; i++) {
-		javascriptRunning(correctCode, function(result1) {
-			javascriptRunning(studentCode, function(result2) {
-				console.log(result1, result2);
+function runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback) {
+	for(let i=0; i<20; i++) {
+		console.log(inputValue[i]);
+		javascriptRunning(correctCode, inputValue[i], function(result1) {
+			javascriptRunning(studentCode, inputValue[i], function(result2) {
 				if (result1.success && result2.success) {
+					console.log(result1.success, result2.success);
+					console.log("===========");
 					if (result1.success === result2.success) {
 						rightCount++;
+					}
+					runCount++;
+
+					if (runCount === 20) {
+						callback(rightCount);
 					}
 				}
 				else {
@@ -196,18 +200,17 @@ function runingJavascriptsCompare(correctCode, studentCode, runCount, rightCount
 			});
 		});
 	}
-	callback(rightCount);
 }
 
 function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeArray, outputArray, callback) {
+	let inputValue = getRandomValueWithCounts(20, inputTypeArray);
 	let runningFn, rightCount = 0, runCount = 0;
 	switch(mode) {
 		case "java":
-			let inputValue = getRandomValueWithCounts(20, inputTypeArray);
 			runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 		case "javascript":
-			runingJavascriptsCompare(correctCode, studentCode, 20, rightCount, callback);
+			runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 	}
 }

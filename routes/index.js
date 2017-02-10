@@ -266,6 +266,19 @@ module.exports = function(app) {
 		// e.stderr.setEncoding('utf8');
 	});
 
+	app.post("/javascriptRunning", function(req, res) {
+		if (!commentJs) {
+			commentJs = fs.readFileSync(commentJsPath);
+		}
+		try {
+			let inputValue = req.body.inputValue;
+			var result = eval(commentJs + "let i=-1; function read_line() {i++; return inputValue[i];}" + req.body.code + "\n (function() {return javascriptPrintResult;})()");
+			res.send({success: result});
+		} catch(e) {
+			res.send({error: e.toString()});
+		}
+	});
+
 	app.get("/shortAnswerCheck", function(req, res) {
 		// console.log(segment.doSegment("这是一个基于Node.js的中文分词模块。"));
 		// console.log(Primitive.readWhole());
