@@ -266,10 +266,6 @@ module.exports = function(app) {
 		// e.stderr.setEncoding('utf8');
 	});
 
-	app.post("/readCommentJS", function(req, res) {
-		res.send(fs.readFileSync(commentJsPath, "utf8"));
-	});
-
 	app.get("/shortAnswerCheck", function(req, res) {
 		// console.log(segment.doSegment("这是一个基于Node.js的中文分词模块。"));
 		// console.log(Primitive.readWhole());

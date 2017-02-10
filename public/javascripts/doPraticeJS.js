@@ -610,18 +610,19 @@ function runningProgramming($programmingContent) {
 
 	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function(result) {
 		let showResult = "正在运行中...";
+		console.log(result);
 		if (!result.error) {
-			if (result.inputCount === inputTypeArray.length) {
+			if (programmingLanguage === "java" && result.inputCount !== inputTypeArray.length) {
+				showResult = "编译不通过！";
+				$programmingContent.find(".runningBtn").removeClass("disable");
+			}
+			else {
 				let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray, function(rightCount) {
 					console.log(rightCount);
 					showResult = "编译通过率：" + rightCount/20*100 + "%";
 					$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
 					$programmingContent.find(".runningBtn").removeClass("disable");
 				});
-			}
-			else {
-				showResult = "编译不通过！";
-				$programmingContent.find(".runningBtn").removeClass("disable");
 			}
 		}
 		else {

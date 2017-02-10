@@ -849,11 +849,11 @@ function runningProgramming($programmingContent) {
 	runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type, function(result) {
 		console.log(result);
 		if (!result.error) {
-			if (result.inputCount === inputObj.type.length) {
-				result = "编译通过，能正常运行！";
+			if (programmingLanguage === "java" && result.inputCount !== inputObj.type.length) {
+				result = "选择的参数类型与实际不符！";
 			}
 			else {
-				result = "选择的参数类型与实际不符！";
+				result = "编译通过，能正常运行！";
 			}
 		}
 		else {
