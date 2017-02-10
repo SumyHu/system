@@ -847,6 +847,7 @@ function runningProgramming($programmingContent) {
 	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "正在运行中...";
 
 	runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type, function(result) {
+		console.log(inputObj.type);
 		console.log(result);
 		if (!result.error) {
 			if (programmingLanguage === "java" && result.inputCount !== inputObj.type.length) {

@@ -8,7 +8,7 @@ function getRandomNumber(numberType, numberLength) {
 		case "float":
 		case "double":
 		case "Number":
-			return parseFloat(random).toFixed(4);
+			return parseFloat(random.toFixed(4));
 	}
 }
 
@@ -144,6 +144,7 @@ function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 			inputValue.push(getRandomValue(inputTypeArray[i].thisType));
 		}
 	}
+	console.log(inputValue);
 
 	switch(mode) {
 		case "java":
