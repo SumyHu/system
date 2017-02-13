@@ -30,7 +30,9 @@ var participle = require("./participle");
 
 // var jieba = require("nodejieba");
 
-const javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java"),
+const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
+	  cppCodePath = path.join(__dirname, "../programmingRunningFile/cppTest.cpp"),
+	  javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java"),
 	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
 
 let commentJs;
@@ -207,6 +209,38 @@ module.exports = function(app) {
 	app.get("/javaRunTest", function(req, res) {
 		res.render("javaRunTest");
 	})
+
+	app.post("/cRunning", function(req, res) {
+		if (fs.existsSync(cCodePath)) {
+			fse.ensureFileSync(cCodePath);
+		}
+		fs.writeFileSync(cCodePath, req.body.code);
+
+		exec("gcc -encoding utf-8 -cTest.c -o cTest", {cwd: "./programmingRunningFile"}, function(err, stdout, stderr) {
+			if (err) {
+				res.send({error: err});
+			}
+			else {
+				exec("cTest", {cwd: "../programmingRunningFile"}, function(err, stdout, stderr) {});
+			}
+		});
+	});
+
+	app.post("/cppRunning", function(req, res) {
+		if (fs.existsSync(cppCodePath)) {
+			fse.ensureFileSync(cppCodePath);
+		}
+		fs.writeFileSync(cppCodePath, req.body.code);
+
+		exec("g++ -encoding utf-8 -cppTest.cpp -o cppTest", {cwd: "./programmingRunningFile"}, function(err, stdout, stderr) {
+			if (err) {
+				res.send({error: err});
+			}
+			else {
+				exec("cppTest", {cwd: "../programmingRunningFile"}, function(err, stdout, stderr) {});
+			}
+		});
+	});
 
 	app.post("/javaRunning", function(req, res)  {
 		if (!fs.existsSync(javaCodePath)) {
