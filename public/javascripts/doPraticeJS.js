@@ -1,13 +1,14 @@
 let praticeTypeArr = ["SingleChoice", "MultipleChoices", "TrueOrFalse", "FillInTheBlank", "ShortAnswer", "Programming"];
 
 let programmingTypeMode = {
-	text: "text/plain",
-	ecmascript: "application/ecmascript",
-	javascript: "application/javascript",
-	json: "application/json",
-	typescript: "application/typescript",
 	c: "text/x-c",
-	java: "text/x-java"
+	"c++": "text/x-c++src",
+	"c#": "text/x-csharp",
+	java: "text/x-java",
+	javascript: "application/javascript",
+	php: "text/x-php",
+	python: "text/x-python",
+	Ruby: "text/x-ruby"
 }
 
 let subjectName, praticeType, selectIndex, type, allPraticeContent;
@@ -538,6 +539,14 @@ function runningProgramming($programmingContent) {
 	let inputType = $programmingContent.find(".inputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、"), 
 		outputType = $programmingContent.find(".outputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、");
 
+	if (inputType.length === 1 && !inputType[0]) {
+		inputType = [];
+	}
+
+	if (outputType.length === 1 && !outputType[0]) {
+		outputType = [];
+	}
+
 	let inputTypeArray = [], outputTypeArray = [];
 	for(let i=0, len=inputType.length; i<len; i++) {
 		if (inputType[i].indexOf("(") > -1) {
@@ -569,7 +578,7 @@ function runningProgramming($programmingContent) {
 		}
 	}
 
-	let programmingLanguage = $(".programmingTypeMode > .mode")[0].innerHTML;
+	let programmingLanguage = $programmingContent.find("> .programmingTypeMode > .mode")[0].innerHTML;
 
 	let answerCode;
 	let titleNum = $programmingContent.find(".title > .titleNum")[0].innerHTML;
@@ -583,36 +592,16 @@ function runningProgramming($programmingContent) {
 		});
 	});
 
-	// let result = runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray), showResult;
-	// console.log(result);
-	// if (!result.error) {
-	// 	if (result.inputCount === inputTypeArray.length) {
-	// 		let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray);
-	// 		showResult = "编译通过率：" + rightCount/20*100 + "%";
-	// 	}
-	// 	else {
-	// 		showResult = "编译不通过！";
-	// 	}
-	// }
-	// else {
-	// 	showResult = result.error;
-	// 	if (showResult === "选择的参数类型与实际不符！") {
-	// 		showResult = "编译不通过！";
-	// 	}
-	// }
-
-	// $programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
-
 	if (!editorContent) {
 		showTips("请输入代码！", 1000);
 		return;
 	}
 
 	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function(result) {
-		let showResult = "正在运行中...";
+		let showResult = "<div class='loading'></div>";
 		console.log(result);
 		if (!result.error) {
-			if (programmingLanguage === "java" && result.inputCount !== inputTypeArray.length) {
+			if ((programmingLanguage === "java" || programmingLanguage === "c" || programmingLanguage === "c++" || programmingLanguage === "c#") && result.inputCount !== inputTypeArray.length) {
 				showResult = "编译不通过！";
 				$programmingContent.find(".runningBtn").removeClass("disable");
 			}

@@ -32,6 +32,7 @@ var participle = require("./participle");
 
 const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
 	  cppCodePath = path.join(__dirname, "../programmingRunningFile/cppTest.cpp"),
+	  csCodePath = path.join(__dirname, "../programmingRunningFile/csTest.cs"),
 	  javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java"),
 	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
 
@@ -169,18 +170,18 @@ module.exports = function(app) {
 				imageSrc: req.session.imageSrc
 			}
 			if (req.query.operation === "modify") {
-				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
+				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/addPraticeStyle.css"];
+				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.index || req.query.type) {
-				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"];
-				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
+				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/doPraticeStyle.css"];
+				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;
 			}
 			else if (req.query.praticeType) {
-				renderContent.cssFilePath = ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js"];
+				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/addPraticeStyle.css"];
+				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.subjectName) {
@@ -199,8 +200,8 @@ module.exports = function(app) {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
-				cssFilePath: ["CodeMirror-master/lib/codemirror.css", "CodeMirror-master/theme/seti.css", "stylesheets/doPraticeStyle.css"],
-				scriptFilePath: ["CodeMirror-master/lib/codemirror.js", "CodeMirror-master/mode/clike/clike.js", "CodeMirror-master/mode/javascript/javascript.js", "CodeMirror-master/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
+				cssFilePath: ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/doPraticeStyle.css"],
+				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
 				innerHtml: initInterface.doPraticeInterface
 			});
 		});
@@ -208,47 +209,42 @@ module.exports = function(app) {
 
 	app.get("/javaRunTest", function(req, res) {
 		res.render("javaRunTest");
-	})
-
-	app.post("/cRunning", function(req, res) {
-		if (fs.existsSync(cCodePath)) {
-			fse.ensureFileSync(cCodePath);
-		}
-		fs.writeFileSync(cCodePath, req.body.code);
-
-		exec("gcc -encoding utf-8 -cTest.c -o cTest", {cwd: "./programmingRunningFile"}, function(err, stdout, stderr) {
-			if (err) {
-				res.send({error: err});
-			}
-			else {
-				exec("cTest", {cwd: "../programmingRunningFile"}, function(err, stdout, stderr) {});
-			}
-		});
 	});
 
-	app.post("/cppRunning", function(req, res) {
-		if (fs.existsSync(cppCodePath)) {
-			fse.ensureFileSync(cppCodePath);
-		}
-		fs.writeFileSync(cppCodePath, req.body.code);
-
-		exec("g++ -encoding utf-8 -cppTest.cpp -o cppTest", {cwd: "./programmingRunningFile"}, function(err, stdout, stderr) {
-			if (err) {
-				res.send({error: err});
-			}
-			else {
-				exec("cppTest", {cwd: "../programmingRunningFile"}, function(err, stdout, stderr) {});
-			}
-		});
-	});
-
-	app.post("/javaRunning", function(req, res)  {
-		if (!fs.existsSync(javaCodePath)) {
-	        fse.ensureFileSync(javaCodePath);
+	app.post("/runningCodeByCmd", function(req, res)  {
+		console.log(req.body.type);
+		let filePath, cmd1, cmd2;
+        switch(req.body.type) {
+        	case "c":
+	        	filePath = cCodePath;
+        		cmd1 = "gcc cTest.c -o cTest";
+        		cmd2 = "cTest";
+        		break;
+        	case "c++":
+        		filePath = cppCodePath;
+        		cmd1 = "g++ cppTest.cpp -o cppTest";
+        		cmd2 = "cppTest";
+        		break;
+        	case "c#":
+        		filePath = csCodePath;
+        		cmd1 = "csc csTest.cs";
+        		cmd2 = "csTest";
+        		break;
+        	case "java":
+	        	filePath = javaCodePath;
+	        	cmd1 = "javac -encoding utf-8 Main.java";
+	        	cmd2 = "java Main";
+	        	break;
         }
-        fs.writeFileSync(javaCodePath, req.body.code);
 
-        exec("javac -encoding utf-8 Main.java", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
+        console.log(cmd1, cmd2);
+
+		if (!fs.existsSync(filePath)) {
+	        fse.ensureFileSync(filePath);
+        }
+        fs.writeFileSync(filePath, req.body.code);
+
+        exec(cmd1, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
 		    if(err) {
 		    	// console.log(11111,stderr);
 		    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
@@ -263,7 +259,7 @@ module.exports = function(app) {
 		    } else {	
         		let inputValueArray = req.body.inputValue, endStatus = false, error, inputCount = 0;
 
-			    let e = exec("java Main", {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
+			    let e = exec(cmd2, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
 		        	if (err) {
 		        		console.log(2, stderr);
 		        		res.send({error: "选择的参数类型与实际不符！"});

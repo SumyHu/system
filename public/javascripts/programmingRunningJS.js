@@ -104,13 +104,13 @@ function print() {
 	javascriptPrintResult += (argumentsArray.join(", ") + "\n");
 }
 
-function javaRunning(code, inputValue, successCallback) {
-	// let result;
+function runningCodeByCmd(type, code, inputValue, successCallback) {
 	$.ajax({
-		url: "../javaRunning",
+		url: "../runningCodeByCmd",
 		type: "POST",
 		// async: false,
 		data: {
+			type: type,
 			code: code,
 			inputValue: inputValue
 		},
@@ -119,7 +119,6 @@ function javaRunning(code, inputValue, successCallback) {
 			successCallback(res);
 		}
 	});
-	// return result;
 }
 
 function javascriptRunning(code, inputValue, callback) {
@@ -147,8 +146,11 @@ function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 	console.log(inputValue);
 
 	switch(mode) {
+		case "c":
+		case "c++":
+		case "c#":
 		case "java":
-			javaRunning(code, inputValue, callback);
+			runningCodeByCmd(mode, code, inputValue, callback);
 			break;
 		case "javascript":
 			javascriptRunning(code, inputValue, callback);
@@ -156,9 +158,9 @@ function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 	}
 }
 
-function runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback) {
-	javaRunning(correctCode, inputValue[runCount], function(result1) {
-		javaRunning(studentCode, inputValue[runCount], function(result2) {
+function runingOnceJavaCompare(type, correctCode, studentCode, inputValue, runCount, rightCount, callback) {
+	runningCodeByCmd(type, correctCode, inputValue[runCount], function(result1) {
+		runningCodeByCmd(type, studentCode, inputValue[runCount], function(result2) {
 			runCount++;
 			if (result1.success && result2.success) {
 				console.log(result1.success, result2.success);
@@ -169,7 +171,7 @@ function runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, r
 			}
 
 			if(runCount !== 20) {
-				runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
+				runingOnceJavaCompare(type, correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			}
 			else {
 				callback(rightCount);
@@ -207,11 +209,14 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 	let inputValue = getRandomValueWithCounts(20, inputTypeArray);
 	let runningFn, rightCount = 0, runCount = 0;
 	switch(mode) {
+		case "c":
+		case "c++":
+		case "c#":
 		case "java":
-			runingOnceJavaCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
+			runingOnceJavaCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 		case "javascript":
-			runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
+			runingJavascriptsCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 	}
 }

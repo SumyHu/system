@@ -13,13 +13,14 @@ let realSingleChoiceCount = 0, realMultipleChoicesCount = 0, realTrueOrFalseCoun
 let selectInputTypeCount = 0;
 
 let programmingTypeMode = {
-	text: "text/plain",
-	ecmascript: "application/ecmascript",
-	javascript: "application/javascript",
-	json: "application/json",
-	typescript: "application/typescript",
 	c: "text/x-c",
-	java: "text/x-java"
+	"c++": "text/x-c++src",
+	"c#": "text/x-csharp",
+	java: "text/x-java",
+	javascript: "application/javascript",
+	php: "text/x-php",
+	python: "text/x-python",
+	Ruby: "text/x-ruby"
 }
 
 // 记录Programing添加的editor，用于后面判断editor是否都不为空
@@ -829,28 +830,13 @@ function runningProgramming($programmingContent) {
 
 	let programmingLanguage = $programmingContent.find(".answer > .programmingType > select option:selected").text();
 
-	// let result = runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type);
-	// console.log(result);
-	// if (!result.error) {
-	// 	if (result.inputCount === inputObj.type.length) {
-	// 		result = "编译通过，能正常运行！";
-	// 	}
-	// 	else {
-	// 		result = "选择的参数类型与实际不符！";
-	// 	}
-	// }
-	// else {
-	// 	result = result.error;
-	// }
-	// $programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ result + `</pre>`;
-
-	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "正在运行中...";
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "<div class='loading'></div>";
 
 	runningCode(programmingLanguage, editorContent, inputObj.type, outputObj.type, function(result) {
 		console.log(inputObj.type);
 		console.log(result);
 		if (!result.error) {
-			if (programmingLanguage === "java" && result.inputCount !== inputObj.type.length) {
+			if ((programmingLanguage === "java" || programmingLanguage === "c" || programmingLanguage === "c++" || programmingLanguage === "c#") && result.inputCount !== inputObj.type.length) {
 				result = "选择的参数类型与实际不符！";
 			}
 			else {
