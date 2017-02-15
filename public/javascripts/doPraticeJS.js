@@ -287,6 +287,11 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				editor:editor
 			});
 
+			editor.on("change", function() {
+				$(section).find(".runningResult > .runningContent")[0].innerHTML
+				 = "";
+			});
+
 		}
 		$(sec).css("display", "none");
 	});

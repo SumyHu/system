@@ -274,6 +274,14 @@ function addProgramming() {
 	$(section).find(".programmingType select").change(function(e) {
 		let selectType = $(getTarget(e)).find("option:selected").text();
 		editor.setOption("mode", programmingTypeMode[selectType]);
+
+		$(section).find(".runningResult > .runningContent")[0].innerHTML
+		 = "";
+	});
+
+	editor.on("change", function() {
+		$(section).find(".runningResult > .runningContent")[0].innerHTML
+		 = "";
 	});
 
 	return section;
@@ -802,15 +810,16 @@ function changeRunningBtnToDisableStatus($runningBtn, milltime) {
 
 /** 检测是否所有代码都能成功运行
 */
-// function checkAllProgrammingRunningSuccess() {
-// 	let allProgrammingContent = $(".addProgramming > .content");
-// 	for(let i=0, len=allProgrammingContent.length; i<len; i++) {
-// 		let runningContent = $(allProgrammingContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
-// 		if (runningContent !== "编译通过，能正常运行！") {
-// 			return false;
-// 		}
-// 	}
-// }
+function checkAllProgrammingRunningSuccess() {
+	let allProgrammingContent = $(".addProgramming > .content");
+	for(let i=0, len=allProgrammingContent.length; i<len; i++) {
+		let runningContent = $(allProgrammingContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
+		if (runningContent !== "<pre>编译通过，能正常运行！</pre>") {
+			return false;
+		}
+	}
+	return true;
+}
 
 /** 进行代码运行
  * @param $programmingContent jQuery Object 该编程题目块
@@ -988,10 +997,10 @@ function bindEvent() {
 			showTips("存在没有填写的空格！", 1000);
 			return;
 		}
-		// if (!checkAllProgrammingRunningSuccess()) {
-		// 	showTips("请确保所有编译都能成功运行！", 1000);
-		// 	return;
-		// }
+		if (!checkAllProgrammingRunningSuccess()) {
+			showTips("请确保所有编译都能成功运行！", 1000);
+			return;
+		}
 		if (this.value === "提交") {
 			showWin("确定提交所添加的所有习题？", function() {
 				savePratices();

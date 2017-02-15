@@ -1,4 +1,4 @@
 #!/usr/bin/ruby
-name = gets
+name = getsq
 
 puts "Hello, #{name}!"

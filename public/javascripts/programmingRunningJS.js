@@ -151,6 +151,8 @@ function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 		case "c#":
 		case "java":
 		case "php":
+		case "python":
+		case "Ruby":
 			runningCodeByCmd(mode, code, inputValue, callback);
 			break;
 		case "javascript":
@@ -215,6 +217,8 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 		case "c#":
 		case "java":
 		case "php":
+		case "python":
+		case "Ruby":
 			runingOnceJavaCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 		case "javascript":

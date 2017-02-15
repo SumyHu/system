@@ -35,6 +35,8 @@ const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
 	  csCodePath = path.join(__dirname, "../programmingRunningFile/csTest.cs"),
 	  javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java"),
 	  phpCodePath = path.join(__dirname, "../programmingRunningFile/phpTest.php"),
+	  pythonCodePath = path.join(__dirname, "../programmingRunningFile/pythonTest.py"),
+	  rubyCodePath = path.join(__dirname, "../programmingRunningFile/rubyTest.rb"),
 	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
 
 let commentJs;
@@ -239,6 +241,14 @@ module.exports = function(app) {
 	        case "php":
 	        	filePath = phpCodePath;
 	        	cmd1 = "php phpTest.php";
+	        	break;
+	        case "python":
+	        	filePath = pythonCodePath;
+	        	cmd1 = "python pythonTest.py";
+	        	break;
+	        case "Ruby":
+	        	filePath = rubyCodePath;
+	        	cmd1 = "ruby rubyTest.rb";
 	        	break;
         }
 
