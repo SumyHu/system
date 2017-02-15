@@ -601,7 +601,7 @@ function runningProgramming($programmingContent) {
 		let showResult = "<div class='loading'></div>";
 		console.log(result);
 		if (!result.error) {
-			if ((programmingLanguage === "java" || programmingLanguage === "c" || programmingLanguage === "c++" || programmingLanguage === "c#") && result.inputCount !== inputTypeArray.length) {
+			if ((programmingLanguage !== "javascript") && result.inputCount !== inputTypeArray.length) {
 				showResult = "编译不通过！";
 				$programmingContent.find(".runningBtn").removeClass("disable");
 			}

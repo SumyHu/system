@@ -836,7 +836,7 @@ function runningProgramming($programmingContent) {
 		console.log(inputObj.type);
 		console.log(result);
 		if (!result.error) {
-			if ((programmingLanguage === "java" || programmingLanguage === "c" || programmingLanguage === "c++" || programmingLanguage === "c#") && result.inputCount !== inputObj.type.length) {
+			if ((programmingLanguage !== "javascript") && result.inputCount !== inputObj.type.length) {
 				result = "选择的参数类型与实际不符！";
 			}
 			else {

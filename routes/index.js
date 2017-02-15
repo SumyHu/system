@@ -34,6 +34,7 @@ const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
 	  cppCodePath = path.join(__dirname, "../programmingRunningFile/cppTest.cpp"),
 	  csCodePath = path.join(__dirname, "../programmingRunningFile/csTest.cs"),
 	  javaCodePath = path.join(__dirname, "../programmingRunningFile/Main.java"),
+	  phpCodePath = path.join(__dirname, "../programmingRunningFile/phpTest.php"),
 	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
 
 let commentJs;
@@ -235,6 +236,10 @@ module.exports = function(app) {
 	        	cmd1 = "javac -encoding utf-8 Main.java";
 	        	cmd2 = "java Main";
 	        	break;
+	        case "php":
+	        	filePath = phpCodePath;
+	        	cmd1 = "php phpTest.php";
+	        	break;
         }
 
         console.log(cmd1, cmd2);
@@ -244,56 +249,92 @@ module.exports = function(app) {
         }
         fs.writeFileSync(filePath, req.body.code);
 
-        exec(cmd1, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
-		    if(err) {
-		    	// console.log(11111,stderr);
-		    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
-		    	// var str1 = iconv.decode(stderr, "gbk");
+        if (cmd2) {
+        	exec(cmd1, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
+			    if(err) {
+			    	// console.log(11111,stderr);
+			    	// var str = iconv.decode(new Buffer(stderr, "binary"), "gbk");
+			    	// var str1 = iconv.decode(stderr, "gbk");
 
-		    	// let u1 = iconv.encode(stderr, "gbk").toString('gb2312');
-		    	// let u2 = iconv.encode("你好", "gbk");
-		    	// console.log(77777,u2);
-		    	console.log(1, stderr);
+			    	// let u1 = iconv.encode(stderr, "gbk").toString('gb2312');
+			    	// let u2 = iconv.encode("你好", "gbk");
+			    	// console.log(77777,u2);
+			    	console.log(1, stderr);
 
-		        res.send({error: stderr});
-		    } else {	
-        		let inputValueArray = req.body.inputValue, endStatus = false, error, inputCount = 0;
+			        res.send({error: stderr});
+			    } else {	
+	        		let inputValueArray = req.body.inputValue, endStatus = false, error, inputCount = 0;
 
-			    let e = exec(cmd2, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
-		        	if (err) {
-		        		console.log(2, stderr);
-		        		res.send({error: "选择的参数类型与实际不符！"});
-		        	} else {
-		        		console.log("stdout", stdout);
-		        		res.send({success: stdout, inputCount: inputCount});
-		        	} 
-	        	});
+				    let e = exec(cmd2, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err, stdout, stderr) {
+			        	if (err) {
+			        		console.log(2, stderr);
+			        		res.send({error: "选择的参数类型与实际不符！"});
+			        	} else {
+			        		console.log("stdout", stdout);
+			        		res.send({success: stdout, inputCount: inputCount});
+			        	} 
+		        	});
 
-	        	e.stdout.pipe(process.stdout);
-	        	if (inputValueArray) {
-	        		for(let i=0; i<inputValueArray.length; i++) {
-		        		setTimeout(function() {
-		        			console.log(inputValueArray[i]);
-		        			if (!endStatus) {
-			        			e.stdin.write(inputValueArray[i] + "\n");
-			        			inputCount++;
-		        			}
-		        		}, 320*i);
+		        	e.stdout.pipe(process.stdout);
+		        	if (inputValueArray) {
+		        		for(let i=0; i<inputValueArray.length; i++) {
+			        		setTimeout(function() {
+			        			console.log(inputValueArray[i]);
+			        			if (!endStatus) {
+				        			e.stdin.write(inputValueArray[i] + "\n");
+				        			inputCount++;
+			        			}
+			        		}, 320*i);
+			        	}
+			        	setTimeout(function() {
+			        		e.stdin.end();
+			        	}, 320*inputValueArray.length);
 		        	}
-		        	setTimeout(function() {
+		        	else {
 		        		e.stdin.end();
-		        	}, 320*inputValueArray.length);
-	        	}
-	        	else {
-	        		e.stdin.end();
-	        	}
+		        	}
 
-	        	e.stdin.on('end', function() {
-				    endStatus = true;
-				});
-		    }
-		});
-		// e.stderr.setEncoding('utf8');
+		        	e.stdin.on('end', function() {
+					    endStatus = true;
+					});
+			    }
+			});
+        }
+        else {
+        	let inputValueArray = req.body.inputValue, endStatus = false, error, inputCount = 0;
+        	let e = exec(cmd1, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
+			    if (err) {
+	        		console.log(2, stdout);
+	        		res.send({error: (stderr?stderr:stdout)});
+	        	} else {
+	        		console.log("stdout", stdout);
+	        		res.send({success: stdout, inputCount: inputCount});
+	        	} 
+        	});
+
+        	e.stdout.pipe(process.stdout);
+        	if (inputValueArray) {
+        		for(let i=0; i<inputValueArray.length; i++) {
+	        		setTimeout(function() {
+	        			console.log(inputValueArray[i]);
+	        			if (!endStatus) {
+		        			e.stdin.write(inputValueArray[i] + "\n");
+		        			inputCount++;
+	        			}
+	        		}, 320*i);
+	        	}
+	        	setTimeout(function() {
+	        		e.stdin.end();
+	        	}, 320*inputValueArray.length);
+        	}
+        	else {
+        		e.stdin.end();
+        	}
+
+        	e.stdin.on('end', function() {
+			    endStatus = true;
+			});
+        }
 	});
 
 	app.post("/javascriptRunning", function(req, res) {

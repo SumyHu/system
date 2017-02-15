@@ -25,6 +25,11 @@ body {
 	transform: translateX(-50%);
 }
 
+pre {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
 input[type=button], input[type=submit] {
 	height: 35px;
 	border: none;
