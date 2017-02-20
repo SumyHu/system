@@ -278,3 +278,13 @@
 .arrayChildType {
 	display: none;
 }
+
+.programmingType {
+	display: inline-block;
+}
+
+.help {
+	margin: 0 50px;
+	color: red;
+	text-decoration: underline;
+}

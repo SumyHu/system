@@ -196,6 +196,8 @@ function showAllProgrammingContent(praticeIdArr) {
 				}
 				$(section).find(".programmingType > select").find("option")[modeIndex].selected = true;
 
+				$(section).find(".help").attr("href", "help?mode=" + $(section).find(".programmingType > select option:selected").text());
+
 				let answer = result.answer[0].content, editor = programingEditorArray[programingEditorArray.length-1].editor;
 
 				$(section).find("textarea").val(answer);

@@ -228,6 +228,7 @@ function addProgramming() {
 						<div class="programmingType">
 							答案：` + selectInnerHtml + `
 						</div>
+						<a href="help?mode=c" target="blank" class="help">在线帮助</a>
 						<textarea id="programming` + realProgrammingCount + `"></textarea>
 					</div>
 					<input type="button" value="运行" class="runningBtn">
@@ -277,6 +278,8 @@ function addProgramming() {
 
 		$(section).find(".runningResult > .runningContent")[0].innerHTML
 		 = "";
+
+		 $(section).find(".help").attr("href", "help?mode=" + $(getTarget(e)).find("option:selected").text());
 	});
 
 	editor.on("change", function() {

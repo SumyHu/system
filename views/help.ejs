@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="codemirror-5.23.0/lib/codemirror.css">
+		<link rel="stylesheet" type="text/css" href="codemirror-5.23.0/theme/seti.css">
+		<link rel="stylesheet" type="text/css" href="stylesheets/helpStyle.css">
+	</head>
+	<body>
+		<div class="showExample">以下为例：</div>
+		<section class="content">
+			<p class="title">求两个整数的和</p>
+			<div class="inputBlock">
+				<div class="description">输入要求：分别输入两个整数</div>
+				<div class="example">输入样例：2，3</div>
+				<div class="inputType">输入类型（按照输入顺序）：int、int</div>
+			</div>
+			<div class="outputBlock">
+				<div class="description">输出要求：输出一个整数</div>
+				<div class="example">输出样例：5</div>
+				<div class="inputType">输出类型（按照输出顺序）：int</span></div>
+			</div>
+			<div class="programmingTypeMode">编程语言：<span class="mode">c</span></div>
+			<div class="notice">注意事项：</div>
+			<div class="longAnswer">
+				<textarea id="textarea">test</textarea>
+			</div>
+		</section>
+
+		<script src="codemirror-5.23.0/lib/codemirror.js"></script>
+		<script src="codemirror-5.23.0/mode/clike/clike.js"></script>
+		<script src="codemirror-5.23.0/mode/php/php.js"></script>
+		<script src="codemirror-5.23.0/mode/python/python.js"></script>
+		<script src="codemirror-5.23.0/mode/ruby/ruby.js"></script>
+		<script src="codemirror-5.23.0/mode/javascript/javascript.js"></script>
+		<script src="codemirror-5.23.0/addon/edit/matchbrackets.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				let programmingTypeMode = {
+					c: "text/x-c",
+					"c++": "text/x-c++src",
+					"c#": "text/x-csharp",
+					java: "text/x-java",
+					javascript: "application/javascript",
+					php: "text/x-php",
+					python: "text/x-python",
+					Ruby: "text/x-ruby"
+				}
+				let mode = programmingTypeMode[document.getElementsByClassName("mode")[0].innerHTML];
+				var editor=CodeMirror.fromTextArea(document.getElementById("textarea"), {
+		            mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
+		            lineNumbers: true,   // 显示行号
+
+			        //设置主题
+			        theme: "seti",
+
+			        //绑定Vim
+			        // keyMap: "vim",
+
+			        //代码折叠
+			        lineWrapping: true,
+			        foldGutter: true,
+			        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+
+			        //全屏模式
+			        // fullScreen: true,
+
+			        //括号匹配
+			        matchBrackets: true,
+
+			        extraKeys: {"Ctrl-Space":"autocomplete"}   //ctrl-space唤起智能提示
+			    });
+    return editor;
+			}
+		</script>
+	</body>
+</html>

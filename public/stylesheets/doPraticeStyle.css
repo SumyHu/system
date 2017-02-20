@@ -23,6 +23,7 @@
 
 .programmingTypeMode {
 	padding: 15px 20px;
+	color: orange;
 }
 
 .inputBlock > div, .outputBlock > div {
@@ -189,4 +190,10 @@
 
 .choiceAnswerBlock > .answerContent {
 	margin: 10px 0;
+}
+
+.help {
+	float: right;
+	color: red;
+	text-decoration: underline;
 }
