@@ -237,6 +237,14 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				}
 			}
 
+			let helpMode = showMode;
+			if (helpMode === "c++") {
+				helpMode = "cpp";
+			}
+			else if (helpMode === "c#") {
+				helpMode = "cs";
+			}
+
 			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
 							<div class="inputBlock">
 								<div class="description">输入要求：` + (inputContent.description ? inputContent.description : "无") + `</div>
@@ -248,7 +256,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 								<div class="example">输出样例：` + (outputContent.example ? outputContent.example : "无") + `</div>
 								<div class="inputType">输出类型（按照输出顺序）：` + (outputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + outputType.join("、") + `</span></div>
 							</div>
-							<div class="programmingTypeMode">编程语言：<span class="mode">` + showMode + `</span><a href="help?mode=` + showMode + `" target="blank" class="help">在线帮助</a></div>
+							<div class="programmingTypeMode">编程语言：<span class="mode">` + showMode + `</span><a href="help?mode=` + helpMode + `" target="blank" class="help">在线帮助</a></div>
 						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
 
 			if (addPraticeType === "Programming") {

@@ -19,10 +19,10 @@
 				<div class="example">输出样例：5</div>
 				<div class="inputType">输出类型（按照输出顺序）：int</span></div>
 			</div>
-			<div class="programmingTypeMode">编程语言：<span class="mode">c</span></div>
-			<div class="notice">注意事项：</div>
+			<div class="programmingTypeMode">编程语言：<span class="mode"><%= mode %></span></div>
+			<div class="notice">注意事项：<%= notice %></div>
 			<div class="longAnswer">
-				<textarea id="textarea">test</textarea>
+				<textarea id="textarea"><%= content %></textarea>
 			</div>
 		</section>
 
@@ -47,6 +47,8 @@
 				}
 				let mode = programmingTypeMode[document.getElementsByClassName("mode")[0].innerHTML];
 				var editor=CodeMirror.fromTextArea(document.getElementById("textarea"), {
+					readOnly: true,   // 只读
+					
 		            mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
 		            lineNumbers: true,   // 显示行号
 

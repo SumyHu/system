@@ -196,7 +196,14 @@ function showAllProgrammingContent(praticeIdArr) {
 				}
 				$(section).find(".programmingType > select").find("option")[modeIndex].selected = true;
 
-				$(section).find(".help").attr("href", "help?mode=" + $(section).find(".programmingType > select option:selected").text());
+				let helpMode = mode;
+				if (helpMode === "c++") {
+				 	helpMode = "cpp";
+				 }
+				 else if (helpMode === "c#") {
+				 	helpMode = "cs";
+				 }
+				$(section).find(".help").attr("href", "help?mode=" + helpMode);
 
 				let answer = result.answer[0].content, editor = programingEditorArray[programingEditorArray.length-1].editor;
 

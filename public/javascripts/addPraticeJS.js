@@ -279,7 +279,14 @@ function addProgramming() {
 		$(section).find(".runningResult > .runningContent")[0].innerHTML
 		 = "";
 
-		 $(section).find(".help").attr("href", "help?mode=" + $(getTarget(e)).find("option:selected").text());
+		 let mode = $(getTarget(e)).find("option:selected").text();
+		 if (mode === "c++") {
+		 	mode = "cpp";
+		 }
+		 else if (mode === "c#") {
+		 	mode = "cs";
+		 }
+		 $(section).find(".help").attr("href", "help?mode=" + mode);
 	});
 
 	editor.on("change", function() {

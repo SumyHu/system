@@ -30,6 +30,7 @@ var participle = require("./participle");
 
 // var jieba = require("nodejieba");
 
+// 编程运行文件
 const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
 	  cppCodePath = path.join(__dirname, "../programmingRunningFile/cppTest.cpp"),
 	  csCodePath = path.join(__dirname, "../programmingRunningFile/csTest.cs"),
@@ -38,6 +39,16 @@ const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
 	  pythonCodePath = path.join(__dirname, "../programmingRunningFile/pythonTest.py"),
 	  rubyCodePath = path.join(__dirname, "../programmingRunningFile/rubyTest.rb"),
 	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
+
+// 示例文件
+const cCodeTestPath = path.join(__dirname, "../Test/cTest.c"),
+	  cppCodeTestPath = path.join(__dirname, "../Test/cppTest.cpp"),
+	  csCodeTestPath = path.join(__dirname, "../Test/csTest.cs"),
+	  javascriptCodeTestPath = path.join(__dirname, "../Test/javascriptTest.js"),
+	  javaCodeTestPath = path.join(__dirname, "../Test/Main.java"),
+	  phpCodeTestPath = path.join(__dirname, "../Test/phpTest.php"),
+	  pythonCodeTestPath = path.join(__dirname, "../Test/pythonTest.py"),
+	  rubyCodeTestPath = path.join(__dirname, "../Test/rubyTest.rb");
 
 let commentJs;
 
@@ -436,6 +447,40 @@ module.exports = function(app) {
 	});
 
 	app.get("/help", function(req, res) {
-		res.render("help");
+		console.log(req.query.mode);
+		let testFilePath, notice = "所有文件名大小写敏感";
+		let mode = req.query.mode;
+		switch(mode) {
+			case "c":
+				testFilePath = cCodeTestPath;
+				break;
+			case "cpp":
+				testFilePath = cppCodeTestPath;
+				mode = "c++";
+				break;
+			case "cs":
+				testFilePath = csCodeTestPath;
+				mode = "c#";
+				break;
+			case "javascript":
+				testFilePath = javascriptCodeTestPath;
+				notice = "读取一行输入：read_line()，输出一行：print(something)，注意使用print函数输出时，末尾自动带有换行符，无需自己添加。";
+				break;
+			case "java":
+				testFilePath = javaCodeTestPath;
+				notice = "您可以写很多个类，但是必须有一个类名为Main，并且为public属性，并且Main为唯一的public class，Main类的里面必须包含一个名字为'main'的静态方法（函数），这个方法是程序的入口。";
+				break;
+			case "php":
+				testFilePath = phpCodeTestPath;
+				break;
+			case "python":
+				testFilePath = pythonCodeTestPath;
+				break;
+			case "Ruby":
+				testFilePath = rubyCodeTestPath;
+				break;
+		}
+		let content = fs.readFileSync(testFilePath);
+		res.render("help", {mode: mode, content: content, notice: notice});
 	});
 }
