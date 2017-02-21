@@ -8,7 +8,8 @@ let programmingTypeMode = {
 	javascript: "application/javascript",
 	php: "text/x-php",
 	python: "text/x-python",
-	Ruby: "text/x-ruby"
+	Ruby: "text/x-ruby",
+	sql: "text/x-sql"
 }
 
 let subjectName, praticeType, selectIndex, type, allPraticeContent;

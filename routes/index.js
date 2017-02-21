@@ -38,6 +38,7 @@ const cCodePath = path.join(__dirname, "../programmingRunningFile/cTest.c"),
 	  phpCodePath = path.join(__dirname, "../programmingRunningFile/phpTest.php"),
 	  pythonCodePath = path.join(__dirname, "../programmingRunningFile/pythonTest.py"),
 	  rubyCodePath = path.join(__dirname, "../programmingRunningFile/rubyTest.rb"),
+	  sqlCodePath = path.join(__dirname, "../programmingRunningFile/sqlTest.sql"),
 	  commentJsPath = path.join(__dirname, "../programmingRunningFile/comment.js");
 
 // 示例文件
@@ -48,7 +49,8 @@ const cCodeTestPath = path.join(__dirname, "../Test/cTest.c"),
 	  javaCodeTestPath = path.join(__dirname, "../Test/Main.java"),
 	  phpCodeTestPath = path.join(__dirname, "../Test/phpTest.php"),
 	  pythonCodeTestPath = path.join(__dirname, "../Test/pythonTest.py"),
-	  rubyCodeTestPath = path.join(__dirname, "../Test/rubyTest.rb");
+	  rubyCodeTestPath = path.join(__dirname, "../Test/rubyTest.rb"),
+	  sqlCodeTestPath = path.join(__dirname, "../Test/sqlTest.sql");
 
 let commentJs;
 
@@ -185,17 +187,17 @@ module.exports = function(app) {
 			}
 			if (req.query.operation === "modify") {
 				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
+				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js", "javascripts/modifyPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.index || req.query.type) {
 				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/doPraticeStyle.css"];
-				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
+				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;
 			}
 			else if (req.query.praticeType) {
 				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/addPraticeStyle.css"];
-				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js"];
+				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/addPraticeJS.js"];
 				renderContent.innerHtml = initInterface.addPraticeInterface;
 			}
 			else if (req.query.subjectName) {
@@ -215,7 +217,7 @@ module.exports = function(app) {
 				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
 				cssFilePath: ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/doPraticeStyle.css"],
-				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
+				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
 				innerHtml: initInterface.doPraticeInterface
 			});
 		});
@@ -260,6 +262,10 @@ module.exports = function(app) {
 	        case "Ruby":
 	        	filePath = rubyCodePath;
 	        	cmd1 = "ruby rubyTest.rb";
+	        	break;
+	        case "sql":
+	        	filePath = sqlCodePath;
+	        	cmd1 = "mysql -h localhost -u root -p 123456  < " + filePath;
 	        	break;
         }
 
@@ -478,6 +484,9 @@ module.exports = function(app) {
 				break;
 			case "Ruby":
 				testFilePath = rubyCodeTestPath;
+				break;
+			case "sql":
+				testFilePath = sqlCodeTestPath;
 				break;
 		}
 		let content = fs.readFileSync(testFilePath);

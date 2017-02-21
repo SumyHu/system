@@ -20,7 +20,8 @@ let programmingTypeMode = {
 	javascript: "application/javascript",
 	php: "text/x-php",
 	python: "text/x-python",
-	Ruby: "text/x-ruby"
+	Ruby: "text/x-ruby",
+	sql: "text/x-sql"
 }
 
 // 记录Programing添加的editor，用于后面判断editor是否都不为空
