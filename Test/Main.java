@@ -9,6 +9,6 @@ public class Main {
 		int n1 = input1.nextInt();
 		int n2 = input2.nextInt();
 		Main instance = new Main();
-		System.out.print(instance.sum(n1, n2));
+		System.out.println(instance.sum(n1, n2));
 	}
 }

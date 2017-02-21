@@ -242,7 +242,7 @@ function addProgramming() {
 	section.innerHTML = content;
 	$(".addProgramming").append(section);
 
-	let editor = editorStyle("programming" + addProgrammingCount, "text/plain");
+	let editor = editorStyle("programming" + addProgrammingCount, "text/x-c");
 	programingEditorArray.push({
 		editor: editor,
 		textareaId: "programming" + realProgrammingCount

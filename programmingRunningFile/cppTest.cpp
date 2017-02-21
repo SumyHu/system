@@ -2,8 +2,9 @@
 #include <iostream>
 int main(int argc,char *argv[])
 {
-    // std::cout << "hello, world" << std::endl;
-    cin>>a>>b;
-    cout<<a+b<<endl;
-    return(0);
+    int a, b;
+    std::cin>>a>>b;
+    std::cout<<a+b<<std::endl;
+    std::cout<<"test"<<std::endl;
+    return 0;
 }

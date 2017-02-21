@@ -5,10 +5,9 @@ namespace HelloWorldApplication
     {
         static void Main(string[] args)
         {
-            /* 我的第一个 C# 程序*/
-            //Console.WriteLine("Hello World!");
-            String str = Console.ReadLine();
-            Console.WriteLine(str);
+            int a = Convert.ToInt32(Console.ReadLine());
+            int b = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine(a+b);
         }
     }
 }

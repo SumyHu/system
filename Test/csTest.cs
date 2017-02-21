@@ -5,10 +5,8 @@ namespace HelloWorldApplication
     {
         static void Main(string[] args)
         {
-            // Console.WriteLine("Hello World!");
-            // Console.ReadKey();
-            int a = Console.ReadKey();
-            int b = Console.ReadKey();
+            int a = Convert.ToInt32(Console.ReadLine());
+            int b = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine(a+b);
         }
     }
