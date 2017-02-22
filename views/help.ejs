@@ -8,16 +8,16 @@
 	<body>
 		<div class="showExample">以下为例：</div>
 		<section class="content">
-			<p class="title">求两个整数的和</p>
+			<p class="title"><%= topic %></p>
 			<div class="inputBlock">
-				<div class="description">输入要求：分别输入两个整数</div>
-				<div class="example">输入样例：2，3</div>
-				<div class="inputType">输入类型（按照输入顺序）：int、int</div>
+				<div class="description">输入要求：<%= input.description %></div>
+				<div class="example">输入样例：<%= input.example %></div>
+				<div class="inputType">输入类型（按照输入顺序）：<%= input.type %></div>
 			</div>
 			<div class="outputBlock">
-				<div class="description">输出要求：输出一个整数</div>
-				<div class="example">输出样例：5</div>
-				<div class="inputType">输出类型（按照输出顺序）：int</span></div>
+				<div class="description">输出要求：<%= output.description %></div>
+				<div class="example">输出样例：<%= output.example %></div>
+				<div class="inputType">输出类型（按照输出顺序）：<%= output.type %></span></div>
 			</div>
 			<div class="programmingTypeMode">编程语言：<span class="mode"><%= mode %></span></div>
 			<div class="notice">注意事项：<%= notice %></div>
@@ -31,6 +31,7 @@
 		<script src="codemirror-5.23.0/mode/php/php.js"></script>
 		<script src="codemirror-5.23.0/mode/python/python.js"></script>
 		<script src="codemirror-5.23.0/mode/ruby/ruby.js"></script>
+		<script src="codemirror-5.23.0/mode/sql/sql.js"></script>
 		<script src="codemirror-5.23.0/mode/javascript/javascript.js"></script>
 		<script src="codemirror-5.23.0/addon/edit/matchbrackets.js"></script>
 		<script type="text/javascript">

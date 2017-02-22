@@ -454,7 +454,17 @@ module.exports = function(app) {
 
 	app.get("/help", function(req, res) {
 		console.log(req.query.mode);
-		let testFilePath, notice = "所有文件名大小写敏感";
+		let testFilePath, notice = "所有文件名大小写敏感", topic = "求两个整数的和",
+			input = {
+				description: "分别输入两个整数",
+				example: "2 \n 3",
+				type: "int、int"
+			},
+			output = {
+				description: "输出一个整数",
+				example: "5",
+				type: "int"
+			};
 		let mode = req.query.mode;
 		switch(mode) {
 			case "c":
@@ -487,9 +497,21 @@ module.exports = function(app) {
 				break;
 			case "sql":
 				testFilePath = sqlCodeTestPath;
+				topic = "求1~100之间的整数和";
+				notice = "建议不要编写可能会造成冲突的程序，如创建表格（重复创建，数据库会报表格已存在错误）。若实在要编写这种程序，请在编写前去除冲突的可能，如判断数据库中是否存在该表格，若存在则将该表格删除，再按照题目要求创建新的表格。";
+				input = {
+					description: "无",
+					example: "无",
+					type: "无"
+				};
+				output = {
+					description: "无",
+					example: "无",
+					type: "无"
+				}
 				break;
 		}
 		let content = fs.readFileSync(testFilePath);
-		res.render("help", {mode: mode, content: content, notice: notice});
+		res.render("help", {mode: mode, topic: topic, input: input, output: output, content: content, notice: notice});
 	});
 }
