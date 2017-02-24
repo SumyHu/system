@@ -265,7 +265,8 @@ module.exports = function(app) {
 	        	break;
 	        case "sql":
 	        	filePath = sqlCodePath;
-	        	cmd1 = "mysql -h localhost -u root -p 123456  < " + filePath;
+	        	// cmd1 = "mysql -h localhost -u root -p 123456 -D mysql < " + filePath;
+	        	cmd1 = "sqlplus system/xg123@orcl @sqlTest.sql";
 	        	break;
         }
 
