@@ -266,14 +266,13 @@ module.exports = function(app) {
 	        	break;
 	        case "sql(mysql)":
 	        	filePath = sqlCodePath;
+	        	// cmd1 = "mysql -h localhost -u root -p 123456 -D mysql < " + filePath;
 				cmd1 = "mysql -uroot -p123456 -Dmysql < " + filePath;
 	        	break;
 	        case "sql(oracle)":
 	        	filePath = sqlCodePath;
 	        	// cmd1 = "sqlplus system/xg123@orcl @" + filePath;
 	        	cmd1 = "sqlplus / as sysdba @"+filePath;
-	        	// cmd2 = "exit";
->>>>>>> 81b0ce3ec220019d1ded152f492890021f6ae1d4
 	        	break;
         }
 

@@ -26,7 +26,7 @@ insert into book values ( '9787115167934', ' artist',
  
 'Diomidis Spinellis',   
  
-'2008-1-00', 384,   
+'2008-1-10', 384,   
  
 ' computer ', 55.00 );   
  
@@ -34,7 +34,7 @@ insert into book values ( '9787111213826', 'Java',
  
 'Bruce Eckel',   
  
-'2007-6-00', 880,   
+'2007-6-02', 880,   
  
 ' computer ', 108.00 );
 
