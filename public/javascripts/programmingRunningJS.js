@@ -153,6 +153,8 @@ function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 		case "php":
 		case "python":
 		case "Ruby":
+		case "sql(mysql)":
+		case "sql(oracle)":
 			runningCodeByCmd(mode, code, inputValue, callback);
 			break;
 		case "javascript":
@@ -167,7 +169,9 @@ function runingOnceJavaCompare(type, correctCode, studentCode, inputValue, runCo
 			runCount++;
 			if (result1.success && result2.success) {
 				console.log(result1.success, result2.success);
-				if (result1.success === result2.success) rightCount++;
+				let compareSuccess1 = result1.success.replace(/\s+/g, ' '),
+					compareSuccess2 = result2.success.replace(/\s+/g, ' ');
+				if (compareSuccess1 === compareSuccess2) rightCount++;
 			}
 			else {
 				runCount--;   // 该次结果作废
@@ -219,6 +223,8 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 		case "php":
 		case "python":
 		case "Ruby":
+		case "sql(mysql)":
+		case "sql(oracle)":
 			runingOnceJavaCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 		case "javascript":

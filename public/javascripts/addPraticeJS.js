@@ -21,7 +21,8 @@ let programmingTypeMode = {
 	php: "text/x-php",
 	python: "text/x-python",
 	Ruby: "text/x-ruby",
-	sql: "text/x-sql"
+	"sql(mysql)": "text/x-mysql",
+	"sql(oracle)": "text/x-sql"
 }
 
 // 记录Programing添加的editor，用于后面判断editor是否都不为空

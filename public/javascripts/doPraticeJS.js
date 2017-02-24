@@ -9,7 +9,8 @@ let programmingTypeMode = {
 	php: "text/x-php",
 	python: "text/x-python",
 	Ruby: "text/x-ruby",
-	sql: "text/x-sql"
+	"sql(mysql)": "text/x-mysql",
+	"sql(oracle)": "text/x-sql"
 }
 
 let subjectName, praticeType, selectIndex, type, allPraticeContent;

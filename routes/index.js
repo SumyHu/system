@@ -50,7 +50,8 @@ const cCodeTestPath = path.join(__dirname, "../Test/cTest.c"),
 	  phpCodeTestPath = path.join(__dirname, "../Test/phpTest.php"),
 	  pythonCodeTestPath = path.join(__dirname, "../Test/pythonTest.py"),
 	  rubyCodeTestPath = path.join(__dirname, "../Test/rubyTest.rb"),
-	  sqlCodeTestPath = path.join(__dirname, "../Test/sqlTest.sql");
+	  mysqlCodeTestPath = path.join(__dirname, "../Test/mysqlTest.sql"),
+	  oracleCodeTestPath = path.join(__dirname, "../Test/oracleTest.sql");
 
 let commentJs;
 
@@ -263,10 +264,16 @@ module.exports = function(app) {
 	        	filePath = rubyCodePath;
 	        	cmd1 = "ruby rubyTest.rb";
 	        	break;
-	        case "sql":
+	        case "sql(mysql)":
 	        	filePath = sqlCodePath;
-	        	// cmd1 = "mysql -h localhost -u root -p 123456 -D mysql < " + filePath;
-	        	cmd1 = "sqlplus system/xg123@orcl @sqlTest.sql";
+				cmd1 = "mysql -uroot -p123456 -Dmysql < " + filePath;
+	        	break;
+	        case "sql(oracle)":
+	        	filePath = sqlCodePath;
+	        	// cmd1 = "sqlplus system/xg123@orcl @" + filePath;
+	        	cmd1 = "sqlplus / as sysdba @"+filePath;
+	        	// cmd2 = "exit";
+>>>>>>> 81b0ce3ec220019d1ded152f492890021f6ae1d4
 	        	break;
         }
 
@@ -275,7 +282,13 @@ module.exports = function(app) {
 		if (!fs.existsSync(filePath)) {
 	        fse.ensureFileSync(filePath);
         }
-        fs.writeFileSync(filePath, req.body.code);
+
+        if (req.body.type === "sql(oracle)") {
+        	fs.writeFileSync(filePath, req.body.code+"\n/\nexit");
+        }
+        else {
+	        fs.writeFileSync(filePath, req.body.code);
+        }
 
         if (cmd2) {
         	exec(cmd1, {cwd: "./programmingRunningFile", encoding: "utf8"}, function(err,stdout,stderr){
@@ -341,7 +354,7 @@ module.exports = function(app) {
         	});
 
         	e.stdout.pipe(process.stdout);
-        	if (inputValueArray) {
+    		if (inputValueArray) {
         		for(let i=0; i<inputValueArray.length; i++) {
 	        		setTimeout(function() {
 	        			console.log(inputValueArray[i]);
@@ -362,7 +375,7 @@ module.exports = function(app) {
         	e.stdin.on('end', function() {
 			    endStatus = true;
 			});
-        }
+    	}
 	});
 
 	app.post("/javascriptRunning", function(req, res) {
@@ -455,7 +468,7 @@ module.exports = function(app) {
 
 	app.get("/help", function(req, res) {
 		console.log(req.query.mode);
-		let testFilePath, notice = "所有文件名大小写敏感", topic = "求两个整数的和",
+		let testFilePath, notice = "最好不要出现中文字样，可能会到导致编译失败！所有文件名大小写敏感。", topic = "求两个整数的和",
 			input = {
 				description: "分别输入两个整数",
 				example: "2 \n 3",
@@ -481,11 +494,11 @@ module.exports = function(app) {
 				break;
 			case "javascript":
 				testFilePath = javascriptCodeTestPath;
-				notice = "读取一行输入：read_line()，输出一行：print(something)，注意使用print函数输出时，末尾自动带有换行符，无需自己添加。";
+				notice += "读取一行输入：read_line()，输出一行：print(something)，注意使用print函数输出时，末尾自动带有换行符，无需自己添加。";
 				break;
 			case "java":
 				testFilePath = javaCodeTestPath;
-				notice = "您可以写很多个类，但是必须有一个类名为Main，并且为public属性，并且Main为唯一的public class，Main类的里面必须包含一个名字为'main'的静态方法（函数），这个方法是程序的入口。";
+				notice += "您可以写很多个类，但是必须有一个类名为Main，并且为public属性，并且Main为唯一的public class，Main类的里面必须包含一个名字为'main'的静态方法（函数），这个方法是程序的入口。";
 				break;
 			case "php":
 				testFilePath = phpCodeTestPath;
@@ -496,10 +509,25 @@ module.exports = function(app) {
 			case "Ruby":
 				testFilePath = rubyCodeTestPath;
 				break;
-			case "sql":
-				testFilePath = sqlCodeTestPath;
+			case "sql(mysql)":
+				testFilePath = mysqlCodeTestPath;
+				topic = "创建一个名为book的表";
+				notice += "使用的数据库名为mysql。建议不要编写可能会造成冲突的程序，如创建表格（重复创建，数据库会报表格已存在错误）。若实在要编写这种程序，请在编写前去除冲突的可能，如判断数据库中是否存在该表格，若存在则将该表格删除，再按照题目要求创建新的表格。";
+				input = {
+					description: "表的字段有（请严格按照顺序）：tisbn(varchar(20) primary key)、tbname(varchar(100))、tauthor(varchar(100))、bookdate(date)、bookpage(int)、leixing(varchar(20))、bprice(float(6,2))",
+					example: "无",
+					type: "无"
+				};
+				output = {
+					description: "显示书1的信息：9787111213826 Java Bruce Eckel	2007-06-00 880 computer 108.00，书2的信息：9787115167934 artist	Diomidis Spinellis 2008-01-00 384 computer 55.00",
+					example: "无",
+					type: "无"
+				}
+				break;
+			case "sql(oracle)":
+				testFilePath = oracleCodeTestPath;
 				topic = "求1~100之间的整数和";
-				notice = "建议不要编写可能会造成冲突的程序，如创建表格（重复创建，数据库会报表格已存在错误）。若实在要编写这种程序，请在编写前去除冲突的可能，如判断数据库中是否存在该表格，若存在则将该表格删除，再按照题目要求创建新的表格。";
+				notice += "建议不要编写可能会造成冲突的程序，如创建表格（重复创建，数据库会报表格已存在错误）。若实在要编写这种程序，请在编写前去除冲突的可能，如判断数据库中是否存在该表格，若存在则将该表格删除，再按照题目要求创建新的表格。";
 				input = {
 					description: "无",
 					example: "无",
