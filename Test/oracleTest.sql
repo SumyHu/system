@@ -1,3 +1,4 @@
+clear SCR
 SET SERVEROUTPUT ON
 DECLARE
 	i NUMBER;
@@ -10,3 +11,5 @@ BEGIN
 	END LOOP;
 	dbms_output.put_line(sumx);
 END;
+/
+exit

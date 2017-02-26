@@ -56,10 +56,13 @@ function bindEvent() {
 		callDataProcessingFn({
 			data: {
 				data: "users",
-				id: registerVal.username,
-				callFunction: "find"
+				callFunction: "find",
+				findOpt: {
+					_id: registerVal.username
+				}
 			},
 			success: function(data) {
+				console.log(data);
 				if (data) {
 					$(".username").select();
 					showTips("该用户名已经存在，请重新输入！");

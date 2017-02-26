@@ -11,21 +11,21 @@
 }
 
 .nextStep, .previousStep, .registerConfirm {
-	width: 80px;
+	width: 120px;
 	border-radius: 10px;
-	background: rgba(67, 135, 253, 0.5);
+	background: rgba(69, 133, 242, 0.9);
 }
 
 .nextStep:hover, .registerConfirm:hover {
-	background: rgba(67, 135, 253, 0.3);
+	background: rgba(69, 133, 242, 1);
 }
 
 .previousStep {
-	background: rgba(142, 173, 46, 0.5);
+	background: rgba(142, 173, 46, 0.9);
 }
 
 .previousStep:hover {
-	background: rgba(142, 173, 46, 0.3);
+	background: rgba(142, 173, 46, 1);
 }
 
 .firstStep, .secondStep {
