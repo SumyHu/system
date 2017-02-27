@@ -1,76 +1,74 @@
-/*body {
-	background: #f8f9fb;
-}*/
-
 .outer {
 	position: absolute;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
 	padding: 20px 40px;
-	/*border: 1px solid #fff;*/
-	border: 1px solid #b1a9bb;
-	border-radius: 20px;
+	border: 1px solid #c4c4c4;
+	border-radius: 10px;
 	background: #fff;
-	/*background: rgba(255, 255, 255, 0.5);*/
-	/*background: #fff;*/
 	text-align: center;
 	font-family: "幼圆";
-	font-size: 23px;
-	/*color: #fff;*/
-	color: #000;
+	font-size: 20px;
+	color: #8c8c8c;
 }
 
 .outer div {
-	margin: 20px 0;
+	margin: 0 0 20px 0;
 }
 
 .outer .title {
+	margin: 20px 0 35px;
+	text-align: left;
+	font-family: "华文琥珀";
 	font-size: 25px;
+	color: #9a8c69;
+}
+
+.btnDiv {
+	width: 100%;
+	text-align: left;
 }
 
 input[type=text], input[type=password] {
 	display: inline-block;
-	width: 250px;
+	width: 400px;
 	font-size: 23px;
 	border: none;
-	/*border-bottom: 1px solid #fff;*/
-	border-bottom: 1px solid #000;
+	border: 1px solid #ededed;
 	outline: none;
-	background: transparent;
+	background: #fafafa;
 	font-family: "幼圆";
-	/*color: #fff;*/
 	color: #000;
 }
 
-.login, .register {
-	width: 120px;
-	border-radius: 10px;
-	/*background: #8EAD2E;*/
-	/*background: rgba(142, 173, 46, 0.5);*/
-	background: rgba(142, 173, 46, 0.8);
-}
-
-.register:hover {
-	/*background: rgba(142, 173, 46, 0.3);*/
-	background: rgba(142, 173, 46, 1);
-}
-
 .login {
-	width: 280px;
-	margin: 10px 0;
-	/*background: rgba(67, 135, 253, 0.5);*/
-	/*background: rgba(67, 135, 253, 0.8);*/
-	background: rgba(69, 133, 242, 0.9);
+	position: absolute;
+	right: 0;
+	padding: 0 20px;
+	margin: 0 40px;
+	border: 1px solid #e5e5e5 !important;
+	box-shadow: 1px 2px #d1d1d1;
+	border-radius: 30px;
+	background: #fff;
+	color: #676767 !important;
 }
 
 .login:hover {
-	/*background: rgba(67, 135, 253, 0.3);*/
-	background: rgba(69, 133, 242, 1);
+	background: #fafafa;
 }
 
-.findPsw {
-	width: 110px;
+.findPsw, .register {
+	padding: 0 7px;
 	background: transparent;
+	font-size: 15px !important;
 	color: #D21F1F !important;
+}
+
+.register {
+	color: #126fbd !important;
+}
+
+.register:hover, .findPsw:hover {
+	text-decoration: underline;
 }

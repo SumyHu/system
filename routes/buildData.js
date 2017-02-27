@@ -28,7 +28,8 @@ var subjectsSchema = new Schema ({
 	subjectName: String,   // 科目唯一标识，即科目名
 	chapterPratices: [],   // 章节练习内容
 	examinationPratices: [],   // 考试模拟内容
-	randomPratices: String   // 随机练习内容
+	randomPratices: String,  // 随机练习内容
+	updateTime: String   // 更新时间
 });
 
 var subjects = mongoose.model('subjects', subjectsSchema);

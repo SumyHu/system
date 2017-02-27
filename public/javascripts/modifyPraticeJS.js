@@ -541,4 +541,18 @@ savePraticesInData = function(contentObj, totalCount) {
 			});
 		}
 	}
+
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "update",
+			updateOpt: {
+				subjectName: subjectName
+			},
+			operation: "set",
+			update: {
+				updateTime: new Date().toLocaleString()
+			}
+		}
+	});
 }

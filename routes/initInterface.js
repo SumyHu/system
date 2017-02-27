@@ -1,5 +1,5 @@
 initInterface = {
-	indexInterface: `<section class="subject">
+	indexInterface: `<section class="body subject">
 						<div class="addSubject">+</div>
 					</section>`,
 	settingsInterface: `<section class="settingsContent body">

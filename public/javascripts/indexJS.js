@@ -5,9 +5,13 @@ let identity;
 */
 function addSubjectInView(subjectName) {
 	let section = document.createElement("section");
-	section.innerHTML = '<div><div class="subjectName" title="' + subjectName + '">' + subjectName 
+	// section.innerHTML = '<div><div class="subjectName" title="' + subjectName + '">' + subjectName 
+	// 					+ '</div><input type="button" value="X" class="remove">'
+	// 					+ '<input type="button" class="modify"></div>';
+	section.innerHTML = '<div class="main"><div class="subjectName" title="' + subjectName + '">' + subjectName 
 						+ '</div><input type="button" value="X" class="remove">'
-						+ '<input type="button" class="modify"></div>';
+						+ '<input type="button" class="modify"></div>'
+						+ '<div class="updateTime"></div>';
 
 	let addSubject = $(".addSubject");
 	addSubject.before(section);
@@ -46,7 +50,8 @@ function addSubject(subjectName) {
 							callFunction: "save",
 							saveData: {
 								subjectName: subjectName,
-								randomPratices: result.id
+								randomPratices: result.id,
+								updateTime: new Date().toLocaleString()
 							}
 						},
 						success: function(result) {
@@ -226,6 +231,20 @@ function modifySubjectName($modifyTarget) {
 					},
 					success: function(result) {
 						if (result) {
+							callDataProcessingFn({
+								data: {
+									data: "subjects",
+									callFunction: "update",
+									updateOpt: {
+										subjectName: subjectName
+									},
+									operation: "set",
+									update: {
+										updateTime: new Date().toLocaleString()
+									}
+								}
+							});
+							
 							$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
 							showTips("科目名称修改成功！", 2000);
 						}

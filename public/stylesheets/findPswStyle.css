@@ -1,5 +1,5 @@
 select {
-	width: 224px;
+	width: 380px;
 	border-radius: 10px;
 	outline: none;
 	font-size: 20px;
@@ -11,9 +11,15 @@ select {
 }
 
 .findPswBtn {
-	width: 80px;
+	width: 120px;
+	border: 1px solid #e5e5e5 !important;
+	box-shadow: 1px 2px rgba(69, 133, 242, 0.8);
 	border-radius: 10px;
-	background: rgba(67, 135, 253, 0.5);
+	background: rgba(69, 133, 242, 0.6);
+}
+
+.findPswBtn:hover {
+	background: rgba(69, 133, 242, 0.8);
 }
 
 .secondStep {
