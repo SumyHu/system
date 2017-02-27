@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="stylesheets/commentStyle.css">
 	<% for(let i=0, len=cssFilePath.length; i<len; i++) { %>
 		<link rel="stylesheet" type="text/css" href="<%= cssFilePath[i] %>">
@@ -8,7 +9,7 @@
 </head>
 <body>
 	<div class="toolbarDisable"></div>
-	<header class="toolbar">
+	<!-- <header class="toolbar">
 		<div class="logo">PRATICE</div>
 		<div class="time"></div>
 		<section class="userInfo">
@@ -18,26 +19,32 @@
 				<div class="identity" id=<%= identity %>></div>
 			</div>
 		</section>
+	</header> -->
+
+	<header class="toolbar">
+		<div class="userImg" style="background-image: url(<%= imageSrc %>);">
+			<div class="showUsername" id=<%= fullName %>><%= username %></div>
+			<div class="identity" id=<%= identity %>></div>
+		</div>
 	</header>
 
 	<section class="naviSec">
 		<div class="tab"></div>
 
 		<nav class="navigation">
-			>>>>>
 			<div class="home"></div>
 		</nav>
 	</section>
 
 	<%- innerHtml %>
 
-	<footer>
+	<!-- <footer>
 		<div class="message">
 			<span class="author">Email:18824167803@163.com</span>|
 			<span class="telphone">Tel:18824167803</span>
 		</div>
 		<div class="copyright">Copyright©2016-2017 SunnyHu</div>
-	</footer>
+	</footer> -->
 
 	<script src="javascripts/jquery.min.js"></script>
 	<script src="javascripts/commentFunction.js"></script>

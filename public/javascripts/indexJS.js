@@ -3,7 +3,7 @@ let identity;
 /** 在界面中添加某个科目
  * @param subjectName String 科目名称
 */
-function addSubjectInView(subjectName) {
+function addSubjectInView(subjectName, updateTime) {
 	let section = document.createElement("section");
 	// section.innerHTML = '<div><div class="subjectName" title="' + subjectName + '">' + subjectName 
 	// 					+ '</div><input type="button" value="X" class="remove">'
@@ -11,23 +11,25 @@ function addSubjectInView(subjectName) {
 	section.innerHTML = '<div class="main"><div class="subjectName" title="' + subjectName + '">' + subjectName 
 						+ '</div><input type="button" value="X" class="remove">'
 						+ '<input type="button" class="modify"></div>'
-						+ '<div class="updateTime"></div>';
+						+ '<div class="updateTime">更新至' + updateTime + '</div>';
 
 	let addSubject = $(".addSubject");
 	addSubject.before(section);
-
-	$(section).hover(function(e) {
-		$(this).find(".remove").css("opacity", 1);
-		$(this).find(".modify").css("opacity", 1);
-	}, function(e) {
-		$(this).find(".remove").css("opacity", 0);
-		$(this).find(".modify").css("opacity", 0);
-	});
 
 	if (identity !== "teacher") {
 		$(".remove").css("display", "none");
 		$(".modify").css("display", "none");
 	}
+
+	$(section).hover(function(e) {
+		$(this).find(".remove").css("opacity", 1);
+		$(this).find(".modify").css("opacity", 1);
+		$(this).css("font-size", "35px");
+	}, function(e) {
+		$(this).find(".remove").css("opacity", 0);
+		$(this).find(".modify").css("opacity", 0);
+		$(this).css("font-size", "25px");
+	});
 }
 
 /** 在界面和数据库中添加某个科目
@@ -44,6 +46,7 @@ function addSubject(subjectName) {
 			},
 			success: function(result) {
 				if (!result.err) {
+					let updateTime = new Date().toLocaleDateString();
 					callDataProcessingFn({
 						data: {
 							data: "subjects",
@@ -51,14 +54,14 @@ function addSubject(subjectName) {
 							saveData: {
 								subjectName: subjectName,
 								randomPratices: result.id,
-								updateTime: new Date().toLocaleString()
+								updateTime: updateTime
 							}
 						},
 						success: function(result) {
 							if (!result.err) {
 								showTips("新建科目成功！", 2000);
 
-								addSubjectInView(subjectName);
+								addSubjectInView(subjectName, updateTime);
 							}
 						}
 					});
@@ -72,7 +75,7 @@ function addSubject(subjectName) {
 function newSubjectName() {
 	let contentHTML = `<div>请输入科目名称：</div>
 						<div><input class="textInput" type="text" autofocus=true 
-						 style="color: #000; border-bottom-color: #000; margin: 20px 0;">
+						 style="color: #000; border-bottom-color: #000; margin: 20px 0;" maxLength=20>
 						 </div>`;
 	showWin(contentHTML, function() {
 		let subjectName = $(".textInput").val();
@@ -190,7 +193,7 @@ function removeOneSubjectAllContent($removeTarget) {
 			randomPratices = result.randomPratices;
 
 		removeSubject(subjectName, function() {
-			$removeTarget.remove();
+			$removeTarget.parent().remove();
 			showTips("删除成功！", 2000);
 		});
 
@@ -231,22 +234,25 @@ function modifySubjectName($modifyTarget) {
 					},
 					success: function(result) {
 						if (result) {
+							let updateTime = new Date().toLocaleDateString();
 							callDataProcessingFn({
 								data: {
 									data: "subjects",
 									callFunction: "update",
 									updateOpt: {
-										subjectName: subjectName
+										subjectName: newSubjectName
 									},
 									operation: "set",
 									update: {
-										updateTime: new Date().toLocaleString()
+										updateTime: updateTime
 									}
+								},
+								success: function() {
+									$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
+									$modifyTarget.parent().find(".updateTime")[0].innerHTML = "更新至" + updateTime;
+									showTips("科目名称修改成功！", 2000);
 								}
 							});
-							
-							$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
-							showTips("科目名称修改成功！", 2000);
 						}
 					}
 				});
@@ -266,7 +272,7 @@ function init() {
 	findAllSubject(function(result) {
 		console.log(result);
 		for(let i=0, len=result.length; i<len; i++) {
-			addSubjectInView(result[i].subjectName);
+			addSubjectInView(result[i].subjectName, result[i].updateTime);
 		}
 	});
 
@@ -309,10 +315,17 @@ function bindEvent() {
 	$(".subject").click(function(e) {
 		let target = getTarget(e);
 		let className = target.className;
+		console.log(className);
 
 		switch(className) {
+			case "main":
+				enterSubjectExercise($(target).find(".subjectName")[0].innerHTML);
+				break;
 			case "subjectName":
 				enterSubjectExercise($(target)[0].innerHTML);
+				break;
+			case "updateTime":
+				enterSubjectExercise($(target).parent().find(".subjectName")[0].innerHTML);
 				break;
 			case "remove":   // 绑定删除科目事件
 				showWin("确定删除该科目吗？（连同该科目的所有题库都删除）", function() {

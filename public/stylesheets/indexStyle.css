@@ -1,8 +1,35 @@
+.toolbar {
+	position: absolute;
+	height: 300px;
+}
+
+.userImg {
+	position: absolute;
+	width: 150px;
+	height: 150px;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
+.showUsername {
+	width: 150px;
+	height: 150px;
+	line-height: 150px;
+	font-size: 40px;
+}
+
+.naviSec {
+	display: none;
+}
+
 .subject {
 	width: 72%;
-	top: 200px;
+	top: 350px;
 	left: 50%;
-	margin: 0 0 180px 0;
+	margin: 0 0 50px 0;
 	transform: translateX(-50%);
 }
 
@@ -11,64 +38,60 @@
 	float: left;
 	width: 220px;
 	height: 222px;
-	margin: 10px;
+	margin: 5px;
 	border: 1px solid #e8eaed;
 	box-shadow: 1px 3px 5px #e0e3e6;
-	line-height: 150px;
+	/*line-height: 178px;*/
 	text-align: center;
-	font-size: 35px;
+	font-size: 25px;
 	color: #000;
 	background-color: #fff;
-	border-radius: 10px;
+	border-radius: 5px;
 	cursor: pointer;
+	transition: all 0.3s linear;
 }
 
 .main {
 	height: 80%;
+	overflow: hidden;
+}
+
+.subjectName {
+	position: relative;
+	top: 50%;
+	/*left: 50%;*/
+	transform: translateY(-50%);
 }
 
 .updateTime {
 	height: 20%;
-	background-color: #e8eaed !important;
+	border-radius: 0 0 5px 5px;
+	/*background-color: #e8eaed !important;*/
+	/*background-color: #71777d !important;*/
+	line-height: 45px;
+	font-size: 13px;
+	background-color: #cccfd1 !important;
 }
 
-/*.subject > .main {
-	display: inline-block;
-	width: 220px;
-	height: 222px;
-	border: none;
-	line-height: 150px;
-	text-align: center;
-	font-size: 35px;
-	color: #000;
-	background-color: #fff;
-	border-radius: 10px;
-	cursor: pointer;
-}*/
-
-/*.subject > section > div > div {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-*/
 .addSubject {
 	/*position: relative;
 	top: -70px;*/
-	line-height: 180px !important;
+	line-height: 222px !important;
 	font-size: 110px !important;
 	background: rgba(255, 255, 255, 0.3) !important;
 	transition: 0.3s all linear;
 }
 
 .addSubject:hover {
-	background: rgba(255, 255, 255, 0.5) !important;
+	/*background: rgba(0, 0, 0, 0.1) !important;*/
+	background: #cccfd1 !important;
 }
 
 .remove, .modify {
+	display: inline-block;
 	position: relative;
-	top: -220px;
-	/*right: 0px;*/
+	top: -45px;
+	right: 10px;
 	width: 25px;
 	height: 25px !important;
 	float: right;
@@ -85,13 +108,14 @@
 }
 
 .modify {
-	clear: both;
+	left: 10px;
+	float: left;
 	background-image: url("../image/pen.png");
-	background-size: 100%;
+	background-size: 80%;
 	background-position: center center;
 	background-repeat: no-repeat;
 }
 
 .remove:hover, .modify:hover {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(0, 0, 0, 0.3);
 }

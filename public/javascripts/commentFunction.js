@@ -142,18 +142,18 @@ function getCurrentToolbar() {
 
 // 绑定顶部导航栏事件
 function toobarEvent() {
-	$(".tab").hover(function() {
-		$(".navigation").css("height", "30px");
-		$(".navigation").css("opacity", 1);
-	});
+	// $(".tab").hover(function() {
+	// 	$(".navigation").css("height", "30px");
+	// 	$(".navigation").css("opacity", 1);
+	// });
 
-	$(".naviSec").hover(function() {
-	}, function() {
-		if ($(".navigation").css("opacity") == 1) {
-			$(".navigation").css("height", 0);
-			$(".navigation").css("opacity", 0);
-		}
-	});
+	// $(".naviSec").hover(function() {
+	// }, function() {
+	// 	if ($(".navigation").css("opacity") == 1) {
+	// 		$(".navigation").css("height", 0);
+	// 		$(".navigation").css("opacity", 0);
+	// 	}
+	// });
 
 	//绑定导航目录事件
 	$(".naviSec").click(function(e) {

@@ -95,7 +95,7 @@ input[type=button], input[type=submit] {
 	overflow: hidden;
 	line-height: 100px;
 	/*background: #222;*/
-	background: #fff;
+	background: #000;
 	z-index: 100;
 }
 
@@ -156,9 +156,11 @@ input[type=button], input[type=submit] {
 .userImg {
 	position: relative;
 	top: 20px;
+	right: 50px;
 	width: 60px;
 	height: 60px;
 	margin: 0 0 0 20px;
+	float: right;
 	overflow: hidden;
 	border: 1px solid #fff;
 	border-radius: 50%;
@@ -194,11 +196,12 @@ input[type=button], input[type=submit] {
 }
 
 .tab {
+	display: none;
 	position: fixed;
 	/*top: 82px;
 	width: 80px;
 	height: 80px;*/
-	top: 90px;
+	top: 25px;
 	width: 60px;
 	height: 60px;
 	background: url(../image/tab.png);
@@ -210,16 +213,16 @@ input[type=button], input[type=submit] {
 
 .navigation {
 	position: fixed;
-	top: 100px;
-	left: 70px;
-	height: 0;
-	opacity: 0;
+	top: 35px;
+	left: 15px;
+	/*height: 0;*/
+	/*opacity: 0;*/
 	overflow: hidden;
 	padding: 3px 20px;
-	border-bottom: 1px solid #fff;
+	/*border-bottom: 1px solid #fff;*/
 	font-size: 18px;
 	color: #fff;
-	background: #222;
+	/*background: #222;*/
 	transition: 0.5s all linear;
 }
 
