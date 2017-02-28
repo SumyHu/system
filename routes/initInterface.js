@@ -90,7 +90,6 @@ initInterface = {
 							<section class="chapterContent">
 								<aside>
 									<ul>
-										<li>示例</li>
 									</ul>
 									<div class="addMore">+</div>
 								</aside>
@@ -197,45 +196,6 @@ initInterface = {
 							</section>
 
 							<section class="examinationContent">
-								<section class="content">
-									<section class="showEg">
-										<div class="title">示例</div>
-										<section class="contentDetail">
-											<div>
-												<p class="showSingleChoiceCount">
-													单选题：<span class="count">20</span>道
-												</p>
-												<p class="showMultipleChoicesCount">
-													多选题：<span class="count">20</span>道
-												</p>
-												<p class="showTrueOrFalseCount">
-													判断题：<span class="count">20</span>道
-												</p>
-												<p class="showFillInTheBlankCount">
-													填空题：<span class="count">20</span>道
-												</p>
-												<p class="showShortAnswerCount">
-													简答题：<span class="count">20</span>道
-												</p>
-												<p class="showProgrammingCount">
-													编程题：<span class="count">20</span>道
-												</p>
-												<p class="totalTime">
-													完成时间：<span class="count">120</span>分钟
-												</p>
-												<p class="totalScore">
-													总分：<span class="count">100</span>分
-												</p>
-											</div>
-											<div>
-												1、请在规定时间完成试卷内全部题目，考试时间结束，系统将自动交卷。<br>
-												2、所有题目可通过答题卡返回修改，点击提前交卷后试卷提交，将无法继续答案，请谨慎提交。<br>
-												3、请诚信答题，独立完成。<br>
-												4、祝你好运
-											</div>
-										</section>
-									</section>
-								</section>
 								<div class="addMore">+</div>
 							</section>
 
@@ -243,6 +203,7 @@ initInterface = {
 								<section class="content">
 									<section class="showOneType SingleChoice">
 										<div class="showEg">
+											<div class="btnDiv"><input type="button" class="modifyBtn"></div>
 											<p class="title">单选题</>
 											<div class="eg">
 												<p class="title">e.g：2008年2月有几天？</p>
@@ -266,6 +227,7 @@ initInterface = {
 
 									<section class="showOneType MultipleChoices">
 										<div class="showEg">
+											<div class="btnDiv"><input type="button" class="modifyBtn"></div>
 											<p class="title">多选题</>
 											<div class="eg">
 												<p class="title">e.g：请问哪些是特别行政区？</p>
@@ -289,6 +251,7 @@ initInterface = {
 
 									<section class="showOneType TrueOrFalse">
 										<div class="showEg">
+											<div class="btnDiv"><input type="button" class="modifyBtn"></div>
 											<p class="title">判断题（T为对，F为错）</>
 											<div class="eg">
 												<p class="title">e.g：2008年2月有30天。</p>
@@ -308,6 +271,7 @@ initInterface = {
 
 									<section class="showOneType FillInTheBlank">
 										<div class="showEg">
+											<div class="btnDiv"><input type="button" class="modifyBtn"></div>
 											<p class="title">填空题</>
 											<div class="eg">
 												<p class="title">e.g：香港是在_______年回归？</p>
@@ -321,6 +285,7 @@ initInterface = {
 
 									<section class="showOneType ShortAnswer">
 										<div class="showEg">
+											<div class="btnDiv"><input type="button" class="modifyBtn"></div>
 											<p class="title">简答题</>
 											<div class="eg">
 												<p class="title">e.g：什么是操作系统？</p>
@@ -334,6 +299,7 @@ initInterface = {
 
 									<section class="showOneType Programming">
 										<div class="showEg">
+											<div class="btnDiv"><input type="button" class="modifyBtn"></div>
 											<p class="title">编程题</>
 											<div class="eg">
 												<p class="title">e.g：请编写一个计算总和的程序，例如：输入(20,30)，输出50.</p>

@@ -1,33 +1,3 @@
-/*.typeNav {
-	position: relative;
-	top: 100px;
-	left: 50%;
-	width: 450px;
-	transform: translateX(-50%);
-}
-
-.typeNav div {
-	display: inline-block;
-	width: 150px;
-	height: 50px;
-	margin: 0 -5px;
-	border-radius: 5px;
-	text-align: center;
-	line-height: 50px;
-	font-size: 18px;
-	cursor: pointer;
-	transition: 0.3s all linear;
-}
-
-.typeNav div:hover {
-	background: rgba(249, 90, 78, 0.8) !important;
-	color: #fff;
-}
-
-.typeNav .chapter {
-	background: rgba(249, 90, 78, 0.8);
-	color: #fff;
-}*/
 .typeNav {
 	position: fixed;
 	top: 50px;
@@ -64,73 +34,29 @@
 	border-top: 1px solid #7a7a7b;
 }
 
-/*.praticeContent {
-	top: 200px;
-}
-
-.praticeContent aside {
-	width: 20%;
-	float: left;
-	overflow-y: auto;
-	text-align: center;
-	font-size: 20px;
-	color: #fff;
-}
-
-.praticeContent aside ul {
-	border: 1px solid #fff;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-.praticeContent aside li, .addMore {
-	width: 100%;
-	height: 46px;
-	text-align: center;
-	line-height: 46px;
-	font-size: 23px;
-	cursor: pointer;
-	transition: 0.5s all linear;
-}
-
-.addMore {
-	margin: 20px 0;
-	background: rgba(255, 255, 255, 0.4);
-	transition: 0.5s all linear;
-}
-
-.addMore:hover {
-	background: rgba(255, 255, 255, 0.7);
-}
-
-.praticeContent aside li.select {
-	background-color: rgba(164, 205, 51, 0.4) !important;
-}
-
-.praticeContent aside li:hover {
-	background-color: rgba(164, 205, 51, 0.4) !important;
-}
-
-.praticeContent aside li+li {
-	border-top: 1px solid #fff;
-}*/
-
 .praticeContent {
 	position: relative;
 	width: 90%;
 	top: 100px;
-	margin: 0 20px 0 10px;
+	margin: 0 10px;
 	float: right;
+}
+
+.chapterContent aside {
+	margin: 20px 0 40px;
 }
 
 .chapterContent aside ul {
 	display: inline-block;
+	float: left;
+	margin: 0 0 10px;
 }
 
 .chapterContent > aside > ul > li, .chapterContent .addMore {
 	display: inline-block;
 	width: 65px;
 	height: 65px;
-	margin: 0 10px 10px;
+	margin: 0 10px;
 	border-radius: 50%;
 	text-align: center;
 	line-height: 65px;
@@ -140,98 +66,10 @@
 	cursor: pointer;
 }
 
-/*.content {
-	width: 70%;
-	padding: 0px 20px;
-	float: right;
-	border: 1px solid #fff;
-	border-radius: 10px;
-	font-size: 18px;
-	color: #fff;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-.content section {
-	padding: 0 0 30px;
-	overflow: hidden;
-}
-
-.content > section+section {
-	border-top: 1px solid #fff;
-}
-
-.randomContent .content > section+section {
-	border-top: none;
-}
-
-.randomContent .showOneType {
+.chapterContent > .content > section {
 	display: none;
-}
-
-.randomContent > .content > .SingleChoice {
-	display: block;
-}
-
-.showEg, .contentDetail, .exerciseCount {
-	width: 85%;
-	float: left;
-}
-
-.showEg > .title {
-	font-size: 27px;
-}
-
-.exerciseCount {
-	margin: 30px 0 0;
 	clear: both;
-	font-size: 21px;
-	color: #5CB099;
 }
-
-.enter {
-	position: relative;
-	top: 50px;
-	width: 8%;
-	float: right;
-	right: 20px;
-}
-
-.examinationContent .enter, .randomContent .enter {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 8%;
-	float: right;
-	right: 20px;
-}
-
-.enter input{
-	display: inline-block;
-	width: 60px;
-	height: 40px;
-	margin: 10px 0;
-	border-radius: 10px;
-	background: rgba(67, 135, 253, 0.5);
-}
-
-.enter input:hover {
-	background: rgba(67, 135, 253, 0.3);
-}
-
-.examinationContent {
-	display: none;
-}
-
-.randomContent {
-	display: none;
-}
-
-
-.contentDetail > div+div {
-	padding: 20px 0 0;
-	border-top: 1px solid #fff;
-	line-height: 30px;
-}*/
 
 .examinationContent {
 	display: none;
@@ -327,19 +165,37 @@
 	/*text-align: left;*/
 }
 
-.enter {
+.btnDiv {
 	display: none;
+	position: absolute;
+	width: 100%;
+	height: 50px;
+	z-index: 2;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+.chapterContent .btnDiv {
+	position: relative;
+	top: -100px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: transparent;
+}
+
+.chapterContent .removeIndex, .chapterContent .modifyBtn {
+	margin: 0 0 0 12px;
 }
 
 .removeIndex, .modifyBtn {
-	display: block;
+	position: relative;
+	top: 25px;
 	/*position: absolute;*/
-	left: 157px;
+	/*left: 157px;*/
 	width: 15px;
 	height: 15px !important;
-	margin: 6px 0 0 !important;
-	float: right;
-	margin: 0;
+	margin: -5px 15px;
+	float: left;
+	/*margin: 0 10px;*/
 	padding: 0;
 	border-radius: 50%;
 	text-align: center;
@@ -358,6 +214,18 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-color: #fff;
+}
+
+.examinationContent .modifyBtn {
+	float: left;
+}
+
+.examinationContent .removeIndex {
+	float: right;
+}
+
+.randomContent .modifyBtn {
+	float: right;
 }
 
 .removeIndex:hover {

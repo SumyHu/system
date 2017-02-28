@@ -321,7 +321,7 @@ function bindEvent() {
 		if (getTarget(e).className === "modifyBtn") {
 			let locationHref;
 			if (currentPraticeType === "random") {
-				locationHref = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&type=" + praticeTypeArr[index] + "&operation=modify"
+				locationHref = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&type=" + praticeTypeArr[index] + "&operation=modify";
 			}
 			else {
 				locationHref = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&index=" + index + "&operation=modify";

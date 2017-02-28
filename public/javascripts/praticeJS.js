@@ -1,6 +1,149 @@
-let subjectName, identity, currentPraticeType = "chapter",
+let subjectName, identity, currentPraticeType = "chapter", currentChapterIndex = 0,
 	showExaminationInit = false, showRandomInit = false, 
 	chapterPratices = [], examinationPratices = [], randomPratices;
+
+function modifyRandom(type) {
+	window.location.href = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&type=" + type + "&operation=modify";
+}
+
+function modifyNotRandom(index) {
+	window.location.href = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + "&index=" + index + "&operation=modify";
+}
+
+/** 将某个习题从以习题为单位的数据库中删除
+ * @param praticeId String 习题id
+ * @param callback Function 回调函数
+*/
+function removePratice(praticeId, callback) {
+	callDataProcessingFn({
+		data: {
+			data: "pratices",
+			callFunction: "remove",
+			removeOpt: {
+				_id: praticeId
+			}
+		},
+		success: callback
+	});
+}
+
+function removePraticeInRandomUnit(randomUnitId, type, praticeId) {
+	let update = {};
+	update[type] = praticeId;
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "update",
+			updateOpt: {
+				_id: randomUnitId
+			},
+			operation: "pull",
+			update: update
+		},
+		success: function() {}
+	});
+}
+
+/** 将某个单元从以单元为单位的数据库中删除
+ * @param unitId String 单元id
+ * @param callback Function 回调函数
+*/
+function removeUnit(unitId, callback) {
+	console.log('unitId: ' + unitId);
+	callDataProcessingFn({
+		data: {
+			data: "units",
+			callFunction: "remove",
+			removeOpt: {
+				_id: unitId
+			}
+		},
+		success: callback
+	});
+}
+
+/** 将某个单元从以单元为单位的数据库中删除，并将该单元内的所以习题都从以习题为单位的数据库中删除
+ * @param unitId String 单元id
+*/
+function removeUnitAndAllPraticesInThisUnit(unitId) {
+	findUnitById(unitId, function(result) {
+		removeUnit(unitId, function() {});
+
+		console.log('find unit result', unitId, result);
+		if (!result) return;
+
+		let randomUnitId;
+		findSubjectByName(subjectName, function(result) {
+			randomUnitId = result.randomPratices;
+		});
+
+		let SingleChoice = result.SingleChoice,
+			MultipleChoices = result.MultipleChoices,
+			TrueOrFalse = result.TrueOrFalse,
+			FillInTheBlank = result.FillInTheBlank,
+			ShortAnswer = result.ShortAnswer,
+			Programming = result.Programming;
+
+		SingleChoice.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "SingleChoice", praticeId)
+		});
+		MultipleChoices.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "MultipleChoices", praticeId)
+		});
+		TrueOrFalse.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "TrueOrFalse", praticeId)
+		});
+		FillInTheBlank.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "FillInTheBlank", praticeId)
+		});
+		ShortAnswer.forEach(function(praticeId, index, array) {
+			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "ShortAnswer", praticeId)
+		});
+		Programming.forEach(function(praticeId, index, array) {
+			console.log(praticeId);
+			removePratice(praticeId, function() {});
+			removePraticeInRandomUnit(randomUnitId, "Programming", praticeId)
+		});
+	});
+}
+
+function removeUnitFormSubject(unitId) {
+	let update = {};
+	update[currentPraticeType+"Pratices"] = unitId;
+	callDataProcessingFn({
+		data: {
+			data: "subjects",
+			callFunction: "update",
+			updateOpt: {
+				subjectName: subjectName
+			},
+			operation: "pull",
+			update: update
+		},
+		success: function() {}
+	});
+}
+
+function removeIndexEvent(index) {
+	$(".btnDiv").css("display", "none");
+	showWin("确定删除？", function() {
+		findSubjectByName(subjectName, function(result) {
+			let unitId = result[currentPraticeType+"Pratices"][index];
+			removeUnitAndAllPraticesInThisUnit(unitId);
+			removeUnitFormSubject(unitId);
+		});
+		location.reload(true);
+	});
+}
+
+function doPratice(queryParam) {
+	window.location.href = "../pratice?subjectName=" + subjectName + "&praticeType=" + currentPraticeType + queryParam;
+}
 
 function authorityControl() {
 	if (identity !== "teacher") {
@@ -20,7 +163,7 @@ function showChapterIndex(indexCount) {
 	// let innerHtml = `<li value=-1>示例</li>`;
 	let innerHtml = "";
 	for(let i=0; i<indexCount; i++) {
-		innerHtml = innerHtml + `<li value=` + i + `>` + (i+1) + `<input type="button" class="removeIndex" value="X"><input type="button" class="modifyBtn"></li>`;
+		innerHtml = innerHtml + `<li value=` + i + `>` + (i+1) + `<div class="btnDiv"><input type="button" class="modifyBtn"><input type="button" class="removeIndex" value="X"></div></li>`;
 	}
 
 	$(".chapterContent > aside > ul")[0].innerHTML = innerHtml;
@@ -28,6 +171,14 @@ function showChapterIndex(indexCount) {
 	if (indexCount > 0) {
 		$($(".chapterContent > aside > ul > li")[0]).addClass("select");
 		showOneChapterContentType(chapterPratices[0]);
+	}
+
+	if (identity === "teacher") {
+		$(".chapterContent > aside > ul > li").hover(function(e) {
+			$(getTarget(e)).find(".btnDiv").css("display", "block");
+		}, function(e) {
+			$(getTarget(e)).find(".btnDiv").css("display", "none");
+		});
 	}
 }
 
@@ -69,7 +220,7 @@ function showOneChapterContentType(unitId) {
 
 function changeChapterIndexNum(index) {
 	$(".chapterContent > aside > ul > li").removeClass("select");
-	$($(".chapterContent > aside > ul > li")[ind]).addClass("select");
+	$($(".chapterContent > aside > ul > li")[index]).addClass("select");
 
 	showOneChapterContentType(chapterPratices[index]);
 }
@@ -79,6 +230,7 @@ function addExamination(unitId, index) {
 		let section = document.createElement("section");
 		section.className = "content";
 		section.innerHTML = `<section class="showEg">
+								<div class="btnDiv"><input type="button" class="modifyBtn"><input type="button" class="removeIndex" value="X"></div>
 								<div class="title">试卷<span class="index">` + (index+1) + `</span></div>
 								<section class="contentDetail">
 									<div>
@@ -116,6 +268,33 @@ function addExamination(unitId, index) {
 								</section>
 							</section>`;
 		$(".examinationContent .addMore").before(section);
+
+		if (identity === "teacher") {
+			$(section).hover(function(e) {
+				let target = getTarget(e);
+				let classname = target.className;
+				switch(classname) {
+					case "contentDetail":
+					case "title":
+						$(target).parent().find(".btnDiv").css("display", "block");
+						break;
+					case "showEg":
+						$(target).find(".btnDiv").css("display", "block");
+						break;
+				}
+			}, function(e) {
+				$(".examinationContent .btnDiv").css("display", "none");
+			});
+
+			$(section).find(".removeIndex").click(function() {
+				removeIndexEvent(index);
+			});
+		}
+
+		section.onclick = function() {
+			let queryParam = "&index=" + ($(section).find(".title .index")[0].innerHTML-1);
+			doPratice(queryParam);
+		};
 	});
 }
 
@@ -181,10 +360,76 @@ function bindEvent() {
 		let value = getTarget(e).value;
 		if (value >= 0) {
 			changeChapterIndexNum(value);
+			currentChapterIndex = value;
+			return;
+		}
+
+		if (getTarget(e).className === "modifyBtn") {
+			let index = $(getTarget(e)).parent().parent().val();
+			modifyNotRandom(index);
+			return;
+		}
+
+		if (getTarget(e).className === "removeIndex") {
+			let index = $(getTarget(e)).parent().parent().val();
+			removeIndexEvent(index);
 		}
 	});
 
 	$(".addMore").click(function(e) {
 		window.location.href = window.location.href + "&praticeType=" + currentPraticeType;
+	});
+
+	if (identity === "teacher") {
+		$(".randomContent > .content > section").hover(function(e) {
+			let target = getTarget(e);
+			let classname = target.className;
+			switch(classname) {
+				case "showOneType SingleChoice":
+				case "showOneType MultipleChoices":
+				case "showOneType TrueOrFalse":
+				case "showOneType FillInTheBlank":
+				case "showOneType ShortAnswer":
+				case "showOneType Programming":
+					$(target).find(".showEg .btnDiv").css("display", "block");
+					break;
+				case "showEg":
+					$(target).find(".btnDiv").css("display", "block");
+					break;
+				case "title":
+				case "eg":
+					$(target).parent().find(".btnDiv").css("display", "block");
+					break;
+				case "exerciseCount":
+					$(target).parent().find(".showEg .btnDiv").css("display", "block");
+					break;
+			}
+		}, function(e) {
+			$(".randomContent .btnDiv").css("display", "none");
+		});
+	}
+
+	$(".content section").click(function(e) {
+		let target = getTarget(e);
+		let classname = target.className, index, type;
+		
+		switch(classname) {
+			case "title":
+			case "btnDiv":
+				type = $(target).parent().parent()[0].className;
+				break;
+			case "showEg":
+			case "exerciseCount":
+				type = $(target).parent()[0].className;
+				break;
+		}
+
+		if (currentPraticeType === "chapter") {
+			queryParam = "&index=" + currentChapterIndex + "&type=" + type;
+		}
+		else if (currentPraticeType === "random") {
+			queryParam = "&type=" + type.split(" ")[1];
+		}
+		doPratice(queryParam);
 	});
 }
