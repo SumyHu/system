@@ -79,20 +79,22 @@ initInterface = {
 							</section>
 						</section>`,
 	praticeInterface: `<nav class="typeNav">
-							<div class="chapter">章节练习</div>
-							<div class="examination">考试模拟</div>
-							<div class="random">随机练习</div>
+							<div class="navContent">
+								<div class="chapter">章节练习</div>
+								<div class="examination">考试模拟</div>
+								<div class="random">随机练习</div>
+							</div>
 						</nav>
 
 						<section class="praticeContent body">
-							<aside>
-								<ul>
-									<li>示例</li>
-								</ul>
-								<div class="addMore">+</div>
-							</aside>
-
 							<section class="chapterContent">
+								<aside>
+									<ul>
+										<li>示例</li>
+									</ul>
+									<div class="addMore">+</div>
+								</aside>
+
 								<section class="content">
 									<section class="SingleChoice">
 										<div class="showEg">
@@ -103,7 +105,7 @@ initInterface = {
 													<input type="radio" id="radio1" name="flag">
 													<label for="radio1">A.28天</label>
 													<input type="radio" id="radio2" name="flag">
-													<label for="radio2">B.29天</label>
+													<label for="radio2">B.29天</label><br>
 													<input type="radio" id="radio3" name="flag">
 													<label for="radio3">C.30天</label>
 													<input type="radio" id="radio4" name="flag">
@@ -111,9 +113,8 @@ initInterface = {
 												</div>
 											</div>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 									</section>
 
@@ -126,7 +127,7 @@ initInterface = {
 													<input type="checkbox" id="checkbox1">
 													<label for="checkbox1">A.香港</label>
 													<input type="checkbox" id="checkbox2">
-													<label for="checkbox2">B.澳门</label>
+													<label for="checkbox2">B.澳门</label><br>
 													<input type="checkbox" id="checkbox3">
 													<label for="checkbox3">C.深圳</label>
 													<input type="checkbox" id="checkbox4">
@@ -134,9 +135,8 @@ initInterface = {
 												</div>
 											</div>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 									</section>
 
@@ -153,9 +153,8 @@ initInterface = {
 												</div>
 											</div>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 									</section>
 
@@ -166,9 +165,8 @@ initInterface = {
 												<p class="title">e.g：香港是在_______年回归？</p>
 											</div>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 									</section>
 
@@ -179,9 +177,8 @@ initInterface = {
 												<p class="title">e.g：什么是操作系统？</p>
 											</div>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 									</section>
 
@@ -192,9 +189,8 @@ initInterface = {
 												<p class="title">e.g：请编写一个计算总和的程序，例如：输入(20,30)，输出50.</p>
 											</div>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
+										<div class="exerciseCount">题目数量：
+											<span class="num"></span>
 										</div>
 									</section>
 								</section>
@@ -202,44 +198,45 @@ initInterface = {
 
 							<section class="examinationContent">
 								<section class="content">
-									<section class="contentDetail">
-										<div>
-											<p class="showSingleChoiceCount">
-												单选题：<span class="count">20</span>道
-											</p>
-											<p class="showMultipleChoicesCount">
-												多选题：<span class="count">20</span>道
-											</p>
-											<p class="showTrueOrFalseCount">
-												判断题：<span class="count">20</span>道
-											</p>
-											<p class="showFillInTheBlankCount">
-												填空题：<span class="count">20</span>道
-											</p>
-											<p class="showShortAnswerCount">
-												简答题：<span class="count">20</span>道
-											</p>
-											<p class="showProgrammingCount">
-												编程题：<span class="count">20</span>道
-											</p>
-											<p class="totalTime">
-												完成时间：<span class="count">120</span>分钟
-											</p>
-											<p class="totalScore">
-												总分：<span class="count">100</span>分
-											</p>
-										</div>
-										<div>
-											1、请在规定时间完成试卷内全部题目，考试时间结束，系统将自动交卷。<br>
-											2、所有题目可通过答题卡返回修改，点击提前交卷后试卷提交，将无法继续答案，请谨慎提交。<br>
-											3、请诚信答题，独立完成。<br>
-											4、祝你好运
-										</div>
+									<section class="showEg">
+										<div class="title">示例</div>
+										<section class="contentDetail">
+											<div>
+												<p class="showSingleChoiceCount">
+													单选题：<span class="count">20</span>道
+												</p>
+												<p class="showMultipleChoicesCount">
+													多选题：<span class="count">20</span>道
+												</p>
+												<p class="showTrueOrFalseCount">
+													判断题：<span class="count">20</span>道
+												</p>
+												<p class="showFillInTheBlankCount">
+													填空题：<span class="count">20</span>道
+												</p>
+												<p class="showShortAnswerCount">
+													简答题：<span class="count">20</span>道
+												</p>
+												<p class="showProgrammingCount">
+													编程题：<span class="count">20</span>道
+												</p>
+												<p class="totalTime">
+													完成时间：<span class="count">120</span>分钟
+												</p>
+												<p class="totalScore">
+													总分：<span class="count">100</span>分
+												</p>
+											</div>
+											<div>
+												1、请在规定时间完成试卷内全部题目，考试时间结束，系统将自动交卷。<br>
+												2、所有题目可通过答题卡返回修改，点击提前交卷后试卷提交，将无法继续答案，请谨慎提交。<br>
+												3、请诚信答题，独立完成。<br>
+												4、祝你好运
+											</div>
+										</section>
 									</section>
-									<div class="enter">
-										<input type="button" value="Go" class="enterPratice">
-									</div>
 								</section>
+								<div class="addMore">+</div>
 							</section>
 
 							<section class="randomContent">
@@ -253,7 +250,7 @@ initInterface = {
 													<input type="radio" id="radio1" name="flag">
 													<label for="radio1">A.28天</label>
 													<input type="radio" id="radio2" name="flag">
-													<label for="radio2">B.29天</label>
+													<label for="radio2">B.29天</label><br>
 													<input type="radio" id="radio3" name="flag">
 													<label for="radio3">C.30天</label>
 													<input type="radio" id="radio4" name="flag">
@@ -264,10 +261,6 @@ initInterface = {
 
 										<div class="exerciseCount">题目数量：
 											<span class="num"></span>
-										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -280,7 +273,7 @@ initInterface = {
 													<input type="checkbox" id="checkbox1">
 													<label for="checkbox1">A.香港</label>
 													<input type="checkbox" id="checkbox2">
-													<label for="checkbox2">B.澳门</label>
+													<label for="checkbox2">B.澳门</label><br>
 													<input type="checkbox" id="checkbox3">
 													<label for="checkbox3">C.深圳</label>
 													<input type="checkbox" id="checkbox4">
@@ -291,10 +284,6 @@ initInterface = {
 
 										<div class="exerciseCount">题目数量：
 											<span class="num"></span>
-										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -315,10 +304,6 @@ initInterface = {
 										<div class="exerciseCount">题目数量：
 											<span class="num"></span>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
-										</div>
 									</section>
 
 									<section class="showOneType FillInTheBlank">
@@ -331,10 +316,6 @@ initInterface = {
 
 										<div class="exerciseCount">题目数量：
 											<span class="num"></span>
-										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
 										</div>
 									</section>
 
@@ -349,10 +330,6 @@ initInterface = {
 										<div class="exerciseCount">题目数量：
 											<span class="num"></span>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
-										</div>
 									</section>
 
 									<section class="showOneType Programming">
@@ -366,12 +343,9 @@ initInterface = {
 										<div class="exerciseCount">题目数量：
 											<span class="num"></span>
 										</div>
-
-										<div class="enter">
-											<input type="button" value="Go" class="enterPratice">
-										</div>
 									</section>
 								</section>
+								<div class="addMore">+</div>
 							</section>
 						</section>`,
 	doPraticeInterface: `<section class="praticeContent body">

@@ -91,12 +91,16 @@ input[type=button], input[type=submit] {
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100px;
+	height: 70px;
 	overflow: hidden;
 	line-height: 100px;
 	/*background: #222;*/
 	background: #000;
 	z-index: 100;
+}
+
+.showTitle {
+	display: none;
 }
 
 .logo {
@@ -155,10 +159,13 @@ input[type=button], input[type=submit] {
 
 .userImg {
 	position: relative;
-	top: 20px;
+	/*top: 20px;*/
+	top: 10px;
 	right: 50px;
-	width: 60px;
-	height: 60px;
+	/*width: 60px;
+	height: 60px;*/
+	width: 50px;
+	height: 50px;
 	margin: 0 0 0 20px;
 	float: right;
 	overflow: hidden;
@@ -172,14 +179,18 @@ input[type=button], input[type=submit] {
 }
 
 .showUsername {
-	width: 60px;
-	height: 60px;
+	/*width: 60px;
+	height: 60px;*/
+	width: 50px;
+	height: 50px;
 	border-radius: 50%;
 	overflow: hidden;
-	line-height: 60px;
+	/*line-height: 60px;*/
+	line-height: 50px;
 	text-align: center;
 	font-family: "Chiller";
-	font-size: 20px;
+	/*font-size: 20px;*/
+	font-size: 17px;
 	color: #fff;
 	background: rgba(34, 34, 34, 0.7);
 	opacity: 0;
@@ -213,7 +224,8 @@ input[type=button], input[type=submit] {
 
 .navigation {
 	position: fixed;
-	top: 35px;
+	/*top: 35px;*/
+	top: 5px;
 	left: 15px;
 	/*height: 0;*/
 	/*opacity: 0;*/
@@ -280,7 +292,8 @@ footer div {
 	top: 0;
 	left: 0;
 	font-size: 23px;
-	background: rgba(255, 255, 255, 0.3);
+	/*background: rgba(255, 255, 255, 0.3);*/
+	background: rgba(0, 0, 0, 0.7);
 	z-index: 200;
 }
 
@@ -294,7 +307,8 @@ footer div {
 	right: 0;
 	margin: auto;
 	border-radius: 20px;
-	background: rgba(255, 255, 255, 0.5);
+	background: rgba(255, 255, 255, 0.9);
+	/*background: #fff;*/
 }
 
 .winContentBg {

@@ -1,22 +1,51 @@
 .toolbar {
 	position: absolute;
-	height: 300px;
+	height: 500px;
+}
+
+.showTitle {
+	display: block;
+	position: relative;
+	width: 100%;
+	top: 18%;
+	left: 50%;
+	transform: translateX(-50%);
+	text-align: center;
+	line-height: 70px;
+	color: #fff;
+}
+
+.showTitle > .title {
+	margin: 10px 0 0 0;
+	font-family: "华文琥珀";
+	font-size: 45px;
+	font-weight: 700;
+	letter-spacing: 10px;
+	/*color: #9a8c69;*/
+}
+
+.showTitle > .detail {
+	/*font-family: "Brush Script Std";*/
+	/*font-family: "MV Boli";*/
+	/*font-family: "楷体";*/
+	font-family: "Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei UI","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+	font-size: 30px;
+	font-weight: 200;
 }
 
 .userImg {
 	position: absolute;
-	width: 150px;
-	height: 150px;
-	top: 0;
-	bottom: 0;
+	width: 120px;
+	height: 120px;
+	top: 55%;
 	left: 0;
 	right: 0;
 	margin: auto;
 }
 
 .showUsername {
-	width: 150px;
-	height: 150px;
+	width: 120px;
+	height: 120px;
 	line-height: 150px;
 	font-size: 40px;
 }
@@ -27,7 +56,7 @@
 
 .subject {
 	width: 72%;
-	top: 350px;
+	top: 550px;
 	left: 50%;
 	margin: 0 0 50px 0;
 	transform: translateX(-50%);
