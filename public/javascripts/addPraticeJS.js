@@ -245,6 +245,7 @@ function addProgramming() {
 	$(".addProgramming").append(section);
 
 	let editor = editorStyle("programming" + addProgrammingCount, "text/x-c");
+	editor.setSize("auto", "700px");
 	programingEditorArray.push({
 		editor: editor,
 		textareaId: "programming" + realProgrammingCount
@@ -311,14 +312,14 @@ function getAllExercise(callback) {
 
 function showSomePraticeType(praticeType) {
 	if (praticeType === "Programming") {
-		$(".next").css("width", "60px");
+		// $(".next").css("width", "60px");
 		$(".next").val("提交");
 	}
 	else {
-		$(".next").css("width", "40px");
+		// $(".next").css("width", "70px");
 		$(".next").val(">");
 	}
-	$(".addPraticeToolbar > div").css("background", "rgba(0, 0, 0, 0.5)");
+	$(".navContent > div").css("background", "rgba(0, 0, 0, 0.5)");
 	$("." + praticeType).css("background", "rgba(249, 90, 78, 0.8)");
 
 	$(".addPraticeContent > section").css("display", "none");
@@ -899,21 +900,21 @@ function init() {
 			count = result.length;
 		}
 
-		let innerHTML;
+		let innerHTML = "";
 		switch(praticeType) {
 			case "chapter": 
-				innerHTML = "第 " + (++count) +" 章";
+				innerHTML = " — 第 " + (++count) +" 章";
 				break;
 			case "examination":
-				innerHTML = "试卷 " + (++count);
+				innerHTML = " — 试卷 " + (++count);
 				break;
 		}
-		$(".addPratice .title")[0].innerHTML = innerHTML;
+		$(".time")[0].innerHTML += innerHTML;
 	});
 }
 
 function bindEvent() {
-	$(".addPraticeToolbar").click(function(e) {
+	$(".navContent").click(function(e) {
 		if (!checkAllTextInputHasVal()) {
 			showTips("存在没有填写的空格！", 1000);
 			return;
@@ -923,7 +924,7 @@ function bindEvent() {
 			return;
 		}
 		let className = getTarget(e).className;
-		if (className !== "addPraticeToolbar") {
+		if (className !== "navContent") {
 			showSomePraticeType(className);
 		}
 	});

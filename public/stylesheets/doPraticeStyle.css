@@ -1,16 +1,19 @@
 .praticeContent {
-	top: 170px;
+	top: 100px;
+	width: 70%;
 	margin: 0 0 80px 0;
 	font-size: 21px;
-	color: #fff;
+	color: #000;
 }
 
 .title, .answer > div, .choiceAnswerBlock {
 	height: 35px;
 	padding: 15px 20px;
-	border: 1px dashed #000;
+	border: 1px dashed #dbd0d0;
+	border-radius: 5px;
 	line-height: 35px;
-	background: rgba(34, 34, 34, 0.6);
+	/*background: rgba(34, 34, 34, 0.6);*/
+	background: #fff;
 }
 
 .inputBlock, .outputBlock, .programmingTypeMode {
@@ -50,7 +53,7 @@
 	border-radius: 50%;
 	text-align: center;
 	color: #000;
-	background: #dbd0d0;
+	background: #e8eaed;
 }
 
 .titleNum {
@@ -59,19 +62,19 @@
 
 .flip {
 	position: relative;
-	width: 150px;
+	/*width: 150px;*/
 	left: 50%;
-	margin: 50px 0;
+	margin: 50px 0 0 0;
 	overflow: hidden;
 	transform: translateX(-50%);
 }
 
 .previous, .next, .runningBtn {
-	/*width: 40px;*/
+	width: 100px;
 	height: 40px !important;
-	padding: 0 15px;
+	/*padding: 0 15px;*/
 	border-radius: 5px;
-	background: rgba(67, 135, 253, 0.5);
+	background: rgba(67, 135, 253, 0.6);
 }
 
 .runningBtn {
@@ -81,11 +84,11 @@
 }
 
 .previous:hover, .next:hover {
-	background: rgba(67, 135, 253, 0.3);
+	background: rgba(67, 135, 253, 0.8);
 }
 
 .runningBtn:hover {
-	background: rgba(255, 165, 0, 0.7);
+	background: rgba(255, 165, 0, 0.9);
 }
 
 .runningResult {
@@ -126,7 +129,7 @@
 }
 
 .showPraticeIndex {
-	margin: 0 0 30px 0;
+	margin: 0 0 50px 0;
 }
 
 .showPraticeBlockIndex > div {
@@ -134,7 +137,7 @@
 	width: 150px;
 	/*border: 1px solid #fff;*/
 	font-size: 20px;
-	background: rgba(0, 0, 0, 0.5);
+	background: #e8eaed;
 	cursor: pointer;
 	transition: 0.5s all linear;
 }
@@ -147,6 +150,7 @@
 	border-radius: 10px;
 	text-align: center;
 	line-height: 50px;
+	/*color: #fff;*/
 	cursor: pointer;
 	transition: 0.5s all linear;
 }
@@ -161,7 +165,7 @@
 
 .answerBlock, .choiceAnswerBlock {
 	overflow: hidden;
-	background: #000 !important;
+	background: #e8eaed !important;
 }
 
 .answerBlock {
@@ -169,6 +173,7 @@
 }
 
 .choiceAnswerBlock {
+	font-size: 18px;
 	transition: 0.3s all linear;
 }
 

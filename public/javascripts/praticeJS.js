@@ -150,7 +150,7 @@ function authorityControl() {
 		$(".addMore").css("display", "none");
 	}
 	else {
-		$(".addMore").css("display", "block");
+		$(".addMore").css("display", "inline-block");
 	}
 
 	if (identity !== "teacher") {
@@ -271,30 +271,38 @@ function addExamination(unitId, index) {
 
 		if (identity === "teacher") {
 			$(section).hover(function(e) {
-				let target = getTarget(e);
-				let classname = target.className;
-				switch(classname) {
-					case "contentDetail":
-					case "title":
-						$(target).parent().find(".btnDiv").css("display", "block");
-						break;
-					case "showEg":
-						$(target).find(".btnDiv").css("display", "block");
-						break;
-				}
+				$(this).find(".showEg > .btnDiv").css("display", "block");
+				// let target = getTarget(e);
+				// let classname = target.className;
+				// switch(classname) {
+				// 	case "contentDetail":
+				// 	case "title":
+				// 		$(target).parent().find(".btnDiv").css("display", "block");
+				// 		break;
+				// 	case "showEg":
+				// 		$(target).find(".btnDiv").css("display", "block");
+				// 		break;
+				// }
 			}, function(e) {
-				$(".examinationContent .btnDiv").css("display", "none");
-			});
-
-			$(section).find(".removeIndex").click(function() {
-				removeIndexEvent(index);
+				$(this).find(".showEg > .btnDiv").css("display", "none");
 			});
 		}
 
-		section.onclick = function() {
-			let queryParam = "&index=" + ($(section).find(".title .index")[0].innerHTML-1);
+		$(section).click(function(e) {
+			let classname = getTarget(e).className;
+			if (classname === "modifyBtn") {
+				modifyNotRandom(index);
+				return;
+			}
+
+			if (classname === "removeIndex") {
+				removeIndexEvent(index);
+				return;
+			}
+
+			let queryParam = "&index=" + index;
 			doPratice(queryParam);
-		};
+		});
 	});
 }
 
@@ -358,7 +366,7 @@ function bindEvent() {
 
 	$(".chapterContent > aside > ul").click(function(e) {
 		let value = getTarget(e).value;
-		if (value >= 0) {
+		if (value > 0 || value === 0) {
 			changeChapterIndexNum(value);
 			currentChapterIndex = value;
 			return;
@@ -382,54 +390,34 @@ function bindEvent() {
 
 	if (identity === "teacher") {
 		$(".randomContent > .content > section").hover(function(e) {
-			let target = getTarget(e);
-			let classname = target.className;
-			switch(classname) {
-				case "showOneType SingleChoice":
-				case "showOneType MultipleChoices":
-				case "showOneType TrueOrFalse":
-				case "showOneType FillInTheBlank":
-				case "showOneType ShortAnswer":
-				case "showOneType Programming":
-					$(target).find(".showEg .btnDiv").css("display", "block");
-					break;
-				case "showEg":
-					$(target).find(".btnDiv").css("display", "block");
-					break;
-				case "title":
-				case "eg":
-					$(target).parent().find(".btnDiv").css("display", "block");
-					break;
-				case "exerciseCount":
-					$(target).parent().find(".showEg .btnDiv").css("display", "block");
-					break;
-			}
+			$(this).find(".showEg > .btnDiv").css("display", "block");
 		}, function(e) {
-			$(".randomContent .btnDiv").css("display", "none");
+			$(this).find(".showEg > .btnDiv").css("display", "none");
 		});
 	}
 
 	$(".content section").click(function(e) {
-		let target = getTarget(e);
-		let classname = target.className, index, type;
-		
-		switch(classname) {
-			case "title":
-			case "btnDiv":
-				type = $(target).parent().parent()[0].className;
-				break;
-			case "showEg":
-			case "exerciseCount":
-				type = $(target).parent()[0].className;
-				break;
-		}
+		type = this.className;
 
-		if (currentPraticeType === "chapter") {
+		if (currentPraticeType === "random") {
+			type = type.split(" ")[1];
+			if (getTarget(e).className === "modifyBtn") {
+				modifyRandom(type);
+				return;
+			}
+
+			let exerciseCount = Number($(this).find(".exerciseCount .num")[0].innerHTML);
+			if (exerciseCount === 0) {
+				showTips("该题型内容为空！", 1500);
+				return;
+			}
+
+			queryParam = "&type=" + type;
+		}
+		else if (currentPraticeType === "chapter") {
 			queryParam = "&index=" + currentChapterIndex + "&type=" + type;
 		}
-		else if (currentPraticeType === "random") {
-			queryParam = "&type=" + type.split(" ")[1];
-		}
+		
 		doPratice(queryParam);
 	});
 }

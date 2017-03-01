@@ -2,33 +2,16 @@ initInterface = {
 	indexInterface: `<section class="body subject">
 						<div class="addSubject">+</div>
 					</section>`,
-	settingsInterface: `<section class="settingsContent body">
-							<aside>
-								<ul>
-									<li class="changeGeneration">基本信息<input type="button" class="info" value="i"></li>
-									<li class="changeUserImg">用户头像<input type="button" class="modify"></li>
-									<li class="changePassword">修改密码<input type="button" class="modify"></li>
-									<li class="changeFindPassword">忘记密码<input type="button" class="modify"></li>
-								</ul>
-								<input type="button" value="注销" class="exitBtn">
-							</aside>
+	settingsInterface: `<section class="settingsContent">
+							<div class="typeNav">
+								<div class="navContent">
+									<div class="changeUserImg">用户头像</div>
+									<div class="changePassword">修改密码</div>
+									<div class="changeFindPassword">忘记密码</div>
+									<input type="button" value="注销" class="exitBtn">
+								</div>
+							</div>
 							<section class="content">
-								<section class="generationInfo">
-									<div class="userImgBlock">
-										<div class="showUserImg">
-										</div>
-										<input type="button" class="modify">
-									</div>
-									<div><span class="name">用户名：</span><span class="username"></span></div>
-									<div class="passwordBlock"><span class="name">密码：</span>
-										<input type="password" value="00000000000" readonly class="passwordInput">
-										<input type="button" class="modify">
-									</div>
-									<div class="findPasswordBlock">
-										<div class="findPassword">忘记密码</div>
-										<input type="button" class="modify">
-									</div>
-								</section>
 								<section class="userImgInfo">
 									<div class="showUserImg">
 									</div>
@@ -323,16 +306,16 @@ initInterface = {
 							</div>
 						</section>`,
 
-	addPraticeInterface: `<section class="addPratice body">
-							<div  class="title"></div>
-
-							<nav class="addPraticeToolbar">
-								<div class="SingleChoice">单选题</div>
-								<div class="MultipleChoices">多选题</div>
-								<div class="TrueOrFalse">判断题</div>
-								<div class="FillInTheBlank">填空题</div>
-								<div class="ShortAnswer">简答题</div>
-								<div class="Programming">编程题</div>
+	addPraticeInterface: `<section class="addPratice">
+							<nav class="typeNav">
+								<div class="navContent">
+									<div class="SingleChoice">单选题</div>
+									<div class="MultipleChoices">多选题</div>
+									<div class="TrueOrFalse">判断题</div>
+									<div class="FillInTheBlank">填空题</div>
+									<div class="ShortAnswer">简答题</div>
+									<div class="Programming">编程题</div>
+								</div>
 							</nav>
 
 							<section class="addPraticeContent">

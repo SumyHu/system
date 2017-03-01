@@ -267,6 +267,16 @@ function init() {
 		$(".addSubject").css("display", "none");
 	}
 
+	callDataProcessingFn({
+		data: {
+			data: "users",
+			callFunction: "findAll"
+		},
+		success: function(result) {
+			console.log(result);
+		}
+	});
+
 	$(".time").css("display", "none");
 	
 	findAllSubject(function(result) {

@@ -380,10 +380,10 @@ function init() {
 	}
 	else {
 		if (praticeType === "chapter") {
-			$(".addPratice .title")[0].innerHTML = "第 " + (Number(index)+1) +" 章";
+			$(".time")[0].innerHTML += " — 第 " + (Number(index)+1) +" 章";
 		}
 		else {
-			$(".addPratice .title")[0].innerHTML = "试卷 " + (Number(index)+1);
+			$(".time")[0].innerHTML += " — 试卷 " + (Number(index)+1);
 		}
 	}
 

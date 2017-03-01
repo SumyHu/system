@@ -144,8 +144,8 @@ function changeFindPassword() {
 }
 
 function showSettingsContent(changeContentName) {
-	$(".settingsContent > aside > ul > li").css("background-color", "#333");
-	$(".settingsContent > aside > ul > li.change" + changeContentName.substr(0, 1).toUpperCase() + changeContentName.substr(1))[0].style.backgroundColor = "rgba(249, 90, 78, 0.5)"
+	$(".navContent > div").css("background-color", "transparent");
+	$(".navContent .change" + changeContentName.substr(0, 1).toUpperCase() + changeContentName.substr(1))[0].style.backgroundColor = "rgba(249, 90, 78, 0.5)"
 
 	$(".content > section").css("display", "none");
 	$(".content > ." + changeContentName + "Info").css("display", "block");
@@ -168,14 +168,8 @@ function bindEvent() {
 		fileSelector: ".uploadImage",
 	});
 
-	$(".settingsContent > aside > ul").click(function(e) {
-		let blockClassName;
-		if (getTarget(e).className === "modify") {
-			blockClassName = $(getTarget(e)).parent()[0].className;
-		}
-		else {
-			blockClassName = getTarget(e).className;
-		}
+	$(".navContent").click(function(e) {
+		let blockClassName = getTarget(e).className;
 
 		showSettingsContent(blockClassName.substr(6, 1).toLowerCase() + blockClassName.substr(7));
 	});
@@ -188,12 +182,16 @@ function bindEvent() {
 
 	$(".confirm").click(function(e) {
 		let className = $(getTarget(e)).parent()[0].className;
+		console.log($(this).parent()[0]);
 		switch(className) {
 			case "userImgInfo":
 				changeUserImg();
 				break;
 			case "passwordInfo":
 				changePassword();
+				break;
+			default: 
+				changeFindPassword()
 				break;
 		}
 	});

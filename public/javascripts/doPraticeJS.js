@@ -363,7 +363,7 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 
 // 根据当前题目类型改变类型索引块的样式
 function changeTypeStyle() {
-	$(".showPraticeBlockIndex > div").css("background", "rgba(0, 0, 0, 0.5)");
+	$(".showPraticeBlockIndex > div").css("background", "#e8eaed");
 	$("." + type + "Block").css("background", "rgba(249, 90, 78, 0.8)");
 }
 
@@ -373,7 +373,7 @@ function changeTypeStyle() {
 function changePraticeContent(index) {
 	// 修改对应索引的样式
 	let $allIndex = $(".showPraticeIndex > div");
-	$allIndex.css("background", "#333");
+	$allIndex.css("background", "#e8eaed");
 	$($allIndex[index]).css("background", "rgba(249, 90, 78, 0.8");
 
 	// 显示对应题目
