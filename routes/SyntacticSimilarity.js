@@ -745,5 +745,5 @@ function SyntacticSimilarity(studentAnswer, correctAnswer, professionalNounsArr)
 	return max;
 }
 
-// module.exports = SyntacticSimilarity;
-module.exports = allTreeOfOneSentence;
+module.exports = SyntacticSimilarity;
+// module.exports = allTreeOfOneSentence;

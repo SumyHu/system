@@ -79,6 +79,12 @@ function addPraticeIndex(count) {
 	}
 }
 
+/** 添加选项型习题（如单选题、多选题、判断题）
+ * @param section Object 添加习题的父对象
+ * @param praticeId String 添加的习题id
+ * @param index Number 题号
+ * @param addPraticeType 添加的习题类型
+*/
 function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
 	findPraticesById(praticeId, function(result) {
 		let sec = document.createElement("section");
@@ -173,6 +179,12 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
 	});
 }
 
+/** 添加非选项型习题（如单选题、多选题、判断题）
+ * @param section Object 添加习题的父对象
+ * @param praticeId String 添加的习题id
+ * @param index Number 题号
+ * @param addPraticeType 添加的习题类型
+*/
 function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) {
 	findPraticesById(praticeId, function(result) {
 		console.log(result);
@@ -402,6 +414,9 @@ function changePraticeContent(index) {
 	}
 }
 
+/** 获得选项型题目的正确答案和考生答案
+ * @param getType String 题目类型
+*/
 function getChoiceAnswer(getType) {
 	examinationStudentAnswer[getType] = [];
 
@@ -425,6 +440,9 @@ function getChoiceAnswer(getType) {
 	}
 }
 
+/** 获得非选项型题目的正确答案和考生答案
+ * @param getType String 题目类型
+*/
 function getNotChoiceAnswer(getType) {
 	examinationStudentAnswer[getType] = [];
 
@@ -447,6 +465,7 @@ function getNotChoiceAnswer(getType) {
 	}
 }
 
+// 获得所有题目的正确答案和考生答案
 function getAllAnswer() {
 	getChoiceAnswer("SingleChoice");
 	getChoiceAnswer("MultipleChoices");
@@ -459,6 +478,11 @@ function getAllAnswer() {
 	console.log(examinationStudentAnswer);
 }
 
+/** 比对选项型答案，并作出相应给分
+ * @param choiceCorrectAnswer Array 正确答案
+ * @param choiceStudentAnswer Array 考生答案
+ * @param score Number 每题分值
+*/
 function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score) {
 	let totalScore = 0;
 	outer: for(let i=0, len=choiceCorrectAnswer.length; i<len; i++) {
@@ -477,6 +501,11 @@ function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score) {
 	}
 }
 
+/** 比对填空题答案，并作出相应给分
+ * @param FillInTheBlankCorrectAnswer Array 正确答案
+ * @param FillInTheBlankStudentAnswer Array 考生答案
+ * @param score Number 每题分值
+*/
 function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, score) {
 	let totalScore = 0;
 	outer: for(let i=0, len=FillInTheBlankCorrectAnswer.length; i<len; i++) {

@@ -2,43 +2,44 @@
 <html>
 <head>
 	<script src="javascripts/jquery.min.js"></script>
+	<script src="javascripts/matchShortAnswer.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			$(".button").click(function() {
-				var btnId = this.id;
-				var textVal1, textVal2;
-				switch(btnId) {
-					case "wordBtn":
-						textVal1 = $(".word1").val();
-						textVal2 = $(".word2").val();
-						break;
-					case "sentenceBtn":
-						textVal1 = $(".sentence1").val();
-						textVal2 = $(".sentence2").val();
-						break;
-					case "textBtn":
-						textVal1 = $(".text1").val();
-						textVal2 = $(".text2").val();
-						break;
-				}
+				// var btnId = this.id;
+				// var textVal1, textVal2;
+				// switch(btnId) {
+				// 	case "wordBtn":
+				// 		textVal1 = $(".word1").val();
+				// 		textVal2 = $(".word2").val();
+				// 		break;
+				// 	case "sentenceBtn":
+				// 		textVal1 = $(".sentence1").val();
+				// 		textVal2 = $(".sentence2").val();
+				// 		break;
+				// 	case "textBtn":
+				// 		textVal1 = $(".text1").val();
+				// 		textVal2 = $(".text2").val();
+				// 		break;
+				// }
 
-				$.ajax({
-					url: "http://127.0.0.1:3000/shortAnswerCheck",
-					type: "POST",
-					crossDomain: true,
-					defaultType: "json",
-					data: {
-						text1: textVal1,
-						text2: textVal2,
-						btnId: btnId
-					},
-					success: function(data) {
-						console.log("【" + textVal1 + "】与【" + textVal2 + "】的相似度为: " + data);
-					},
-					error: function(error) {
-						console.log("error: " + error);
-					}
-				});
+				// $.ajax({
+				// 	url: "http://127.0.0.1:3000/shortAnswerCheck",
+				// 	type: "POST",
+				// 	crossDomain: true,
+				// 	defaultType: "json",
+				// 	data: {
+				// 		text1: textVal1,
+				// 		text2: textVal2,
+				// 		btnId: btnId
+				// 	},
+				// 	success: function(data) {
+				// 		console.log("【" + textVal1 + "】与【" + textVal2 + "】的相似度为: " + data);
+				// 	},
+				// 	error: function(error) {
+				// 		console.log("error: " + error);
+				// 	}
+				// });
 			});
 		});
 	</script>

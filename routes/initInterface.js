@@ -294,7 +294,6 @@ initInterface = {
 										</div>
 									</section>
 								</section>
-								<div class="addMore">+</div>
 							</section>
 						</section>`,
 	doPraticeInterface: `<section class="praticeContent body">

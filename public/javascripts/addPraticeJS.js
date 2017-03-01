@@ -28,6 +28,11 @@ let programmingTypeMode = {
 // 记录Programing添加的editor，用于后面判断editor是否都不为空
 let programingEditorArray = [];
 
+/** 将textarea转换为codemirror编辑器
+ * @param id String textarea的id
+ * @param mode String 编程类型
+ * @return codemirror编辑器对象
+*/
 function editorStyle(id, mode) {
 	var editor=CodeMirror.fromTextArea(document.getElementById(id), {
             mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
@@ -57,6 +62,7 @@ function editorStyle(id, mode) {
     return editor;
 }
 
+// 添加单选题
 function addSingleChoice() {
 	addSingleChoiceCount++;
 	realSingleChoiceCount ++;
@@ -94,6 +100,7 @@ function addSingleChoice() {
 	return section;
 }
 
+// 添加多选题
 function addMultipleChoices() {
 	addMultipleChoicesCount++;
 	let content = `<input type="button" value="X" class="remove">
@@ -130,6 +137,7 @@ function addMultipleChoices() {
 	return section;
 }
 
+// 添加判断题
 function addTrueOrFalse() {
 	addTrueOrFalseCount++;
 	realTrueOrFalseCount ++;
@@ -157,6 +165,7 @@ function addTrueOrFalse() {
 	return section;
 }
 
+// 添加填空题
 function addFillInTheBlank() {
 	addFillInTheBlankCount++;
 	let content = `<input type="button" value="X" class="remove">
@@ -178,6 +187,7 @@ function addFillInTheBlank() {
 	return section;
 }
 
+// 添加简答题
 function addShortAnswer() {
 	// addShortAnswerCount++;
 	// let name = "trueOrFalse" + addShortAnswerCount;
@@ -189,6 +199,12 @@ function addShortAnswer() {
 	// $(".addShortAnswerCount").append(section);
 }
 
+/** 输入、输出的基本类型
+ * @param count Number 第几个类型选择，用于唯一标识
+ * @param Prefix String 唯一标识前缀
+ * @param firstInputChecked Boolean 是否默认选择第一个选项
+ * @return String 类型选择的innerHTML
+*/
 function basicInputType(count, Prefix, firstInputChecked) {
 	let prefix = Prefix ? Prefix : "";
 
@@ -199,11 +215,16 @@ function basicInputType(count, Prefix, firstInputChecked) {
 	<input type="radio" id="` + prefix + `boolean` + count + `" name="selectInputType` + count + `" value="boolean"><label for="` + prefix + `boolean` + count + `">boolean</label>`;
 }
 
+/** 基本类型选择项+数组选择项
+ * @param count Number 第几个类型选择，用于唯一标识
+ * @return String 类型选择的innerHTML
+*/
 function selectInputType(count) {
 	return basicInputType(count) + `<input type="radio" id="Array` + count + `" name="selectInputType` + count + `" value="Array"><label for="Array` + count + `">Array</label>`
 		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count+1, "array-", true) + `】</div><input type="button" value="X" class="removeSelectType">`;
 }
 
+// 添加编程题
 function addProgramming() {
 	let selectInnerHtml = "<select>";
 	for(var k in programmingTypeMode) {
@@ -300,6 +321,9 @@ function addProgramming() {
 	return section;
 }
 
+/** 获取所有的某练习类型（chapter、examination、random）的所有unitId
+ * @param callback Function 回调函数
+*/
 function getAllExercise(callback) {
 	findSubjectByName(subjectName, function(data) {
 		try {
@@ -310,6 +334,9 @@ function getAllExercise(callback) {
 	});
 }
 
+/** 显示某个类型的索引
+ * @param praticeType String 练习类型
+*/
 function showSomePraticeType(praticeType) {
 	if (praticeType === "Programming") {
 		// $(".next").css("width", "60px");
@@ -451,6 +478,9 @@ function getShortAnswerContent($content) {
 	return [];
 }
 
+/** 获取编程题各项设定内容
+ * @param $objTarget Object 编程题对象
+*/
 function getProgrammingObj($objTarget) {
 	let obj = {};
 
