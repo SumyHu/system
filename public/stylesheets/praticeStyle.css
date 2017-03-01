@@ -73,6 +73,10 @@
 	line-height: 500px;
 }
 
+.examinationContent .showEg {
+	padding: 0 0 20px 0;
+}
+
 .addMore {
 	display: inline-block;
 	color: #000 !important;
