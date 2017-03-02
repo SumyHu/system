@@ -412,7 +412,8 @@ module.exports = function(app) {
 		// let wordSimilaryFn = WordSimilary();
 		// console.log(wordSimilaryFn.simWord("改变", "不改变"));
 		// console.log(sentenceSimilary("数据的逻辑存储结构不发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
-		console.log(textSimilaryCal("数据的逻辑存储结构改变", "数据的逻辑存储结构改变", ["逻辑存储结构"]));
+		// console.log(textSimilaryCal("数据的逻辑存储结构改变", "数据的逻辑存储结构不改变", ["逻辑存储结构"]));
+		console.log(textSimilaryCal.OverallCalTextSimilary({text1:"其实，我觉得快乐大本营挺不错的", text2:"我觉得快乐大本营好看呢", professionalNounsArr:["快乐大本营"]}));
 		// console.log(SyntacticSimilarity("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 		// console.log(SyntacticSimilarity("没有运行其他事务时进行的转储操作"));
 

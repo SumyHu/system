@@ -120,7 +120,7 @@ function participle(sentence, professionalNounsArr) {
 /** 获得分词的实际权值
  * @param wordTarget = {
 	word: String,
-	type: String,
+	type: Array,
 	weight: Number,
 	count: Number,
 	idf: Number
@@ -154,11 +154,26 @@ function baseSimilary(weightArr1, weightArr2) {
 	return sum1/(Math.sqrt(sum2)*Math.sqrt(sum3));
 }
 
+/** 比较两个类型数组是否存在相同的类型值，若存在一个相同的类型，则返回true
+ * @param typeArray1 Array 类型数组1
+ * @param typeArray2 Array 类型数组2
+*/
+function compareTypeArray(typeArray1, typeArray2) {
+	for(let i=0, len1=typeArray1.length; i<len1; i++) {
+		for(let j=0, len2=typeArray2.length; j<len2; j++) {
+			if (typeArray1[i] === typeArray2[j]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 /** 基于结构特性的结构相似度计算
  * @param wordTargetArr Array 存储一个句子中的各个分词对象
  * wordTargetArr = [{
 	word: String,
-	type: String,
+	type: Array,
 	weight: Number,
 	count: Number,
 	idf: Number
@@ -175,12 +190,12 @@ function structureSimilary(wordTargetArr1, wordTargetArr2) {
 
 	for(let i=0; i<len1; i++) {
 		for(let j=0; j<len2; j++) {
-			if (wordTargetArr1[i].type == wordTargetArr2[j].type) {
+			if (compareTypeArray(wordTargetArr1[i].type, wordTargetArr2[j].type)) {
 				console.log("==========");
 				var matchCount = 0;
 				for(let p=i, q=j; p<len1 && q<len2; p++, q++) {
 					console.log(wordTargetArr1[p].type, wordTargetArr2[q].type)
-					if (wordTargetArr1[p].type != wordTargetArr2[q].type) {
+					if (!compareTypeArray(wordTargetArr1[p].type, wordTargetArr2[q].type)) {
 						break;
 					}
 					matchCount ++;
@@ -231,6 +246,8 @@ function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
 
 	var baseSimilaryVal = baseSimilary(weightArr1, weightArr2);
 	var structureSimilaryVal = structureSimilary(parResult1, parResult2);
+	console.log("baseSimilaryVal: " + baseSimilaryVal);
+	console.log("structureSimilaryVal: " + structureSimilaryVal);
 	return sentenceSimilary(baseSimilaryVal, structureSimilaryVal);
 }
 
@@ -269,6 +286,33 @@ function clause(text) {
 	return clauseTextResult;
 }
 
+/** 在分句的结果数组中添加每个分句的各自权重（默认都为1，即均等）
+ * @param clauseTextResult Array 分句结果
+*/
+function clauseWithWeight(clauseTextResult, totalScore) {
+	let totalWeight = clauseTextResult.length, clauseWithWeightArr = [], weighted = 0, count = 0;
+	for(let i=0; i<totalWeight; i++) {
+		let sentence = clauseTextResult[i];
+		clauseWithWeightArr.push({
+			sentence: sentence
+		});
+		if (sentence.indexOf("{")>-1 && sentence.indexOf("}")>-1) {
+			let sentenceScore = sentence.split("{")[1].split("}")[0];
+			let weight = sentenceScore/totalScore*sentenceCount;
+			clauseWithWeightArr[clauseWithWeightArr.length-1].weight = weight;
+			weighted += weight;   // 已占权重
+			count++;   // 已分配权重的分句数
+		}
+	}
+
+	let averageWeight = (totalWeight-weighted)/(totalWeight-count);
+	for(let i=0; i<totalWeight; i++) {
+		if (!clauseWithWeightArr[i].weight) {
+			clauseWithWeightArr[i].weight = averageWeight;
+		}
+	}
+}
+
 /** 文本句子聚类
  * @param data Array 存储需要聚类的句子数组
  * @return Array 文本句子聚类的结果
@@ -292,10 +336,17 @@ function textClustering(data) {
 }
 
 /** 句子数组之间相似度计算
- * @param sentenceArr Array 比较的句子数组（该句子数组已经经过处理，如聚类）
+ * @param paramObj Object 参数对象
+ * paramObj = {
+	sentenceArr1: Array,   //比较的句子数组
+	sentenceArr2: Array, 
+	professionalNounsArr: Array,   //专有名词数组
+	scoreArray: scoreArray    // 分值数组（按照分句顺序）
+ }
  * @return Number 句子数组之间相似度的计算结果
 */
-function calTotalSentenceSimilary(sentenceArr1, sentenceArr2, professionalNounsArr) {
+function calTotalSentenceSimilary(paramObj) {
+	let sentenceArr1 = paramObj.sentenceArr1, sentenceArr2 = paramObj.sentenceArr2, professionalNounsArr = paramObj.professionalNounsArr;
 	var len1 = sentenceArr1.length; 
 	var len2 = sentenceArr2.length;
 
@@ -306,6 +357,13 @@ function calTotalSentenceSimilary(sentenceArr1, sentenceArr2, professionalNounsA
 	for(let i=0; i<len2; i++) {
 		tempSentenceArr2[i] = sentenceArr2[i];
 	}
+
+	// let scoreArray = [], initScoreArray = paramObj.scoreArray;
+	// if (initScoreArray) {
+	// 	for(let i=0, len=initScoreArray.length; i<len; i++) {
+	// 		scoreArray.push(initScoreArray[i])
+	// 	}
+	// }
 
 	var big = (len1>len2) ? len1 : len2;
 	var matchCount = (len1<len2) ? len1 : len2;
@@ -334,21 +392,26 @@ function calTotalSentenceSimilary(sentenceArr1, sentenceArr2, professionalNounsA
 }
 
 /** 文本之间的总体相似度计算
- * @param text String 计算相似度的文本
+ * @param paramObj Object 参数对象
+ * paramObj = {
+	text1: String,   //比较的文本
+	text2: String, 
+	professionalNounsArr: Array,   //专有名词数组
+	score: Number   // 该题分值
+ }
 */
-function calTextSimilary(text1, text2, professionalNounsArr) {
+function OverallCalTextSimilary(paramObj) {
 	// 段落分句
-	var clauseTextResult1 = clause(text1);
-	var clauseTextResult2 = clause(text2);
-
-	// var sentenceArr1 = clauseTextResult1, sentenceArr2 = clauseTextResult2;
-	// if (clauseTextResult1.length > 10 && clauseTextResult2.length > 10) {
-	// 	sentenceArr1 = textClustering(clauseTextResult1);
-	// 	sentenceArr2 = textClustering(clauseTextResult2);
-	// }
-
-	// return calTotalSentenceSimilary(sentenceArr1, sentenceArr2);
-	return calTotalSentenceSimilary(clauseTextResult1, clauseTextResult2, professionalNounsArr);
+	var clauseTextResult1 = clause(paramObj.text1);
+	var clauseTextResult2 = clause(paramObj.text2);
+	return calTotalSentenceSimilary({
+		sentenceArr1: clauseTextResult1, 
+		sentenceArr2: clauseTextResult2, 
+		professionalNounsArr: paramObj.professionalNounsArr,
+		score: paramObj.score
+	});
 }
 
-module.exports = calTextSimilary;
+module.exports = {
+	OverallCalTextSimilary: OverallCalTextSimilary
+};
