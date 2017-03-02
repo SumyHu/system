@@ -1,17 +1,25 @@
-const CustomizeParticiple = require("./participle"),   // 自定义中文分词
-	  wordIdf = require("./wordIdf"),   // 获得词语的idf值
-	  kMeans = require("kmeans-js");    // 调用k-means聚类算法
+/**
+ * 非规则文本相似度计算
+ * 参考文献：《基于语义的文本相似度算法研究及应用》 作者：张金鹏
+ * 算法实现：分句——>分词——>根据词语的idf值和词语的出现次数获得该词语的实际权值——>基于余弦相似度的基础相似度计算+基于结构特性的结构相似度计算，求得句子的总体相似度——>句子聚类，求聚类后句子中间的相似度——>计算文本之间的相似度
 
-let unimportantAttr = ["ECHO", "PREP", "STRU", "CONJ", "SpecialSTRU"],   // 不重要的词语词性
-	wordWeightByAttr = {
-		N: 0.3,
-		PRON: 0.3,
-		V: 0.3,
-		ADJ: 0.2,
-		ADV: 0.2,
-		NUM: 0.1,
-		CLAS: 0.1
-	};
+ * 缺点：①过分依赖idf词典，如何填补词典没有的词语的idf值？②计算句子相似度中，基于结构特性的结构相似度计算是基于词语的词性匹配计算的，并没有实际深入考虑词义结构；③k-means聚类算法自身就存在一定的缺陷。
+ * 优点：时间复杂度小
+*/
+
+const wordIdf = require("./wordIdf");
+const postag = require("./postag");   // 转换词性
+
+// 中文分词模块，该模块以盘古分词组件中的词库为基础
+var Segment = require("segment");
+var segment = new Segment();
+segment.useDefault();
+
+// 调用结巴分词
+// var jieba = require("nodejieba");
+
+// 调用k-means聚类算法
+// var kMeans = require("kmeans-js");
 
 const nVal = 0.3;   // 名词比重
 const vVal = 0.3;   // 动词比重
@@ -24,78 +32,67 @@ const beta = 0.6;   // 计算句子总体相似度的β取值
 const k = 5;   // 句子聚类的k取值
 const delta = 0.2;   // 计算文本总体相似度的δ值
 
-/** 将ECHO（语气词）、PREP（介词）、STRU（虚词）、SpecialSTRU、CONJ（连词）等词性的词语去掉
- * @param wordArray Array 最初获得的分词结果
- * wordArray = [{word: String, type: Array}, {...}, {...}, ...]
+/** 文本分句
+ * @param text String 分句的文本
+ * @return clauseTextResult Array 文本的分句结果
 */
-function removeUnimportantWord(wordArray) {
-	for(let i=0, len1=wordArray.length; i<len1; i++) {
-		let typeArray = wordArray[i].type;
-		for(let j=0; j<typeArray.length; j++) {
-			let type = typeArray[j];
-			for(let t=0, len2=unimportantAttr.length; t<len2; t++) {
-				if (type === unimportantAttr[t]) {
-					typeArray.splice(j, 1);
-					j--;
-					break;
-				}
+function clause(text) {
+	var clauseBasis = ["。", "；", "！", "？"];
+	var clauseTextResult = [text];
+
+	for(let i=0, len1=clauseBasis.length; i<len1; i++) {
+		for(let j=0, len2=clauseTextResult.length; j<len2;) {
+			var splitResult = clauseTextResult[j].split(clauseBasis[i]);
+			var temp = [];
+			for(let p=0; p<j; p++) {
+				temp.push(clauseTextResult[p]);
 			}
+			for(let q=0, len3=splitResult.length; q<len3; q++) {
+				temp.push(splitResult[q]);
+			}
+			for(let m=j+1, len4=clauseTextResult.length; m<len4; m++) {
+				temp.push(clauseTextResult[m]);
+			}
+			clauseTextResult = temp;
+			j = j+splitResult.length;
 		}
 	}
 
-	for(let i=0; i<wordArray.length; i++) {
-		if (wordArray[i].type.length === 0) {
-			wordArray.splice(i, 1);
-			i--;
+	for(let i=0, len=clauseTextResult.length; i<len; i++) {
+		if (clauseTextResult[i] == "") {
+			clauseTextResult.splice(i, 1);
 		}
 	}
-}
 
-/** 根据词语词性获取词语的权重
- * @param typeArray Array 某个词语的类型数组
-*/
-function getWordWeightByAttr(typeArray) {
-	let sum = 0;
-	for(let i=0, len=typeArray.length; i<len; i++) {
-		sum += wordWeightByAttr[typeArray[i]];
-	}
-	return sum/typeArray.length;
+	return clauseTextResult;
 }
 
 /** 获取词语的idf值
- * @param wordObj Object 词语对象
- * wordObj = {
-	word: String,
-	type: Array,
-	weight: Number,
-	count: Number
- }
+ * @param word String 词语
+ * @return Number 传入的词语的idf值
 */
-function getWordIdf(wordObj, totalWordCount) {
-	let idf = wordIdf(wordObj.word);
-	if (!idf) {
-		idf = wordObj.count/totalWordCount*100;
-	}
-	return idf;
+function getWordIdf(word) {
+	return wordIdf(word);
 }
 
-/** 提取分词结果
- * @param sentence String 需要分词的句子
- * @param professionalNounsArr Array 专有名词数组
+/** 句子分词，且获得各个分词在句子中出现的次数、权重和idf值
+ * @param sentence String 句子
+ * @return parResult Array 句子的分词结果
 */
-function participle(sentence, professionalNounsArr) {
-	let initResult = CustomizeParticiple(sentence, professionalNounsArr),    // 获得初始分词结果，已经去除了标点符号
-		parResult = [];
+function participle(sentence) {
+	// var result = jieba.extract(sentence, kTop=100);
+	// var result = jieba.tag("你好，你好，在做什么呢？我好想你呢，超级超级想你地地呢。");
+	var segResult = segment.doSegment(sentence, {
+		stripPunctuation: true,   // 去除标点符号
+		stripStopword: true   // 去除停止符
+	});
 
-	let totalWordCount = initResult.length;
-	
-	// ECHO（语气词）、PREP（介词）、STRU（虚词）、SpecialSTRU、CONJ（连词）等词性去掉
-	removeUnimportantWord(initResult);
+	var parResult = [];
 
-	for(let i=0, len1=initResult.length; i<len1; i++) {
+	for(let i=0, len1=segResult.length; i<len1; i++) {
 		var flag = true;
 		for(let j=0, len2=parResult.length; j<len2; j++) {
-			if (parResult[j].word == initResult[i].word) {
+			if (parResult[j].word == segResult[i].w) {
 				parResult[j].count = parResult[j].count+1;
 				flag = false;
 				break;
@@ -103,16 +100,14 @@ function participle(sentence, professionalNounsArr) {
 		}
 		if (flag) {
 			parResult.push({
-				word: initResult[i].word,
-				type: initResult[i].type,
-				weight: getWordWeightByAttr(initResult[i].type),
-				count: 1
+				word: segResult[i].w,
+				type: postag.getType(segResult[i].p),
+				chsName: postag.chsName(segResult[i].p),
+				weight: postag.getWeight(segResult[i].p),
+				count: 1,
+				idf: getWordIdf(segResult[i].w)
 			});
 		}
-	}
-
-	for(let i=0, len=parResult.length; i<len; i++) {
-		parResult[i].idf = getWordIdf(parResult[i], totalWordCount);
 	}
 	return parResult;
 }
@@ -216,10 +211,10 @@ function sentenceSimilary(baseSimilaryVal, structureSimilaryVal) {
  * @param sentence String 计算相似度的句子
  * @return Number 句子之间总体相似度的计算结果
 */
-function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
+function calSentenceSimilary(sentence1, sentence2) {
 	// 句子分词
-	var parResult1 = participle(sentence1, professionalNounsArr);
-	var parResult2 = participle(sentence2, professionalNounsArr);
+	var parResult1 = participle(sentence1);
+	var parResult2 = participle(sentence2);
 
 	var weightArr1 = [], weightArr2 = [];
 	for(let i=0, len=parResult1.length; i<len; i++) {
@@ -232,41 +227,6 @@ function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
 	var baseSimilaryVal = baseSimilary(weightArr1, weightArr2);
 	var structureSimilaryVal = structureSimilary(parResult1, parResult2);
 	return sentenceSimilary(baseSimilaryVal, structureSimilaryVal);
-}
-
-/** 文本分句
- * @param text String 分句的文本
- * @return clauseTextResult Array 文本的分句结果
-*/
-function clause(text) {
-	var clauseBasis = ["，", "。", "；", "！", "？"];
-	var clauseTextResult = [text];
-
-	for(let i=0, len1=clauseBasis.length; i<len1; i++) {
-		for(let j=0, len2=clauseTextResult.length; j<len2;) {
-			var splitResult = clauseTextResult[j].split(clauseBasis[i]);
-			var temp = [];
-			for(let p=0; p<j; p++) {
-				temp.push(clauseTextResult[p]);
-			}
-			for(let q=0, len3=splitResult.length; q<len3; q++) {
-				temp.push(splitResult[q]);
-			}
-			for(let m=j+1, len4=clauseTextResult.length; m<len4; m++) {
-				temp.push(clauseTextResult[m]);
-			}
-			clauseTextResult = temp;
-			j = j+splitResult.length;
-		}
-	}
-
-	for(let i=0, len=clauseTextResult.length; i<len; i++) {
-		if (clauseTextResult[i] == "") {
-			clauseTextResult.splice(i, 1);
-		}
-	}
-
-	return clauseTextResult;
 }
 
 /** 文本句子聚类
@@ -295,7 +255,7 @@ function textClustering(data) {
  * @param sentenceArr Array 比较的句子数组（该句子数组已经经过处理，如聚类）
  * @return Number 句子数组之间相似度的计算结果
 */
-function calTotalSentenceSimilary(sentenceArr1, sentenceArr2, professionalNounsArr) {
+function calTotalSentenceSimilary(sentenceArr1, sentenceArr2) {
 	var len1 = sentenceArr1.length; 
 	var len2 = sentenceArr2.length;
 
@@ -315,7 +275,7 @@ function calTotalSentenceSimilary(sentenceArr1, sentenceArr2, professionalNounsA
 		var index1=0, index2=0;
 		for(let i=0; i<len1; i++) {
 			for(let j=0; j<len2; j++) {
-				var currentSentenceSimilaryVal = calSentenceSimilary(sentenceArr1[i], sentenceArr2[j], professionalNounsArr);
+				var currentSentenceSimilaryVal = calSentenceSimilary(sentenceArr1[i], sentenceArr2[j]);
 				if (currentSentenceSimilaryVal > maxSentenceSimilaryVal) {
 					maxSentenceSimilaryVal = currentSentenceSimilaryVal;
 					index1 = i;
@@ -336,19 +296,17 @@ function calTotalSentenceSimilary(sentenceArr1, sentenceArr2, professionalNounsA
 /** 文本之间的总体相似度计算
  * @param text String 计算相似度的文本
 */
-function calTextSimilary(text1, text2, professionalNounsArr) {
+function calTextSimilary(text1, text2) {
 	// 段落分句
 	var clauseTextResult1 = clause(text1);
 	var clauseTextResult2 = clause(text2);
 
-	// var sentenceArr1 = clauseTextResult1, sentenceArr2 = clauseTextResult2;
-	// if (clauseTextResult1.length > 10 && clauseTextResult2.length > 10) {
-	// 	sentenceArr1 = textClustering(clauseTextResult1);
-	// 	sentenceArr2 = textClustering(clauseTextResult2);
-	// }
-
-	// return calTotalSentenceSimilary(sentenceArr1, sentenceArr2);
-	return calTotalSentenceSimilary(clauseTextResult1, clauseTextResult2, professionalNounsArr);
+	var sentenceArr1 = clauseTextResult1, sentenceArr2 = clauseTextResult2;
+	if (clauseTextResult1.length > 10 && clauseTextResult2 > 10) {
+		sentenceArr1 = textClustering(clauseTextResult1);
+		sentenceArr2 = textClustering(clauseTextResult2);
+	}
+	return calTotalSentenceSimilary(sentenceArr1, sentenceArr2);
 }
 
 module.exports = calTextSimilary;

@@ -6,8 +6,6 @@ const idfPath = path.join(__dirname, "../dictionary/idf.dat");
 // 存储idf词典的对象，并且以词语开头为索引，方便查找
 var allWords;
 
-const notFindIdfVal = 5;
-
 function loadIdf() {
 	allWords = {};
     var data = fs.readFileSync(idfPath, "utf-8");
@@ -35,14 +33,14 @@ function findWordIdf(word) {
 		}
 	}
 
-	return notFindIdfVal;
+	return null;
 }
 
-module.exports = {
-	getWordIdf: function(word) {
-		if (!allWords) {
-			loadIdf();
-		}
-		return findWordIdf(word);
+function getWordIdf(word) {
+	if (!allWords) {
+		loadIdf();
 	}
-};
+	return findWordIdf(word);
+}
+
+module.exports = getWordIdf;

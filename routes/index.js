@@ -407,16 +407,17 @@ module.exports = function(app) {
 		// var result = jieba.tag("我拿着如意");
 		// console.log(result);
 
-		var SyntacticSimilarity = require("./SyntacticSimilarity");
+		// var SyntacticSimilarity = require("./SyntacticSimilarity");
 		// SyntacticSimilarity("数据的逻辑存储结构发生改变时", ["逻辑存储结构"]);
-		let wordSimilaryFn = WordSimilary();
+		// let wordSimilaryFn = WordSimilary();
 		// console.log(wordSimilaryFn.simWord("改变", "不改变"));
 		// console.log(sentenceSimilary("数据的逻辑存储结构不发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
-		// console.log(textSimilaryCal("数据的逻辑存储结构改变", "数据的逻辑存储结构改变"));
-		console.log(SyntacticSimilarity("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
+		console.log(textSimilaryCal("数据的逻辑存储结构改变", "数据的逻辑存储结构改变", ["逻辑存储结构"]));
+		// console.log(SyntacticSimilarity("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 		// console.log(SyntacticSimilarity("没有运行其他事务时进行的转储操作"));
 
-		// console.log(participle("数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
+		// console.log(participle("啊，数据的逻辑存储结构有没有发生改变呢？", ["逻辑存储结构"]));
+		// console.log(textSimilaryCal("啊，把数据的逻辑存储结构有没有发生改变吧？", ["逻辑存储结构"]));
 
 		// var result;
 		// switch(req.body.btnId) {
