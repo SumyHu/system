@@ -502,16 +502,12 @@ function addWord(word) {
     allWords[firstChar].push(word);   // 若该词语不存在，则在该索引下添加该词语
 }
 
-module.exports = function() {
-	return {
-		//提供计算两个词语之间的相似度的接口
-		simWord: function(wordstr1, wordstr2) {
-			if (!allWords) {
-				loadGlossary();
-			}
-			return calSimWordStr(wordstr1, wordstr2);
-		},
-        addWord: addWord
-	}
-	// loadGlossary();
-};
+//提供计算两个词语之间的相似度的接口
+function simWord(wordstr1, wordstr2) {
+    if (!allWords) {
+        loadGlossary();
+    }
+    return calSimWordStr(wordstr1, wordstr2);
+}
+
+module.exports = simWord;

@@ -410,10 +410,10 @@ module.exports = function(app) {
 		// var SyntacticSimilarity = require("./SyntacticSimilarity");
 		// SyntacticSimilarity("数据的逻辑存储结构发生改变时", ["逻辑存储结构"]);
 		// let wordSimilaryFn = WordSimilary();
-		// console.log(wordSimilaryFn.simWord("改变", "不改变"));
+		// console.log(WordSimilary("改变", "改变"));
 		// console.log(sentenceSimilary("数据的逻辑存储结构不发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
-		// console.log(textSimilaryCal("数据的逻辑存储结构改变", "数据的逻辑存储结构不改变", ["逻辑存储结构"]));
-		console.log(textSimilaryCal.OverallCalTextSimilary({text1:"其实，我觉得快乐大本营挺不错的", text2:"我觉得快乐大本营好看呢", professionalNounsArr:["快乐大本营"]}));
+		// console.log(textSimilaryCal({text1: "数据的逻辑存储结构改变", text2: "数据的逻辑存储结构改变", professionalNounsArr: ["逻辑存储结构"], totalScore: 5}));
+		res.send(textSimilaryCal({text1:"其实，我觉得【快乐大本营（2）】【挺不错（2）】的{5}", text2:"不过，其实，我觉得快乐大本营好看呢", professionalNounsArr:["快乐大本营"], totalScore: 5}));
 		// console.log(SyntacticSimilarity("数据的逻辑存储结构发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 		// console.log(SyntacticSimilarity("没有运行其他事务时进行的转储操作"));
 

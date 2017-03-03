@@ -14,7 +14,7 @@ const participleFn = require("./participle");
 const primitive = require("./Primitive");
 
 // 调用词语计算库计算两个词语相似度的方法
-const wordSimilary = require("./WordSimilary")().simWord;
+const wordSimilary = require("./WordSimilary");
 
 // 句法相似度实现库
 const SyntacticSimilarity = require("./SyntacticSimilarity");
