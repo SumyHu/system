@@ -1,13 +1,23 @@
+/**
+ * 非规则文本相似度计算
+ * 参考文献：《基于语义的文本相似度算法研究及应用》 作者：张金鹏
+ * 算法实现：分句——>分词——>根据词语的idf值和词语的出现次数获得该词语的实际权值——>基于余弦相似度的基础相似度计算+基于结构特性的结构相似度计算，求得句子的总体相似度——>句子聚类，求聚类后句子中间的相似度——>计算文本之间的相似度
+
+ * 缺点：①过分依赖idf词典，如何填补词典没有的词语的idf值？②计算句子相似度中，基于结构特性的结构相似度计算是基于词语的词性匹配计算的，并没有实际深入考虑词义结构；③k-means聚类算法自身就存在一定的缺陷。
+ * 优点：时间复杂度小
+*/
+
 const CustomizeParticiple = require("./participle"),   // 自定义中文分词
 	  wordIdf = require("./wordIdf"),   // 获得词语的idf值
 	  WordSimilary = require("./WordSimilary"),   // 自定义词语相似度计算
 	  kMeans = require("kmeans-js");    // 调用k-means聚类算法
 
-let unimportantAttr = ["ECHO", "PREP", "STRU", "CONJ", "SpecialSTRU"],   // 不重要的词语词性
+let unimportantAttr = ["ECHO", "PREP", "STRU", "CONJ", "SpecialSTRU", "COOR"],   // 不重要的词语词性
 	wordWeightByAttr = {
 		N: 0.3,
 		PRON: 0.3,
 		V: 0.3,
+		AUX: 0.3,   // 助动词
 		ADJ: 0.2,
 		ADV: 0.2,
 		NUM: 0.1,
@@ -25,7 +35,10 @@ const beta = 0.6;   // 计算句子总体相似度的β取值
 const k = 5;   // 句子聚类的k取值
 const delta = 0.2;   // 计算文本总体相似度的δ值
 
-/** 将ECHO（语气词）、PREP（介词）、STRU（虚词）、SpecialSTRU、CONJ（连词）等词性的词语去掉
+const minWordSimilary = 0.95,   // 词语相近的最小相似度界定值
+	  minSentenceSimilary = 0.86;   // 句子相近的最小相似度界定值
+
+/** 将ECHO（语气词）、PREP（介词）、STRU（虚词）、SpecialSTRU、CONJ（连词）、COOR等词性的词语去掉
  * @param wordArray Array 最初获得的分词结果
  * wordArray = [{word: String, type: Array}, {...}, {...}, ...]
 */
@@ -182,6 +195,7 @@ function compareTypeArray(typeArray1, typeArray2) {
  * @return Number 结构特性的相似度计算结果
 */
 function structureSimilary(wordTargetArr1, wordTargetArr2) {
+	console.log(wordTargetArr1, wordTargetArr2);
 	var len1 = wordTargetArr1.length;
 	var len2 = wordTargetArr2.length;
 	var N = len1<len2 ? len1 : len2;   // 表示两个句子中维数较小的词性标识数目
@@ -191,10 +205,10 @@ function structureSimilary(wordTargetArr1, wordTargetArr2) {
 
 	for(let i=0; i<len1; i++) {
 		for(let j=0; j<len2; j++) {
-			if (compareTypeArray(wordTargetArr1[i].type, wordTargetArr2[j].type)) {
+			if (WordSimilary(wordTargetArr1[i].word, wordTargetArr2[j].word) === 1) {
 				var matchCount = 0;
 				for(let p=i, q=j; p<len1 && q<len2; p++, q++) {
-					if (!compareTypeArray(wordTargetArr1[p].type, wordTargetArr2[q].type)) {
+					if (WordSimilary(wordTargetArr1[p].word, wordTargetArr2[q].word) !== 1) {
 						break;
 					}
 					matchCount ++;
@@ -232,6 +246,22 @@ function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
 	// 句子分词
 	var parResult1 = participle(sentence1, professionalNounsArr);
 	var parResult2 = participle(sentence2, professionalNounsArr);
+
+	let negativeWordsCount1 = 0, negativeWordsCount2 = 0;
+	for(let i=0, len=parResult1.length; i<len; i++) {
+		if (WordSimilary(parResult1[i].word, "不") === 1) {
+			negativeWordsCount1++;
+		}
+	}
+	for(let i=0, len=parResult2.length; i<len; i++) {
+		if (WordSimilary(parResult2[i].word, "不") === 1) {
+			negativeWordsCount2++;
+		}
+	}
+
+	if ((negativeWordsCount1%2) !== (negativeWordsCount2%2)) {
+		return 0;
+	}
 
 	var weightArr1 = [], weightArr2 = [];
 	for(let i=0, len=parResult1.length; i<len; i++) {
@@ -441,10 +471,20 @@ function calTotalSentenceSimilaryWithoutKeyword(paramObj) {
 				}
 			}
 		}
+		console.log("0000000000000");
+		console.log("maxSentenceSimilaryVal: " + maxSentenceSimilaryVal);
 
-		let weight = sentenceArr1[index1].score/paramObj.totalScore*paramObj.totalLength;
+		if (maxSentenceSimilaryVal < minSentenceSimilary) {
+			maxSentenceSimilaryVal = 0;
+		}
+
+		console.log(sentenceArr1[index1].sentence, maxSentenceSimilaryVal, sentenceArr1[index1].score);
+		console.log("0000000000000");
+
+		// let weight = sentenceArr1[index1].score/paramObj.totalScore*paramObj.totalLength;
 		// 欠一个计算句子数组相似度的公式，暂定
-		sum += maxSentenceSimilaryVal*weight;
+		// sum += maxSentenceSimilaryVal*weight;
+		sum += maxSentenceSimilaryVal*sentenceArr1[index1].score;
 		// tempSentenceArr1.splice(index1, 1);
 		// tempSentenceArr2.splice(index2, 1);
 		sentenceArr1.splice(index1, 1);
@@ -575,6 +615,7 @@ function calTotalSentenceSimilaryWithKeyword(paramObj) {
 			keywordRecode: [{   // 记录关键字信息的数组
 				keyword: String,
 				keywordWeight: Number,
+				keywordScore: Number,
 				maxWordSimilaryVal: Number,
 				sentenceArr2_index: Number
 			}],
@@ -609,6 +650,7 @@ function calTotalSentenceSimilaryWithKeyword(paramObj) {
 			record[record.length-1].keywordRecode.push({
 				keyword: keyword,
 				keywordWeight: keywordWeight,
+				keywordScore: keywordArray[j].keywordScore,
 				maxWordSimilaryVal: result.maxParticipleKeywordSimilaryVal,
 				sentenceArr2_index: result.realIndex
 			});
@@ -653,52 +695,82 @@ function calTotalSentenceSimilaryWithKeyword(paramObj) {
 
 		let realMaxSimilaryVal = 0, realIndex = 0;
 		for(var k in keywordRecodeObj) {
-			let similaryVal = 0, weighted = 0;
-			for(let j=0, len2=keywordRecode.length; j<len2; j++) {
-				let keywordWeight= keywordRecode[j].keywordWeight, keyword = keywordRecode[j].keyword;
-				weighted += keywordWeight;
-				if (!keywordRecodeObj[k][keyword]) {
-					// 判断是否是专有名词，professionalNounsFlag为true代表是
-					let professionalNounsFlag = false;
-					for(let i=0, len=professionalNounsArr.length; i<len; i++) {
-						if (keyword === professionalNounsArr[i]) {
-							professionalNounsFlag = true;
-							break;
-						}
-					}
-
-					let compareWordArray = [totalCompareWords[k]];
-
-					if (professionalNounsFlag) {
-						console.log("keywordWeight: " + keywordWeight + ",similaryVal: " + similaryVal);
-						similaryVal += calWordSimilary(keyword, professionalNounsArr, compareWordArray, true).maxWordSimilaryVal*keywordWeight;
-						console.log(keyword, k, calWordSimilary(keyword, professionalNounsArr, compareWordArray, true).maxWordSimilaryVal);
-					}
-					else {
-						let participleKeyword = CustomizeParticiple(keyword, professionalNounsArr), tempSimilaryVal = 0;
-						for(let t=0, len3=participleKeyword.length; t<len3; t++) {
-							tempSimilaryVal += calWordSimilary(participleKeyword[t].word, professionalNounsArr, compareWordArray, false).maxWordSimilaryVal;
-						}
-						console.log("keywordWeight: " + keywordWeight + ",similaryVal: " + similaryVal);
-						similaryVal += tempSimilaryVal/participleKeyword.length*keywordWeight;
-						console.log(keyword, k, tempSimilaryVal/participleKeyword.length);
-					}
-				}
-				else {
-					console.log("keywordWeight: " + keywordWeight + ",similaryVal: " + similaryVal);
-					similaryVal += keywordRecodeObj[k][keyword].maxWordSimilaryVal*keywordWeight;
-					console.log(keyword, k, keywordRecodeObj[k][keyword].maxWordSimilaryVal);
-				}
-			}
+			let similaryVal = 0, addScore = 0;
 
 			let thisSentenceSimilaryVal = calSentenceSimilary(sentenceArr1[sentenceArr1_index].sentence, sentenceArr2[k], professionalNounsArr);
-			console.log("------=====");
-			console.log(similaryVal, thisSentenceSimilaryVal, weighted);
-			similaryVal = (similaryVal+(1-weighted)*thisSentenceSimilaryVal)*0.4 + thisSentenceSimilaryVal*0.6;
-			// console.log("thisSentenceSimilaryVal: " + thisSentenceSimilaryVal);
+			if (thisSentenceSimilaryVal === 0) {
+				similaryVal = 0;
+			}
+			else {
+				for(let j=0, len2=keywordRecode.length; j<len2; j++) {
+					let keywordWeight= keywordRecode[j].keywordWeight, keywordScore = keywordRecode[j].keywordScore, keyword = keywordRecode[j].keyword;
+					addScore += keywordScore;
+					if (!keywordRecodeObj[k][keyword]) {
+						// 判断是否是专有名词，professionalNounsFlag为true代表是
+						let professionalNounsFlag = false;
+						for(let i=0, len=professionalNounsArr.length; i<len; i++) {
+							if (keyword === professionalNounsArr[i]) {
+								professionalNounsFlag = true;
+								break;
+							}
+						}
 
-			console.log("------------");
-			console.log(k, weighted, similaryVal);
+						let compareWordArray = [totalCompareWords[k]];
+
+						if (professionalNounsFlag) {
+							// console.log("keywordWeig/ht: " + keywordWeight + ",similaryVal: " + similaryVal);
+							let resultVal = calWordSimilary(keyword, professionalNounsArr, compareWordArray, true).maxWordSimilaryVal;
+							console.log("before", keyword, k, resultVal);
+
+							if (resultVal < minWordSimilary) {
+								resultVal = 0;
+							}
+							console.log("after", keyword, k, resultVal, keywordScore);
+
+							similaryVal += resultVal*keywordScore;
+						}
+						else {
+							let participleKeyword = CustomizeParticiple(keyword, professionalNounsArr), tempSimilaryVal = 0;
+							for(let t=0, len3=participleKeyword.length; t<len3; t++) {
+								tempSimilaryVal += calWordSimilary(participleKeyword[t].word, professionalNounsArr, compareWordArray, false).maxWordSimilaryVal;
+							}
+							// console.log("keywordWeight: " + keywordWeight + ",similaryVal: " + similaryVal);
+							let resultVal = tempSimilaryVal/participleKeyword.length;
+							console.log("before", keyword, k, resultVal);
+
+							if (resultVal < minWordSimilary) {
+								resultVal = 0;
+							}
+							console.log("after", keyword, k, resultVal, keywordScore);
+
+							similaryVal += resultVal*keywordScore;
+						}
+					}
+					else {
+						// console.log("keywordWeight: " + keywordWeight + ",similaryVal: " + similaryVal);
+						let resultVal = keywordRecodeObj[k][keyword].maxWordSimilaryVal;
+						console.log("before", keyword, k, resultVal);
+
+						if (resultVal < minWordSimilary) {
+							resultVal = 0;
+						}
+						console.log("after", keyword, k, resultVal, keywordScore);
+
+						similaryVal += resultVal*keywordScore;
+					}
+				}
+
+				if (thisSentenceSimilaryVal < minSentenceSimilary) {
+					thisSentenceSimilaryVal = 0;
+				}
+				console.log("------=====");
+				console.log(similaryVal, thisSentenceSimilaryVal, addScore, record[i].score-addScore);
+				similaryVal = (similaryVal+(record[i].score-addScore)*thisSentenceSimilaryVal)*0.9 + thisSentenceSimilaryVal*record[i].score*0.1;
+				// console.log("thisSentenceSimilaryVal: " + thisSentenceSimilaryVal);
+
+				console.log("------------");
+				// console.log(k, weighted, similaryVal);
+			}
 
 			if (similaryVal > realMaxSimilaryVal) {
 				realMaxSimilaryVal = similaryVal;
@@ -708,8 +780,9 @@ function calTotalSentenceSimilaryWithKeyword(paramObj) {
 
 		console.log("sentenceArr1_index: " + sentenceArr1_index + "k: " + k + ",realMaxSimilaryVal: " + realMaxSimilaryVal);
 
-		let weight = record[i].score/paramObj.totalScore*paramObj.totalLength;
-		sum += realMaxSimilaryVal*weight;
+		// let weight = record[i].score/paramObj.totalScore*paramObj.totalLength;
+		// sum += realMaxSimilaryVal*weight;
+		sum += realMaxSimilaryVal;
 		console.log(sum);
 
 		// console.log("==========");
@@ -767,7 +840,8 @@ function calTotalSentenceSimilary(paramObj) {
 	sum = sum1+sum2;
 
 	// return (sum + delta * (big - matchCount)) / big;
-	return (sum + delta * (totalLength - matchCount)) / totalLength;
+	// return (sum + delta * (totalLength - matchCount)) / totalLength;
+	return sum;
 }
 
 /** 文本之间的总体相似度计算
@@ -776,13 +850,14 @@ function calTotalSentenceSimilary(paramObj) {
 	text1: String,   //比较的文本
 	text2: String, 
 	professionalNounsArr: Array,   //专有名词数组
-	totalScore: Number   // 该题分值
+	totalScore: Number   // 该题分值,
+	Affirmative: Boolean   // 是否为肯定句，true为肯定句
  }
 */
 function OverallCalTextSimilary(paramObj) {
 	// 段落分句
-	var clauseTextResult1 = clause(paramObj.text1, paramObj.totalScore);
-	var clauseTextResult2 = initClause(paramObj.text2);
+	let clauseTextResult1 = clause(paramObj.text1, paramObj.totalScore),
+		clauseTextResult2 = initClause(paramObj.text2);
 	// console.log(clauseTextResult1, clauseTextResult2);
 	return calTotalSentenceSimilary({
 		sentenceArr1: clauseTextResult1, 
@@ -790,7 +865,7 @@ function OverallCalTextSimilary(paramObj) {
 		professionalNounsArr: paramObj.professionalNounsArr,
 		totalScore: paramObj.totalScore
 	});
-	// return [clauseTextResult1, clauseTextResult2];
 }
 
 module.exports = OverallCalTextSimilary;
+// module.exports = calSentenceSimilary;

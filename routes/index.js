@@ -398,7 +398,8 @@ module.exports = function(app) {
 
 	app.post("/shortAnswerCheck", function(req, res) {
 		// console.log(segment.doSegment("你好，你好，在做什么呢？我好想你呢，超级超级想你呢。"));
-		// var result = wordSimilaryFn.simWord(req.body.word1, req.body.word2);
+		// res.send(WordSimilary(req.body.text1, req.body.text2)+"");
+		// res.send(textSimilaryCal(req.body.text1, req.body.text2)+"");
 		// res.send(result.toString());
 		// console.log(wordSimilaryFn.simWord);
 
@@ -413,8 +414,8 @@ module.exports = function(app) {
 		// console.log(WordSimilary("改变", "改变"));
 		// console.log(sentenceSimilary("数据的逻辑存储结构不发生改变", "数据的逻辑存储结构发生改变", ["逻辑存储结构"]));
 		// console.log(textSimilaryCal({text1: "数据的逻辑存储结构改变", text2: "数据的逻辑存储结构改变", professionalNounsArr: ["逻辑存储结构"], totalScore: 5}));
-		// res.send(textSimilaryCal({text1:"其实，我觉得【快乐大本营（1）】【不好看（1）】的{3}，我个人是这么【认为（2）】的", text2:"不过，其实，我觉得快乐大本营挺好看呢", professionalNounsArr:["快乐大本营"], totalScore: 5})+"");
-		res.send(textSimilaryCal({text1: "数据的【逻辑存储结构（1）】发生【改变（3）】", text2: "数据的逻辑存储结构改变", professionalNounsArr:["逻辑存储结构"], totalScore: 5})+"");
+		// res.send(textSimilaryCal({text1:"其实，我觉得【快乐大本营（1）】【不好看（1）】的{3}，我个人是这么【认为（2）】的", text2:"不过，其实，我觉得快乐大本营挺不错的呢", professionalNounsArr:["快乐大本营"], totalScore: 5})+"");
+		res.send(textSimilaryCal({text1: "数据的【逻辑存储结构（1）】【改变（4）】", text2: "数据的逻辑存储结构不会发生改变", professionalNounsArr:["逻辑存储结构"], totalScore: 5})+"");
 		// console.log(SyntacticSimilarity("没有运行其他事务时进行的转储操作"));
 
 		// console.log(participle("啊，数据的逻辑存储结构有没有发生改变呢？", ["逻辑存储结构"]));
