@@ -249,7 +249,7 @@ function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
 
 	let negativeWordsCount1 = 0, negativeWordsCount2 = 0;
 	for(let i=0, len=parResult1.length; i<len; i++) {
-		if (WordSimilary(parResult1[i].word, "不") === 1) {
+		if (WordSimilary(parResult1[i].word, "不") === 1 || WordSimilary(parResult1[i].word, "不能") === 1) {
 			negativeWordsCount1++;
 		}
 	}
