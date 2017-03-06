@@ -234,18 +234,26 @@ function calTotalScore(result) {
 		SingleChoiceTotalScore=0, MultipleChoicesTotalScore=0, TrueOrFalseTotalScore=0, 
 		FillInTheBlankTotalScore=0, ShortAnswerTotalScore=0, ProgrammingTotalScore=0, totalScore;
 
-	findPraticesById(SingleChoiceArr[0], function(data) {
-		SingleChoiceTotalScore = SingleChoiceArr.length*data.score;
-	});
-	findPraticesById(MultipleChoicesArr[0], function(data) {
-		MultipleChoicesTotalScore = MultipleChoicesArr.length*data.score;
-	});
-	findPraticesById(TrueOrFalseArr[0], function(data) {
-		TrueOrFalseTotalScore = TrueOrFalseArr.length*data.score;
-	});
-	findPraticesById(FillInTheBlankArr[0], function(data) {
-		FillInTheBlankTotalScore = FillInTheBlankArr.length*data.score;
-	});
+	if (SingleChoiceArr.length) {
+		findPraticesById(SingleChoiceArr[0], function(data) {
+			SingleChoiceTotalScore = SingleChoiceArr.length*data.score;
+		});
+	}
+	if (MultipleChoicesArr.length) {
+		findPraticesById(MultipleChoicesArr[0], function(data) {
+			MultipleChoicesTotalScore = MultipleChoicesArr.length*data.score;
+		});
+	}
+	if (TrueOrFalseArr.length) {
+		findPraticesById(TrueOrFalseArr[0], function(data) {
+			TrueOrFalseTotalScore = TrueOrFalseArr.length*data.score;
+		});
+	}
+	if (FillInTheBlankArr.length) {
+		findPraticesById(FillInTheBlankArr[0], function(data) {
+			FillInTheBlankTotalScore = FillInTheBlankArr.length*data.score;
+		});
+	}
 
 	for(let i=0, len=ShortAnswerArr.length; i<len; i++) {
 		findPraticesById(ShortAnswerArr[i], function(data) {
@@ -276,7 +284,7 @@ function addExamination(unitId, index) {
 	findUnitById(unitId, function(result) {
 		let section = document.createElement("section");
 		section.className = "content";
-		let totalScore = calTotalScore(result);
+		let totalScore = calTotalScore(result), time = result.time;
 		section.innerHTML = `<section class="showEg">
 								<div class="btnDiv"><input type="button" class="modifyBtn"><input type="button" class="removeIndex" value="X"></div>
 								<div class="title">试卷<span class="index">` + (index+1) + `</span></div>
@@ -301,7 +309,7 @@ function addExamination(unitId, index) {
 											编程题：` + result.Programming.length + `道 共` + totalScore.ProgrammingTotalScore + `分
 										</p>
 										<p class="totalTime">
-											完成时间：<span class="count">120</span>分钟
+											完成时间：` + time.hours + `小时` + time.minutes + `分钟` + time.seconds + `秒
 										</p>
 										<p class="totalScore">
 											总分：<span class="count">` + totalScore.totalScore + `</span>分

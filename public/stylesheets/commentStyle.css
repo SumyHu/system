@@ -51,7 +51,7 @@ input[type=button], input[type=submit] {
 .textInput {
 	display: inline-block;
 	width: 250px;
-	padding: 0 20px;
+	padding: 0 2px;
 	font-size: 23px;
 	border: none;
 	border-bottom: 1px solid #000;

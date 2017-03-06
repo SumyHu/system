@@ -181,7 +181,7 @@
 }
 
 .topic > .textInput, .input .textInput, .output .textInput {
-	width: 90%;
+	width: 87%;
 }
 
 .choice {
@@ -194,7 +194,7 @@
 }
 
 .choice > .textInput {
-	width: 93%;
+	width: 90%;
 }
 
 .blank {
@@ -202,6 +202,7 @@
 }
 
 .blank > .textInput {
+	width: 88%;
 	margin: 0 0 15px;
 }
 
@@ -226,9 +227,13 @@
 	background: rgba(142, 173, 46, 0.6);
 }
 
+.addProfessionalNouns {
+	display: none;
+}
+
 .addProfessionalNouns .textInput {
-	width: 95%;
-	margin: 0 0 5px 0;
+	width: 93%;
+	margin: 10px 0;
 }
 
 .addChoiceBtn:hover, .addBlankBtn:hover {
@@ -241,7 +246,7 @@
 }
 
 .answer textarea {
-	width: 100%;
+	width: 95%;
 	height: 200px;
 	font-size: 18px;
 }

@@ -131,7 +131,33 @@ function showAllFillInTheBlankContent(praticeIdArr) {
 /** 显示所有简答题内容
  * @param praticeIdArr Array 习题id集合
 */
-function showAllShortAnswerContent(praticeIdArr) {}
+function showAllShortAnswerContent(praticeIdArr) {
+	for(let i=0, len=praticeIdArr.length; i<len; i++) {
+		findPraticesById(praticeIdArr[i], function(result) {
+			console.log(result);
+			let section = addShortAnswer();
+
+			section.id = praticeIdArr[i];
+
+			$(section).find(".topic > .textInput").val(result.topic);
+			$(section).find(".answer > textarea").val(result.answer[0].content);
+
+			console.log(result.answer[0]);
+
+			let professionalNounsArr = result.answer[0].professionalNounsArr;
+			if (professionalNounsArr) {
+				for(let i=0, len=professionalNounsArr.length; i<len; i++) {
+					let newDiv = addMoreProfessionalNouns($(section).find(".addProfessionalNouns .addProfessionalNounsBtn"));
+					$(newDiv).find(".textInput").val(professionalNounsArr[i]);
+				}
+			}
+
+			if (praticeType === "examination") {
+				$(section).find(".showScore > .textInput").val(result.score);
+			}
+		});
+	}
+}
 
 function showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType) {
 	console.log("inputType", inputType);
@@ -354,6 +380,41 @@ function getFillInTheBlankContent($content) {
  * @param $content Object 所要添加的全部content对象
 */
 function getShortAnswerContent($content) {
+	let allContent = [];
+
+	for(let i=0, len=$content.length; i<len; i++) {
+		let topic = $($content[i]).find(".topic > .textInput").val();
+
+		let answer = $($content[i]).find(".answer > textarea").val();
+		
+		let professionalNounsArr = [], allProfessionalNouns = $($content[i]).find(".addProfessionalNouns .professionalNounsDiv");
+		for(let i=0, len=allProfessionalNouns.length; i<len; i++) {
+			professionalNounsArr.push($(allProfessionalNouns[i]).find(".textInput").val());
+		}
+		
+		allContent.push({
+			topic: topic,
+			answer: [{
+				content: answer,
+				professionalNounsArr: professionalNounsArr
+			}]
+		});
+
+		if ($content[i].id) {
+			allContent[allContent.length-1].id = $content[i].id;
+		}
+
+		if (praticeType === "examination") {
+			let score = $($content[i]).find(".showScore > .textInput").val();
+			if (!score) {
+				score = $($content[i]).find(".showScore > .textInput")[0].placeholder;
+			}
+
+			allContent[allContent.length-1].score = score;
+		}
+	}
+
+	return allContent;
 }
 
 /** 获取所要添加的编程题内容

@@ -198,6 +198,7 @@ function addShortAnswer() {
 						<textarea></textarea>
 					</div>
 					<div class="addProfessionalNouns">
+						答案中的专有名词有：
 						<input type="button" value="添加专有名词" class="addProfessionalNounsBtn">
 					</div>`;
 
@@ -205,6 +206,12 @@ function addShortAnswer() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addShortAnswer").append(section);
+
+	if (praticeType === "examination") {
+		$(".addProfessionalNouns").css("display", "block");
+		$(".showScore").css("display", "block");
+	}
+
 	return section;
 }
 
@@ -412,8 +419,10 @@ function addMoreProfessionalNouns($addProfessionalNounsBtn) {
 	let count = $addProfessionalNounsBtn.parent().find(".textInput").length+1;
 
 	let div = document.createElement("div");
+	div.className = "professionalNounsDiv";
 	div.innerHTML = count + ". <input type='text' class='textInput'>"
 	$addProfessionalNounsBtn.before(div);
+	return div;
 }
 
 /** 添加更多可能的答案
@@ -525,8 +534,37 @@ function getFillInTheBlankContent($content) {
  * @param $content Object 所要添加的全部content对象
 */
 function getShortAnswerContent($content) {
-	console.log("test");
-	return [];
+	let allContent = [];
+
+	for(let i=0, len=$content.length; i<len; i++) {
+		let topic = $($content[i]).find(".topic > .textInput").val();
+
+		let answer = $($content[i]).find(".answer > textarea").val();
+
+		let professionalNounsArr = [], allProfessionalNouns = $($content[i]).find(".addProfessionalNouns .professionalNounsDiv");
+		for(let i=0, len=allProfessionalNouns.length; i<len; i++) {
+			professionalNounsArr.push($(allProfessionalNouns[i]).find(".textInput").val());
+		}
+		
+		allContent.push({
+			topic: topic,
+			answer: [{
+				content: answer,
+				professionalNounsArr: professionalNounsArr
+			}]
+		});
+
+		if (praticeType === "examination") {
+			let score = $($content[i]).find(".showScore > .textInput").val();
+			if (!score) {
+				score = $($content[i]).find(".showScore > .textInput")[0].placeholder;
+			}
+
+			allContent[allContent.length-1].score = score;
+		}
+	}
+
+	return allContent;
 }
 
 /** 获取编程题各项设定内容
@@ -842,7 +880,7 @@ function savePratices(examinationTime) {
 	MultipleChoicesContentArr = getChoiceContent(MultipleChoicesContent);
 	TrueOrFalseContentArr = getChoiceContent(TrueOrFalseContent);
 	FillInTheBlankContentArr = getFillInTheBlankContent(FillInTheBlankContent);
-	// ShortAnswerContentArr = getShortAnswerContent(ShortAnswerContent);
+	ShortAnswerContentArr = getShortAnswerContent(ShortAnswerContent);
 	ProgrammingContentArr = getProgrammingContent(ProgrammingContent);
 
 	console.log(SingleChoiceContentArr);
