@@ -7,6 +7,7 @@ let removePraticeArr = [];   // 记录被删除的习题
  * @param showType String 习题类型
 */
 function showAllChoicesContent(praticeIdArr, showType) {
+	let score;
 	for(let i=0, len=praticeIdArr.length; i<len; i++) {
 		callDataProcessingFn({
 			data: {
@@ -17,6 +18,10 @@ function showAllChoicesContent(praticeIdArr, showType) {
 				}
 			},
 			success: function(result) {
+				if (praticeType === "examination" && !score) {
+					score = result.score;
+				}
+
 				let section, inputType = "radio";
 				switch(showType) {
 					case "SingleChoice":
@@ -66,12 +71,17 @@ function showAllChoicesContent(praticeIdArr, showType) {
 			}
 		});
 	}
+
+	if (praticeType === "examination") {
+		$(".add" + showType + " > .showScore > .textInput").val(score);
+	}
 }
 
 /** 显示所有填空题内容
  * @param praticeIdArr Array 习题id集合
 */
 function showAllFillInTheBlankContent(praticeIdArr) {
+	let score;
 	for(let i=0, len=praticeIdArr.length; i<len; i++) {
 		callDataProcessingFn({
 			data: {
@@ -82,6 +92,10 @@ function showAllFillInTheBlankContent(praticeIdArr) {
 				}
 			},
 			success: function(result) {
+				if (praticeType === "examination" && !score) {
+					score = result.score;
+				}
+
 				let section = addFillInTheBlank();
 
 				section.id = praticeIdArr[i];
@@ -107,6 +121,10 @@ function showAllFillInTheBlankContent(praticeIdArr) {
 				}
 			}
 		});
+	}
+
+	if (praticeType === "examination") {
+		$(".addFillInTheBlank > .showScore > .textInput").val(score);
 	}
 }
 
@@ -205,6 +223,10 @@ function showAllProgrammingContent(praticeIdArr) {
 				 }
 				$(section).find(".help").attr("href", "help?mode=" + helpMode);
 
+				if (praticeType === "examination") {
+					$(section).find(".showScore > .textInput").val(result.score);
+				}
+
 				let answer = result.answer[0].content, editor = programingEditorArray[programingEditorArray.length-1].editor;
 
 				$(section).find("textarea").val(answer);
@@ -239,6 +261,14 @@ getChoiceContent = function($content) {
 		type = "checkbox";
 	}
 
+	let score;
+	if (praticeType === "examination" && $content.length) {
+		score = $content.parent().find(".showScore > .textInput").val();
+		if (!score) {
+			score = $content.parent().find(".showScore > .textInput")[0].placeholder;
+		}
+	}
+
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
 
@@ -264,6 +294,10 @@ getChoiceContent = function($content) {
 		if ($content[i].id) {
 			allContent[allContent.length-1].id = $content[i].id;
 		}
+
+		if (praticeType === "examination") {
+			allContent[allContent.length-1].score = score;
+		}
 	}
 
 	return allContent;
@@ -274,6 +308,16 @@ getChoiceContent = function($content) {
 */
 function getFillInTheBlankContent($content) {
 	let allContent = [];
+
+	let score;
+	if (praticeType === "examination"  && $content.length) {
+		console.log($content);
+		console.log($content.parent()[0]);
+		score = $content.parent().find(".showScore > .textInput").val();
+		if (!score) {
+			score = $content.parent().find(".showScore > .textInput")[0].placeholder;
+		}
+	}
 
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
@@ -296,6 +340,10 @@ function getFillInTheBlankContent($content) {
 
 		if ($content[i].id) {
 			allContent[allContent.length-1].id = $content[i].id;
+		}
+
+		if (praticeType === "examination") {
+			allContent[allContent.length-1].score = score;
 		}
 	}
 
@@ -340,6 +388,15 @@ function getProgrammingContent($content) {
 		if ($content[i].id) {
 			allContent[allContent.length-1].id = $content[i].id;
 		}
+
+		if (praticeType === "examination") {
+			let score = $($content[i]).find(".showScore > .textInput").val();
+			if (!score) {
+				score = $($content[i]).find(".showScore > .textInput")[0].placeholder;
+			}
+
+			allContent[allContent.length-1].score = score;
+		}
 	}
 
 	return allContent;
@@ -373,16 +430,18 @@ function init() {
 		$(".addPraticeToolbar").css("display", "none");
 		$(".addPraticeContent > section").css("display", "none");
 		$(".addPraticeContent > .add" + type).css("display", "block");
-		$(".previous").css("display", "none");
-		$(".flip").css("width", "60px");
-		$(".next").css("width", "60px");
-		$(".next").val("提交");
+		// $(".previous").css("display", "none");
+		// $(".flip").css("width", "60px");
+		// $(".next").css("width", "60px");
+		// $(".next").val("提交");
 	}
 	else {
 		if (praticeType === "chapter") {
 			$(".time")[0].innerHTML += " — 第 " + (Number(index)+1) +" 章";
 		}
 		else {
+			$(".examinationTime").css("display", "block");
+			$(".showScore").css("display", "block");
 			$(".time")[0].innerHTML += " — 试卷 " + (Number(index)+1);
 		}
 	}
@@ -397,6 +456,12 @@ function init() {
 		}
 
 		findUnitById(unitId, function(data) {
+			if (data.time) {
+				$(".examinationTime > .hours").val(data.time.hours);
+				$(".examinationTime > .minutes").val(data.time.minutes);
+				$(".examinationTime > .seconds").val(data.time.seconds);
+			}
+
 			if (type) {
 				praticeIdObj[type] = data[type];
 				currentAddType = type;
@@ -435,7 +500,7 @@ function init() {
 	...
  }
 */
-savePraticesInData = function(contentObj, totalCount) {
+savePraticesInData = function(contentObj, totalCount, examinationTime) {
 	console.log(contentObj);
 	console.log(removePraticeArr);
 
@@ -464,7 +529,8 @@ savePraticesInData = function(contentObj, totalCount) {
 						update: {
 							topic: praticeContent.topic,
 							choices: praticeContent.choices,
-							answer: praticeContent.answer
+							answer: praticeContent.answer,
+							score: praticeContent.score
 						}
 					},
 					success: function(result) {
@@ -553,6 +619,24 @@ savePraticesInData = function(contentObj, totalCount) {
 			update: {
 				updateTime: new Date().toLocaleString()
 			}
-		}
+		},
+		success: function() {}
 	});
+
+	if (examinationTime) {
+		callDataProcessingFn({
+			data: {
+				data: "units",
+				callFunction: "update",
+				updateOpt: {
+					_id: unitId
+				},
+				operation: "set",
+				update: {
+					time: examinationTime
+				}
+			},
+			success: function() {}
+		});
+	}
 }

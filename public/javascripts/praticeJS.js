@@ -225,38 +225,86 @@ function changeChapterIndexNum(index) {
 	showOneChapterContentType(chapterPratices[index]);
 }
 
+/** 计算试卷的总分
+ * @param result Object 查询试卷unitId后得到的result
+*/
+function calTotalScore(result) {
+	let SingleChoiceArr = result.SingleChoice, MultipleChoicesArr = result.MultipleChoices, TrueOrFalseArr = result.TrueOrFalse, 
+		FillInTheBlankArr = result.FillInTheBlank, ShortAnswerArr = result.ShortAnswer, ProgrammingArr = result.Programming,
+		SingleChoiceTotalScore=0, MultipleChoicesTotalScore=0, TrueOrFalseTotalScore=0, 
+		FillInTheBlankTotalScore=0, ShortAnswerTotalScore=0, ProgrammingTotalScore=0, totalScore;
+
+	findPraticesById(SingleChoiceArr[0], function(data) {
+		SingleChoiceTotalScore = SingleChoiceArr.length*data.score;
+	});
+	findPraticesById(MultipleChoicesArr[0], function(data) {
+		MultipleChoicesTotalScore = MultipleChoicesArr.length*data.score;
+	});
+	findPraticesById(TrueOrFalseArr[0], function(data) {
+		TrueOrFalseTotalScore = TrueOrFalseArr.length*data.score;
+	});
+	findPraticesById(FillInTheBlankArr[0], function(data) {
+		FillInTheBlankTotalScore = FillInTheBlankArr.length*data.score;
+	});
+
+	for(let i=0, len=ShortAnswerArr.length; i<len; i++) {
+		findPraticesById(ShortAnswerArr[i], function(data) {
+			ShortAnswerTotalScore += data.score;
+		});
+	}
+
+	for(let i=0, len=ProgrammingArr.length; i<len; i++) {
+		findPraticesById(ProgrammingArr[i], function(data) {
+			ProgrammingTotalScore += data.score;
+		});
+	}
+
+	totalScore = SingleChoiceTotalScore+MultipleChoicesTotalScore+TrueOrFalseTotalScore+FillInTheBlankTotalScore+ShortAnswerTotalScore+ProgrammingTotalScore;
+
+	return {
+		SingleChoiceTotalScore: SingleChoiceTotalScore,
+		MultipleChoicesTotalScore: MultipleChoicesTotalScore,
+		TrueOrFalseTotalScore: TrueOrFalseTotalScore,
+		FillInTheBlankTotalScore: FillInTheBlankTotalScore,
+		ShortAnswerTotalScore: ShortAnswerTotalScore,
+		ProgrammingTotalScore: ProgrammingTotalScore,
+		totalScore: totalScore
+	};
+}
+
 function addExamination(unitId, index) {
 	findUnitById(unitId, function(result) {
 		let section = document.createElement("section");
 		section.className = "content";
+		let totalScore = calTotalScore(result);
 		section.innerHTML = `<section class="showEg">
 								<div class="btnDiv"><input type="button" class="modifyBtn"><input type="button" class="removeIndex" value="X"></div>
 								<div class="title">试卷<span class="index">` + (index+1) + `</span></div>
 								<section class="contentDetail">
 									<div>
 										<p class="showSingleChoiceCount">
-											单选题：<span class="count">` + result.SingleChoice.length + `</span>道
+											单选题：` + result.SingleChoice.length + `道 共` + totalScore.SingleChoiceTotalScore + `分
 										</p>
 										<p class="showMultipleChoicesCount">
-											多选题：<span class="count">` + result.MultipleChoices.length + `</span>道
+											多选题：` + result.MultipleChoices.length + `道 共` + totalScore.MultipleChoicesTotalScore + `分
 										</p>
 										<p class="showTrueOrFalseCount">
-											判断题：<span class="count">` + result.TrueOrFalse.length + `</span>道
+											判断题：` + result.TrueOrFalse.length + `道 共` + totalScore.TrueOrFalseTotalScore + `分
 										</p>
 										<p class="showFillInTheBlankCount">
-											填空题：<span class="count">` + result.FillInTheBlank.length + `</span>道
+											填空题：` + result.FillInTheBlank.length + `道 共` + totalScore.FillInTheBlankTotalScore + `分
 										</p>
 										<p class="showShortAnswerCount">
-											简答题：<span class="count">` + result.ShortAnswer.length + `</span>道
+											简答题：` + result.ShortAnswer.length + `道 共` + totalScore.ShortAnswerTotalScore + `分
 										</p>
 										<p class="showProgrammingCount">
-											编程题：<span class="count">` + result.Programming.length + `</span>道
+											编程题：` + result.Programming.length + `道 共` + totalScore.ProgrammingTotalScore + `分
 										</p>
 										<p class="totalTime">
 											完成时间：<span class="count">120</span>分钟
 										</p>
 										<p class="totalScore">
-											总分：<span class="count">100</span>分
+											总分：<span class="count">` + totalScore.totalScore + `</span>分
 										</p>
 									</div>
 									<div>

@@ -315,29 +315,35 @@ initInterface = {
 									<div class="ShortAnswer">简答题</div>
 									<div class="Programming">编程题</div>
 								</div>
+								<input type="button" value="提交" class="submitBtn">
 							</nav>
 
 							<section class="addPraticeContent">
+								<div class="examinationTime">考试时间：
+									<input type="number" max=99 min=0 class="hours" placeholder=0>小时
+									<input type="number" max=59 min=0 class="minutes" placeholder=0>分钟
+									<input type="number" max=59 min=0 class="seconds" placeholder=0>秒
+								</div>
 								<section class="addSingleChoice">
 									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
+									<div class="showScore">分值：<input type="text" class="textInput" placeholder=2></div>
 								</section>
 								<section class="addMultipleChoices">
 									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
+									<div class="showScore">分值：<input type="text" class="textInput" placeholder=3></div>
 								</section>
 								<section class="addTrueOrFalse">
 									<div class="correctAnswerTips">注：勾选后面选项表示该选项为正确答案！</div>
+									<div class="showScore">分值：<input type="text" class="textInput" placeholder=1></div>
 								</section>
-								<section class="addFillInTheBlank"></section>
+								<section class="addFillInTheBlank">
+									<div class="showScore">分值：<input type="text" class="textInput" placeholder=1></div>
+								</section>
 								<section class="addShortAnswer"></section>
 								<section class="addProgramming"></section>
 							</section>
 
 							<div class="addMore">+</div>
-							
-							<div class="flip">
-								<input type="button" class="previous" value="<">
-								<input type="button" class="next" value=">">
-							</div>
 						</section>`
 }
 

@@ -91,8 +91,12 @@ function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
 		sec.className = "content";
 		let showIndex = index+1, inputType;
 
-		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
-						 <div class="answer">`;
+		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic;
+
+		if (praticeType === "examination") {
+			innerHtml += ` (  <span class="score">` + result.score + `</span>分 )`;
+		}
+		innerHtml += `</p><div class="answer">`;
 
 		if (addPraticeType === "MultipleChoices") {
 			inputType = "checkbox";
@@ -192,8 +196,12 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 		sec.className = "content";
 		let showIndex = index+1;
 
-		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
-						<div class="answer">`;
+		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic;
+
+		if (praticeType === "examination") {
+			innerHtml += ` (  <span class="score">` + result.score + `</span>分 )`;
+		}
+		innerHtml += `</p><div class="answer">`;
 
 		if (addPraticeType === "FillInTheBlank") {
 			for(let i=1, len=result.answer.length; i<=len; i++) {
@@ -259,7 +267,8 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				helpMode = "cs";
 			}
 
-			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic + `</p>
+			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic 
+							+ (praticeType === "examination" ? ` (  <span class="score">` + result.score + `</span>分 )` : ``) + `</p>
 							<div class="inputBlock">
 								<div class="description">输入要求：` + (inputContent.description ? inputContent.description : "无") + `</div>
 								<div class="example">输入样例：` + (inputContent.example ? inputContent.example : "无") + `</div>
@@ -694,8 +703,6 @@ function init() {
 		// 考试模拟，将导航栏盖上蒙层
 		$(".toolbarDisable").css("display", "block");
 
-		$(".time")[0].innerHTML = "<span class='hours'>02</span>:<span class='minutes'>00</span>:<span class='seconds'>00</span>";
-
 		// 考试模拟时计时开始
 		var countdown = setInterval(function() {
 			let hours = $(".hours")[0].innerHTML, minutes = $(".minutes")[0].innerHTML, seconds = $(".seconds")[0].innerHTML;
@@ -742,6 +749,23 @@ function init() {
 		}
 
 		findUnitById(unitId, function(data) {
+			let time = data.time;
+			if (time) {
+				let hours = time.hours, minutes = time.minutes, seconds = time.seconds;
+				if (Number(hours) < 10) {
+					hours = "0" + hours;
+				}
+				if (Number(minutes) < 10) {
+					minutes = "0" + minutes;
+				}
+				if (Number(seconds) < 10) {
+					seconds = "0" + seconds;
+				}
+
+				$(".time")[0].innerHTML = "<span class='hours'>" + hours + "</span>:<span class='minutes'>" 
+											+ minutes + "</span>:<span class='seconds'>" + seconds + "</span>";
+			}
+
 			if (type) {
 				allPraticeContent = data[type];
 

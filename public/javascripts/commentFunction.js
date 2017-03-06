@@ -36,7 +36,7 @@ function showTips(msg, millTime) {
 
 	if ($tips.css("height") == "0px") {
 		$tips[0].innerHTML = msg;
-		$tips.css("height", 50);
+		$tips.css("height", 70);
 
 		if (millTime) {
 			setTimeout(function() {

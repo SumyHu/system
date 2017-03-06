@@ -189,14 +189,23 @@ function addFillInTheBlank() {
 
 // 添加简答题
 function addShortAnswer() {
-	// addShortAnswerCount++;
-	// let name = "trueOrFalse" + addShortAnswerCount;
-	// let content = ``;
+	addShortAnswerCount++;
+	let content = `<input type="button" value="X" class="remove">
+					<div class="showScore">分值：<input type="text" class="textInput" placeholder=10></div>
+					<div class="topic">题目<span class="topicNum">` + addShortAnswerCount + 
+					`</span>：<input type="text" class="textInput"></div>
+					<div class="answer">
+						<textarea></textarea>
+					</div>
+					<div class="addProfessionalNouns">
+						<input type="button" value="添加专有名词" class="addProfessionalNounsBtn">
+					</div>`;
 
-	// let section = document.createElement("section");
-	// section.className = "content";
-	// section.innerHTML = content;
-	// $(".addShortAnswerCount").append(section);
+	let section = document.createElement("section");
+	section.className = "content";
+	section.innerHTML = content;
+	$(".addShortAnswer").append(section);
+	return section;
 }
 
 /** 输入、输出的基本类型
@@ -235,6 +244,7 @@ function addProgramming() {
 	addProgrammingCount++;
 	realProgrammingCount ++;
 	let content = `<input type="button" value="X" class="remove">
+					<div class="showScore">分值：<input type="text" class="textInput" placeholder=30></div>
 					<div class="topic">题目<span class="topicNum">` + addProgrammingCount + 
 					`</span>：<input type="text" class="textInput"></div>
 					<div class="input">
@@ -264,6 +274,10 @@ function addProgramming() {
 	section.className = "content";
 	section.innerHTML = content;
 	$(".addProgramming").append(section);
+
+	if (praticeType === "examination") {
+		$(".showScore").css("display", "block");
+	}
 
 	let editor = editorStyle("programming" + addProgrammingCount, "text/x-c");
 	editor.setSize("auto", "700px");
@@ -338,14 +352,14 @@ function getAllExercise(callback) {
  * @param praticeType String 练习类型
 */
 function showSomePraticeType(praticeType) {
-	if (praticeType === "Programming") {
-		// $(".next").css("width", "60px");
-		$(".next").val("提交");
-	}
-	else {
-		// $(".next").css("width", "70px");
-		$(".next").val(">");
-	}
+	// if (praticeType === "Programming") {
+	// 	// $(".next").css("width", "60px");
+	// 	$(".next").val("提交");
+	// }
+	// else {
+	// 	// $(".next").css("width", "70px");
+	// 	$(".next").val(">");
+	// }
 	$(".navContent > div").css("background", "rgba(0, 0, 0, 0.5)");
 	$("." + praticeType).css("background", "rgba(249, 90, 78, 0.8)");
 
@@ -391,6 +405,17 @@ function addMoreBlank($addBlankSection) {
 	$addBlankSection.append(div);
 }
 
+/** 添加更多简答题的专有名词
+ * @param $addProfessionalNounsBtn Object 添加专有名词按钮对象
+*/
+function addMoreProfessionalNouns($addProfessionalNounsBtn) {
+	let count = $addProfessionalNounsBtn.parent().find(".textInput").length+1;
+
+	let div = document.createElement("div");
+	div.innerHTML = count + ". <input type='text' class='textInput'>"
+	$addProfessionalNounsBtn.before(div);
+}
+
 /** 添加更多可能的答案
  * @param $addOtherAnswerBtn Object 点击添加更多可能的答案的按钮
 */
@@ -415,6 +440,14 @@ function getChoiceContent($content) {
 		type = "checkbox";
 	}
 
+	let score;
+	if (praticeType === "examination" && $content.length) {
+		score = $content.parent().find(".showScore > .textInput").val();
+		if (!score) {
+			score = $content.parent().find(".showScore > .textInput")[0].placeholder;
+		}
+	}
+
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
 
@@ -436,6 +469,10 @@ function getChoiceContent($content) {
 			choices: choiceArray,
 			answer: answer
 		});
+
+		if (praticeType === "examination") {
+			allContent[allContent.length-1].score = score;
+		}
 	}
 
 	return allContent;
@@ -446,6 +483,16 @@ function getChoiceContent($content) {
 */
 function getFillInTheBlankContent($content) {
 	let allContent = [];
+
+	let score;
+	if (praticeType === "examination"  && $content.length) {
+		console.log($content);
+		console.log($content.parent()[0]);
+		score = $content.parent().find(".showScore > .textInput").val();
+		if (!score) {
+			score = $content.parent().find(".showScore > .textInput")[0].placeholder;
+		}
+	}
 
 	for(let i=0, len=$content.length; i<len; i++) {
 		let topic = $($content[i]).find(".topic > .textInput").val();
@@ -465,6 +512,10 @@ function getFillInTheBlankContent($content) {
 			topic: topic,
 			answer: answer
 		});
+
+		if (praticeType === "examination") {
+			allContent[allContent.length-1].score = score;
+		}
 	}
 
 	return allContent;
@@ -546,6 +597,15 @@ function getProgrammingContent($content) {
 				programmingTypeMode: mode
 			}]
 		});
+
+		if (praticeType === "examination") {
+			let score = $($content[i]).find(".showScore > .textInput").val();
+			if (!score) {
+				score = $($content[i]).find(".showScore > .textInput")[0].placeholder;
+			}
+
+			allContent[allContent.length-1].score = score;
+		}
 	}
 
 	return allContent;
@@ -654,7 +714,7 @@ function addOneUnitInSubject(param) {
 	...
  }
 */
-function savePraticesInData(contentObj, totalCount) {
+function savePraticesInData(contentObj, totalCount, examinationTime) {
 	if (totalCount === 0) {
 		return;
 	}
@@ -696,6 +756,23 @@ function savePraticesInData(contentObj, totalCount) {
 							});
 						})(key);
 					}
+				}
+
+				if (examinationTime) {
+					callDataProcessingFn({
+						data: {
+							data: "units",
+							callFunction: "update",
+							updateOpt: {
+								_id: unitId
+							},
+							operation: "set",
+							update: {
+								time: examinationTime
+							}
+						},
+						success: function() {}
+					});
 				}
 			}
 		});
@@ -751,7 +828,7 @@ function removePratice($target) {
 
 /** 存储添加的所有习题
 */
-function savePratices() {
+function savePratices(examinationTime) {
 	let SingleChoiceContentArr = [], MultipleChoicesContentArr = [], TrueOrFalseContentArr = [], FillInTheBlankContentArr = [], ShortAnswerContentArr = [], ProgrammingContentArr = [];
 
 	let SingleChoiceContent = $(".addSingleChoice > .content");
@@ -782,6 +859,7 @@ function savePratices() {
 	// savePraticesInData(TrueOrFalseContentArr, "TrueOrFalse");
 	// savePraticesInData(FillInTheBlankContentArr, "FillInTheBlank");
 	// savePraticesInData(ProgrammingContentArr, "Programming");
+
 	savePraticesInData({
 		SingleChoice: SingleChoiceContentArr,
 		MultipleChoices: MultipleChoicesContentArr,
@@ -789,7 +867,7 @@ function savePratices() {
 		FillInTheBlank: FillInTheBlankContentArr,
 		ShortAnswer: ShortAnswerContentArr,
 		Programming: ProgrammingContentArr
-	}, totalCount);
+	}, totalCount, examinationTime);
 
 	window.location.href = "../pratice?subjectName=" + subjectName;
 }
@@ -802,6 +880,11 @@ function checkAllTextInputHasVal() {
 		if (!allTextInput[i].value) {
 			let parentClassName = $(allTextInput[i]).parent()[0].className;
 			if (parentClassName === "description" || parentClassName === "example") continue;
+			if (parentClassName === "showScore") {
+				if (allTextInput[i].placeholder) {
+					continue;
+				}
+			}
 			return false;
 		}
 	}
@@ -878,6 +961,39 @@ function checkAllProgrammingRunningSuccess() {
 	return true;
 }
 
+/** 检测考试时间是否合理
+*/
+function checkTimeValidation() {
+	if ($(".examinationTime > input").hasClass("invalid")) {
+		showTips("请确保考试时间的值符合要求！", 1500);
+		return false;
+	}
+
+	let hours = $(".examinationTime > .hours").val(), 
+		minutes = $(".examinationTime > .minutes").val(), 
+		seconds = $(".examinationTime > .seconds").val();
+
+	if (!hours) {
+		hours = $(".examinationTime > .hours")[0].placeholder;
+	}
+	if (!minutes) {
+		minutes = $(".examinationTime > .minutes")[0].placeholder;
+	}
+	if (!seconds) {
+		seconds = $(".examinationTime > .seconds")[0].placeholder;
+	}
+
+	if (Number(hours+minutes+seconds) <= 0) {
+		showTips("考试时间必须大于0s！", 1500);
+		return false;
+	}
+	return {
+		hours: hours,
+		minutes: minutes,
+		seconds: seconds
+	}
+}
+
 /** 进行代码运行
  * @param $programmingContent jQuery Object 该编程题目块
 */
@@ -936,6 +1052,8 @@ function init() {
 				innerHTML = " — 第 " + (++count) +" 章";
 				break;
 			case "examination":
+				$(".examinationTime").css("display", "block");
+				$(".showScore").css("display", "block");
 				innerHTML = " — 试卷 " + (++count);
 				break;
 		}
@@ -996,6 +1114,9 @@ function bindEvent() {
 			case "addBlankBtn":
 				addMoreBlank($(getTarget(e)).parent().find(".allBlank"));
 				break;
+			case "addProfessionalNounsBtn":
+				addMoreProfessionalNouns($(getTarget(e)));
+				break;
 			case "addOtherAnswer":
 				addMoreOtherAnswer($(getTarget(e)));
 				break;
@@ -1016,40 +1137,103 @@ function bindEvent() {
 		}
 	});
 
-	$(".previous").click(function() {
-		let showPraticeType;
-		if (currentAddType === "SingleChoice") {
-			return;
-		}
-		if (!checkAllTextInputHasVal()) {
-			showTips("存在没有填写的空格！", 1000);
-			return;
-		}
-		else if (currentAddType === "MultipleChoices") {
-			if (checkMultipleChoicesAnswerExit()) {
-				showPraticeType = "SingleChoice";
+	if (praticeType === "examination") {
+		$(".examinationTime > input").change(function(e) {
+			let target = getTarget(e);
+			let classname = target.className,
+				value = target.value;
+
+			if (value < 0) {
+				$(target).addClass("invalid");
 			}
 			else {
-				showTips("存在题目没有勾选标准答案！", 1000);
-				return;
+				if ((classname === "minutes" || classname === "seconds") && value > 59) {
+					$(target).addClass("invalid");
+				}
+				else if (value > 99) {
+					$(target).addClass("invalid");
+				}
+				else {
+					$(target).removeClass("invalid");
+				}
 			}
-		}
-		else if (currentAddType === "TrueOrFalse") {
-			showPraticeType = "MultipleChoices";
-		}
-		else if (currentAddType === "FillInTheBlank") {
-			showPraticeType = "TrueOrFalse";
-		}
-		else if (currentAddType === "ShortAnswer") {
-			showPraticeType = "FillInTheBlank";
-		}
-		else if (currentAddType === "Programming") {
-			showPraticeType = "ShortAnswer";
-		}
-		showSomePraticeType(showPraticeType);
-	});
+		});
+	}
 
-	$(".next").click(function() {
+	// $(".previous").click(function() {
+	// 	let showPraticeType;
+	// 	if (currentAddType === "SingleChoice") {
+	// 		return;
+	// 	}
+	// 	if (!checkAllTextInputHasVal()) {
+	// 		showTips("存在没有填写的空格！", 1000);
+	// 		return;
+	// 	}
+	// 	else if (currentAddType === "MultipleChoices") {
+	// 		if (checkMultipleChoicesAnswerExit()) {
+	// 			showPraticeType = "SingleChoice";
+	// 		}
+	// 		else {
+	// 			showTips("存在题目没有勾选标准答案！", 1000);
+	// 			return;
+	// 		}
+	// 	}
+	// 	else if (currentAddType === "TrueOrFalse") {
+	// 		showPraticeType = "MultipleChoices";
+	// 	}
+	// 	else if (currentAddType === "FillInTheBlank") {
+	// 		showPraticeType = "TrueOrFalse";
+	// 	}
+	// 	else if (currentAddType === "ShortAnswer") {
+	// 		showPraticeType = "FillInTheBlank";
+	// 	}
+	// 	else if (currentAddType === "Programming") {
+	// 		showPraticeType = "ShortAnswer";
+	// 	}
+	// 	showSomePraticeType(showPraticeType);
+	// });
+
+	// $(".next").click(function() {
+	// 	if (!checkAllTextInputHasVal()) {
+	// 		showTips("存在没有填写的空格！", 1000);
+	// 		return;
+	// 	}
+	// 	if (!checkAllProgrammingRunningSuccess()) {
+	// 		showTips("请确保所有编译都能成功运行！", 1000);
+	// 		return;
+	// 	}
+	// 	if (this.value === "提交") {
+	// 		showWin("确定提交所添加的所有习题？", function() {
+	// 			savePratices();
+	// 		});
+	// 		return;
+	// 	}
+	// 	let showPraticeType;
+	// 	if (currentAddType === "SingleChoice") {
+	// 		showPraticeType = "MultipleChoices";
+	// 	}
+	// 	else if (currentAddType === "MultipleChoices") {
+	// 		if (checkMultipleChoicesAnswerExit()) {
+	// 			showPraticeType = "TrueOrFalse";
+	// 		}
+	// 		else {
+	// 			showTips("存在题目没有勾选标准答案！", 1000);
+	// 			return;
+	// 		}
+	// 	}
+	// 	else if (currentAddType === "TrueOrFalse") {
+	// 		showPraticeType = "FillInTheBlank";
+	// 	}
+	// 	else if (currentAddType === "FillInTheBlank") {
+	// 		showPraticeType = "ShortAnswer";
+	// 	}
+	// 	else if (currentAddType === "ShortAnswer") {
+	// 		showPraticeType = "Programming";
+	// 	}
+	// 	showSomePraticeType(showPraticeType);
+	// });
+
+	$(".submitBtn").click(function() {
 		if (!checkAllTextInputHasVal()) {
 			showTips("存在没有填写的空格！", 1000);
 			return;
@@ -1058,34 +1242,17 @@ function bindEvent() {
 			showTips("请确保所有编译都能成功运行！", 1000);
 			return;
 		}
-		if (this.value === "提交") {
-			showWin("确定提交所添加的所有习题？", function() {
-				savePratices();
-			});
-			return;
-		}
-		let showPraticeType;
-		if (currentAddType === "SingleChoice") {
-			showPraticeType = "MultipleChoices";
-		}
-		else if (currentAddType === "MultipleChoices") {
-			if (checkMultipleChoicesAnswerExit()) {
-				showPraticeType = "TrueOrFalse";
-			}
-			else {
-				showTips("存在题目没有勾选标准答案！", 1000);
+
+		let examinationTime;
+		if (praticeType === "examination") {
+			examinationTime = checkTimeValidation();
+			if (!examinationTime) {
 				return;
 			}
 		}
-		else if (currentAddType === "TrueOrFalse") {
-			showPraticeType = "FillInTheBlank";
-		}
-		else if (currentAddType === "FillInTheBlank") {
-			showPraticeType = "ShortAnswer";
-		}
-		else if (currentAddType === "ShortAnswer") {
-			showPraticeType = "Programming";
-		}
-		showSomePraticeType(showPraticeType);
+
+		showWin("确定提交所添加的所有习题？", function() {
+			savePratices(examinationTime);
+		});
 	});
 }

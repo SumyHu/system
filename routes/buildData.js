@@ -44,7 +44,8 @@ var unitsSchema = new Schema ({
 	TrueOrFalse: [],
 	FillInTheBlank: [],
 	ShortAnswer: [],
-	Programming: []
+	Programming: [],
+	time: {}
 });
 
 var units = mongoose.model('units', unitsSchema);
