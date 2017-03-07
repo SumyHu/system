@@ -927,6 +927,13 @@ function checkAllTextInputHasVal() {
 		}
 	}
 
+	let allShortAnswerContent = $(".addShortAnswer > .content");
+	for(let i=0, len=allShortAnswerContent.length; i<len; i++) {
+		if (!$(allShortAnswerContent[i]).find(".answer > textarea").val()) {
+			return false;
+		}
+	}
+
 	// let textarea = $(".add" + currentAddType + " textarea");
 	// console.log(textarea);
 	// if (textarea.length > 0) {

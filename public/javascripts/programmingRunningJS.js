@@ -167,7 +167,7 @@ function runingOnceJavaCompare(type, correctCode, studentCode, inputValue, runCo
 	runningCodeByCmd(type, correctCode, inputValue[runCount], function(result1) {
 		runningCodeByCmd(type, studentCode, inputValue[runCount], function(result2) {
 			runCount++;
-			if (result1.success && result2.success) {
+			if ((result1.success || result1.success === "") && (result2.success || result2.success === "")) {
 				console.log(result1.success, result2.success);
 				let compareSuccess1 = result1.success.replace(/\s+/g, ' '),
 					compareSuccess2 = result2.success.replace(/\s+/g, ' ');
@@ -189,10 +189,9 @@ function runingOnceJavaCompare(type, correctCode, studentCode, inputValue, runCo
 
 function runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback) {
 	for(let i=0; i<20; i++) {
-		console.log(inputValue[i]);
 		javascriptRunning(correctCode, inputValue[i], function(result1) {
 			javascriptRunning(studentCode, inputValue[i], function(result2) {
-				if (result1.success && result2.success) {
+				if ((result1.success || result1.success === "") && (result2.success || result2.success === "")) {
 					console.log(result1.success, result2.success);
 					console.log("===========");
 					if (result1.success === result2.success) {
@@ -214,6 +213,7 @@ function runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount
 
 function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeArray, outputArray, callback) {
 	let inputValue = getRandomValueWithCounts(20, inputTypeArray);
+	console.log(inputValue);
 	let runningFn, rightCount = 0, runCount = 0;
 	switch(mode) {
 		case "c":
@@ -228,7 +228,7 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 			runingOnceJavaCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 		case "javascript":
-			runingJavascriptsCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
+			runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);
 			break;
 	}
 }

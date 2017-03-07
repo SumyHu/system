@@ -123,7 +123,11 @@ function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
 									</div>`;
 		}
 		else {
-			examinationCorrectAnswer[addPraticeType].push(result.answer);
+			examinationCorrectAnswer[addPraticeType].answer.push(result.answer);
+
+			if (index === 0) {
+				examinationCorrectAnswer[addPraticeType].score = result.score;
+			}
 		}
 
 		$(section).append(sec);
@@ -155,7 +159,10 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
 	}
 	else {
 		if (praticeType === "examination") {
-			examinationCorrectAnswer[addPraticeType] = [];
+			examinationCorrectAnswer[addPraticeType] = {
+				answer: [],
+				score: 0
+			};
 		}
 		praticeIdArr.forEach(function(praticeId, index, array) {
 			addChoicePraticesContent(section, praticeId, index, addPraticeType);
@@ -225,13 +232,39 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 										</div>`;
 			}
 			else {
-				examinationCorrectAnswer[addPraticeType].push(result.answer);
+				examinationCorrectAnswer[addPraticeType].answer.push(result.answer);
+
+				if (index === 0) {
+					examinationCorrectAnswer[addPraticeType].score = result.score;
+				}
 			}
 
 			$(section).append(sec);
 			$(".flip").before(section);
 		}
-		else {
+		else if (addPraticeType === "ShortAnswer") {
+			innerHtml += "<textarea></textarea>"
+			sec.innerHTML = innerHtml + `</div>`;
+
+			if (praticeType !== "examination") {
+				let answerHtml = result.answer[0].content;
+				
+				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
+											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
+											<div class="answerContent">` + answerHtml + `</div>
+										</div>`;
+			}
+			else {
+				examinationCorrectAnswer[addPraticeType].push({
+					answer: result.answer,
+					score: result.score
+				});
+			}
+
+			$(section).append(sec);
+			$(".flip").before(section);
+		}
+		else if (addPraticeType === "Programming") {
 			let inputContent = result.answer[0].input, outputContent = result.answer[0].output;
 			let inputType = [], outputType = [];
 			if (inputContent.type) {
@@ -299,7 +332,10 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				}
 			}
 			else {
-				examinationCorrectAnswer[addPraticeType].push(result.answer);
+				examinationCorrectAnswer[addPraticeType].push({
+					answer: result.answer,
+					score: result.score
+				});
 			}
 
 			$(section).append(sec);
@@ -352,7 +388,15 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 	}
 	else {
 		if (praticeType === "examination") {
-			examinationCorrectAnswer[addPraticeType] = [];
+			if (addPraticeType === "FillInTheBlank") {
+				examinationCorrectAnswer[addPraticeType] = {
+					answer: [],
+					score: 0
+				}
+			}
+			else {
+				examinationCorrectAnswer[addPraticeType] = [];
+			}
 		}
 		praticeIdArr.forEach(function(praticeId, index, array) {
 			addNotChoicePraticesContent(section, praticeId, index, addPraticeType)
@@ -467,10 +511,23 @@ function getNotChoiceAnswer(getType) {
 			}
 		}
 	}
+	else if (getType === "ShortAnswer") {
+		let allContent = $("." + getType + " > .content");
+		for(let i=0, len=allContent.length; i<len; i++) {
+			examinationStudentAnswer[getType].push($(allContent[i]).find(".answer > textarea").val());
+		}
+	}
 	else if (getType === "Programming") {
 		for(let i=0, len=programingEditorArray.length; i<len; i++) {
-			examinationStudentAnswer[getType].push([programingEditorArray[i].editor.getValue()]);
+			let allContent = $("." + getType + " > .content");
+			let showResult = $(allContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
+			console.log(showResult);
+			if (!showResult || showResult === '<pre><div class="loading"></div></pre>') {
+				return false;
+			}
+			// examinationStudentAnswer[getType].push([programingEditorArray[i].editor.getValue()]);
 		}
+		return true;
 	}
 }
 
@@ -480,8 +537,8 @@ function getAllAnswer() {
 	getChoiceAnswer("MultipleChoices");
 	getChoiceAnswer("TrueOrFalse");
 	getNotChoiceAnswer("FillInTheBlank");
-	getNotChoiceAnswer("shortAnswer");
-	getNotChoiceAnswer("Programming");
+	getNotChoiceAnswer("ShortAnswer");
+	// getNotChoiceAnswer("Programming");
 
 	console.log(examinationCorrectAnswer);
 	console.log(examinationStudentAnswer);
@@ -508,6 +565,7 @@ function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score) {
 		totalScore += score;
 		console.log("choice: " + i + ", score: " + score);
 	}
+	return totalScore;
 }
 
 /** 比对填空题答案，并作出相应给分
@@ -528,6 +586,79 @@ function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStud
 			}
 		}
 	}
+	return totalScore;
+}
+
+/** 比对简答题答案，并作出相应给分
+ * @param ShortAnswerCorrectAnswer Array 正确答案
+ * @param ShortAnswerStudentAnswer Array 考生答案
+
+ * ShortAnswerCorrectAnswer = [{
+	answer: [],
+	score: Number
+ }, {...}, ...]
+*/
+function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, callback) {
+	let totalScore = 0, count = 0;
+	for(let i=0, len1=ShortAnswerCorrectAnswer.length; i<len1; i++) {
+		let answer = ShortAnswerCorrectAnswer[i].answer[0];
+		let correctAnswerContent = answer.content, professionalNounsArr = (answer.professionalNounsArr ? answer.professionalNounsArr : []), 
+			score = ShortAnswerCorrectAnswer[i].score,
+			studentAnswerContent = ShortAnswerStudentAnswer[i];
+
+		console.log(correctAnswerContent, professionalNounsArr, score, studentAnswerContent);
+
+		if (studentAnswerContent) {
+			$.ajax({
+				url: "./shortAnswerCheck",
+				type: "POST",
+				data: {
+					correctAnswerContent: correctAnswerContent,
+					studentAnswerContent: studentAnswerContent,
+					professionalNounsArr: professionalNounsArr,
+					score: score
+				},
+				success: function(result) {
+					console.log(result, count);
+					totalScore += Number(result);
+					count++;
+
+					if (count === ShortAnswerCorrectAnswer.length) {
+						callback(totalScore);
+					}
+				}
+			});
+		}
+		else {
+			count++;
+
+			if (count === ShortAnswerCorrectAnswer.length) {
+				callback(totalScore);
+			}
+		}
+	}
+}
+
+/** 比对编程题答案，并作出相应给分
+ * @param ProgrammingCorrectAnswer Array 正确答案
+ * @param ProgrammingStudentAnswer Array 考生答案
+
+ * ProgrammingCorrectAnswer = [{
+	answer: [],
+	score: Number
+ }]
+*/
+function checkProgrammingAnswer(ProgrammingCorrectAnswer) {
+	let allContent = $(".Programming > .content"), totalScore = 0;
+	for(let i=0, len=ProgrammingCorrectAnswer.length; i<len; i++) {
+		let result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML, 
+			score = ProgrammingCorrectAnswer[i].score, correctRate;
+
+		if (result.indexOf("编译通过率：") > -1) {
+			totalScore += parseFloat(result.substr(6))/100*score;
+		}
+	}
+	return totalScore;
 }
 
 function checkAnswer() {
@@ -544,12 +675,30 @@ function checkAnswer() {
 		ShortAnswerCorrectAnswer = examinationCorrectAnswer.ShortAnswer,
 		ShortAnswerStudentAnswer = examinationStudentAnswer.ShortAnswer,
 		ProgrammingCorrectAnswer = examinationCorrectAnswer.Programming,
-		ProgrammingStudentAnswer = examinationStudentAnswer.Programming;
+		ProgrammingStudentAnswer = examinationStudentAnswer.Programming,
+		totalScore = 0;
 
-	checkChoiceAnswer(SingleChoiceCorrectAnswer, SingleChoiceStudentAnswer, 1);
-	checkChoiceAnswer(MultipleChoicesCorrectAnswer, MultipleChoicesStudentAnswer, 2);
-	checkChoiceAnswer(TrueOrFalseCorrectAnswer, TrueOrFalseStudentAnswer, 3);
-	checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, 2);
+	if (SingleChoiceCorrectAnswer) {
+		totalScore += checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score);
+	}
+	if (MultipleChoicesCorrectAnswer) {
+		totalScore += checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score);
+	}
+	if (TrueOrFalseCorrectAnswer) {
+		totalScore += checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score);
+	}
+	if (FillInTheBlankCorrectAnswer) {
+		totalScore += checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer.answer, FillInTheBlankStudentAnswer, FillInTheBlankCorrectAnswer.score);
+	}
+	if (ProgrammingCorrectAnswer) {
+		totalScore += checkProgrammingAnswer(ProgrammingCorrectAnswer);
+	}
+	if (ShortAnswerCorrectAnswer) {
+		checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, function(score) {
+			totalScore += score;
+			console.log(totalScore);
+		});
+	}
 }
 
 /** 将运行按钮的状态改为不可点击状态
@@ -579,7 +728,6 @@ function changeRunningBtnToDisableStatus($runningBtn, milltime) {
  * @param $programmingContent jQuery Object 该编程题目块
 */
 function runningProgramming($programmingContent) {
-	console.log($programmingContent[0]);
 	let textareaId = $programmingContent.find(".longAnswer textarea")[0].id, editor;
 	for(let i=0, len=programingEditorArray.length; i<len; i++) {
 		if (programingEditorArray[i].textareaId === textareaId) {
@@ -647,6 +795,7 @@ function runningProgramming($programmingContent) {
 
 	if (!editorContent) {
 		showTips("请输入代码！", 1000);
+		$programmingContent.find(".runningBtn").removeClass("disable");
 		return;
 	}
 
@@ -875,6 +1024,10 @@ function bindEvent() {
 
 	$(".next").click(function() {
 		if (this.value === "提交") {
+			if (!getNotChoiceAnswer("Programming")) {
+				showTips("请确保所有编程题至少被运行一次！", 1500);
+				return;
+			}
 			showWin("是否确定提交答案？（提交后将不能修改）", function() {
 				checkAnswer();
 			});

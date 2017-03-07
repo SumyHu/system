@@ -100,6 +100,7 @@ function getWordIdf(wordObj, totalWordCount) {
 function participle(sentence, professionalNounsArr) {
 	let initResult = CustomizeParticiple(sentence, professionalNounsArr),    // 获得初始分词结果，已经去除了标点符号
 		parResult = [];
+		console.log("initResult", initResult);
 
 	let totalWordCount = initResult.length;
 	
@@ -243,9 +244,11 @@ function sentenceSimilary(baseSimilaryVal, structureSimilaryVal) {
  * @return Number 句子之间总体相似度的计算结果
 */
 function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
+	console.log(sentence1, sentence2, professionalNounsArr);
 	// 句子分词
 	var parResult1 = participle(sentence1, professionalNounsArr);
 	var parResult2 = participle(sentence2, professionalNounsArr);
+	console.log(parResult1, parResult2);
 
 	let negativeWordsCount1 = 0, negativeWordsCount2 = 0;
 	for(let i=0, len=parResult1.length; i<len; i++) {
@@ -283,7 +286,8 @@ function calSentenceSimilary(sentence1, sentence2, professionalNounsArr) {
  * @return clauseTextResult Array 文本的分句结果
 */
 function initClause(text) {
-	var clauseBasis = ["，", "。", "；", "！", "？"];
+	text = text.replace(/\s+/g, " ");
+	var clauseBasis = ["，", "。", "；", "！", "？", " ", "\n"];
 	var clauseTextResult = [text];
 
 	for(let i=0, len1=clauseBasis.length; i<len1; i++) {
@@ -809,6 +813,7 @@ function calTotalSentenceSimilaryWithKeyword(paramObj) {
  * @return Number 句子数组之间相似度的计算结果
 */
 function calTotalSentenceSimilary(paramObj) {
+	console.log("in");
 	let sentenceArr1 = paramObj.sentenceArr1, sentenceArr2 = paramObj.sentenceArr2, professionalNounsArr = paramObj.professionalNounsArr,
 		sentenceArrWithKeyWord = [], sentenceArrWithoutKeyword = [], totalLength = sentenceArr1.length, sum,
 		matchCount = (totalLength<sentenceArr2.length) ? totalLength : sentenceArr2.length;
@@ -821,14 +826,19 @@ function calTotalSentenceSimilary(paramObj) {
 			sentenceArrWithoutKeyword.push(sentenceArr1[i]);
 		}
 	}
+	console.log(sentenceArrWithKeyWord, sentenceArrWithoutKeyword);
 
-	let sum1 = calTotalSentenceSimilaryWithKeyword({
-		sentenceArr1: sentenceArrWithKeyWord, 
-		sentenceArr2: sentenceArr2, 
-		professionalNounsArr: professionalNounsArr, 
-		totalScore: paramObj.totalScore,
-		totalLength: totalLength
-	}), 
+	let sum1 = 0, sum2 = 0;
+	if (sentenceArrWithKeyWord.length > 0) {
+		sum1 = calTotalSentenceSimilaryWithKeyword({
+			sentenceArr1: sentenceArrWithKeyWord, 
+			sentenceArr2: sentenceArr2, 
+			professionalNounsArr: professionalNounsArr, 
+			totalScore: paramObj.totalScore,
+			totalLength: totalLength
+		})
+	}
+	if (sentenceArrWithoutKeyword.length > 0) {
 		sum2 = calTotalSentenceSimilaryWithoutKeyword({
 			sentenceArr1: sentenceArrWithoutKeyword, 
 			sentenceArr2: sentenceArr2, 
@@ -836,6 +846,8 @@ function calTotalSentenceSimilary(paramObj) {
 			totalScore: paramObj.totalScore,
 			totalLength: totalLength
 		});
+	}
+
 	console.log(sum1, sum2);
 	sum = sum1+sum2;
 
@@ -858,7 +870,6 @@ function OverallCalTextSimilary(paramObj) {
 	// 段落分句
 	let clauseTextResult1 = clause(paramObj.text1, paramObj.totalScore),
 		clauseTextResult2 = initClause(paramObj.text2);
-	// console.log(clauseTextResult1, clauseTextResult2);
 	return calTotalSentenceSimilary({
 		sentenceArr1: clauseTextResult1, 
 		sentenceArr2: clauseTextResult2, 

@@ -86,12 +86,27 @@ function participleSentence(sentence) {
 	*/
 	var initResult = [];
 
-	var cutWordLength = sentence.length>maxLength ? maxLength : sentence.length;
+	var cutWordLength = sentence.length>maxLength ? maxLength : sentence.length, specialStr = "";
 	while(sentenceStr.length > 0) {
-		for(let i=0;i<=(sentenceStr.length-cutWordLength); i++) {
+		for(let i=0; i<=(sentenceStr.length-cutWordLength); i++) {
+			// console.log("i: " + i);
 			var cutWord = sentenceStr.substr(i, cutWordLength);
+			// console.log("cutWord: " + cutWord);
 			var firstChar = cutWord[0];
+			// console.log("firstChar: " + firstChar);
 			if (allWordsInGlossary[firstChar]) {
+				if (specialStr) {
+					let index = sentenceStr.indexOf(specialStr);
+					initResult.push({
+						word: specialStr,
+						type: "N",
+						index: initResult.length-1
+					});
+					sentenceStr = sentenceStr.substring(0, index) + sentenceStr.substring(index+specialStr.length);
+					cutWordLength = specialStr.length;
+					specialStr = "";
+				}
+				console.log("sentenceStr", sentenceStr);
 				for(let j=0, len=allWordsInGlossary[firstChar].length; j<len; j++) {
 					if (allWordsInGlossary[firstChar][j].word == cutWord) {
 						if (allWordsInGlossary[firstChar][j].type[0] != "PUNC") {   // 将标点符号去除
@@ -125,8 +140,27 @@ function participleSentence(sentence) {
 					}
 				}
 			}
+			else {
+				specialStr += firstChar;
+			}
 		}
 		cutWordLength--;
+
+		if (cutWordLength === 0) {
+			if (specialStr) {
+				let index = sentenceStr.indexOf(specialStr);
+				initResult.push({
+					word: specialStr,
+					type: "N",
+					index: index
+				});
+				specialStr = "";
+				sentenceStr = "";
+			}
+		}
+		else {
+			specialStr = "";
+		}
 	}
 
 	var sortResult = [];
@@ -165,11 +199,13 @@ function participle(sentence, professionalNounsArr) {
 					index: proIndex
 				});
 				sentenceStr = sentenceStr.substring(0, proIndex) + "N" + sentenceStr.substring(proIndex+professionalNounsArr[i].length);
+				i--;
 			}
 		}
 
 		if (sentenceStr != sentence) {
 			let sentenceArr = sentenceStr.split("N");
+			console.log("sentenceArr", sentenceArr);
 			for(let i=0, len1=sentenceArr.length; i<len1; i++) {
 				if (sentenceArr[i]) {
 					let sortResult = participleSentence(sentenceArr[i]);
@@ -179,14 +215,15 @@ function participle(sentence, professionalNounsArr) {
 							type: sortResult[j].type
 						});
 					}
-					if (initResult[i]) {
-						result.push({
-							word: initResult[i].word,
-							type: initResult[i].type
-						});
-					}
+				}
+				if (initResult[i]) {
+					result.push({
+						word: initResult[i].word,
+						type: initResult[i].type
+					});
 				}
 			}
+			console.log("result", result);
 			return result;
 		}
 		else {

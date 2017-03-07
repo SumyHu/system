@@ -16,6 +16,10 @@
 	margin: 0 0 10px;
 }
 
+.chapterContent > aside > ul > li.select {
+	background: rgba(249, 90, 78, 0.8);
+}
+
 .chapterContent > aside > ul > li, .chapterContent .addMore {
 	display: inline-block;
 	width: 65px;
