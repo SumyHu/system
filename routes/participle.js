@@ -64,49 +64,44 @@ function loadGlossary() {
     }
 }
 
-/** 实现分词的函数
- * 以《知网》词典为基础，采用正向最大匹配算法，实现句子的分词
- * @param sentence String 分词的句子
- * @return sortResult Array 分词结果数组
- * sortResult = [{word: "", type: ["", "", ...]}, {}, {}, ...]
+/** 句子分词具体实现
+ * @param sentence String 整个原始句子 用于记录分词位置
+ * @param sentenceStr String 用于分词的目标句子
+ * @param cutWordLength Number 分词长度
+ * @param initResult 用于记住词语类型、位置等信息
+ * initResult = [{
+		word: String,
+		type: Array,   // 词语类型数组
+		index: Number   // 该词语第一个字所在的下标，为之后排序分词结果提供依据
+    }]
 */
-function participleSentence(sentence) {
-	if (!allWordsInGlossary) {
-		loadGlossary();
-	}
-
-	var sentenceStr = sentence;
-
-	/** 
-	 * initResult = [{
-			word: String,
-			type: Array,   // 词语类型数组
-			index: Number   // 该词语第一个字所在的下标，为之后排序分词结果提供依据
-	 }]
-	*/
-	var initResult = [];
-
-	var cutWordLength = sentence.length>maxLength ? maxLength : sentence.length, specialStr = "";
-	while(sentenceStr.length > 0) {
-		for(let i=0; i<=(sentenceStr.length-cutWordLength); i++) {
-			// console.log("i: " + i);
-			var cutWord = sentenceStr.substr(i, cutWordLength);
-			// console.log("cutWord: " + cutWord);
-			var firstChar = cutWord[0];
-			// console.log("firstChar: " + firstChar);
-			if (allWordsInGlossary[firstChar]) {
-				if (specialStr) {
-					let index = sentenceStr.indexOf(specialStr);
-					initResult.push({
-						word: specialStr,
-						type: "N",
-						index: initResult.length-1
-					});
-					sentenceStr = sentenceStr.substring(0, index) + sentenceStr.substring(index+specialStr.length);
-					cutWordLength = specialStr.length;
-					specialStr = "";
+function participleSentenceDetail(sentence, sentenceStr, cutWordLength, initResult) {
+	if(sentenceStr.length > 0) {
+		if (cutWordLength  === 0) {
+			let index = sentence.indexOf(sentenceStr);
+			let flag = false;
+			while(!flag) {
+				flag = true;
+				for(let t=0, len1=initResult.length; t<len1; t++) {
+					if (initResult[t].index == index) {
+						index = sentence.indexOf(sentenceStr, index+sentenceStr.length);
+						flag = false;
+					}
 				}
-				console.log("sentenceStr", sentenceStr);
+			}
+
+			initResult.push({
+				word: sentenceStr,
+				type: ["N"],
+				index: index
+			});
+			return;
+		}
+
+		for(let i=0; i<=(sentenceStr.length-cutWordLength); i++) {
+			var cutWord = sentenceStr.substr(i, cutWordLength);
+			var firstChar = cutWord[0];
+			if (allWordsInGlossary[firstChar]) {
 				for(let j=0, len=allWordsInGlossary[firstChar].length; j<len; j++) {
 					if (allWordsInGlossary[firstChar][j].word == cutWord) {
 						if (allWordsInGlossary[firstChar][j].type[0] != "PUNC") {   // 将标点符号去除
@@ -134,35 +129,46 @@ function participleSentence(sentence) {
 							}
 						}
 						// 将切分的词从句子中删除
-						sentenceStr = sentenceStr.substring(0, i) + sentenceStr.substring(i+cutWordLength);
+						sentenceStr = sentenceStr.substring(0, i) + "|" + sentenceStr.substring(i+cutWordLength);
 						i--;   // 将下一个匹配的下标矫正
 						break;
 					}
 				}
 			}
-			else {
-				specialStr += firstChar;
-			}
 		}
 		cutWordLength--;
-
-		if (cutWordLength === 0) {
-			if (specialStr) {
-				let index = sentenceStr.indexOf(specialStr);
-				initResult.push({
-					word: specialStr,
-					type: "N",
-					index: index
-				});
-				specialStr = "";
-				sentenceStr = "";
-			}
-		}
-		else {
-			specialStr = "";
+		let sentenceStrArr = sentenceStr.split("|");
+		for(let i=0, len=sentenceStrArr.length; i<len; i++) {
+			participleSentenceDetail(sentence, sentenceStrArr[i], cutWordLength, initResult);
 		}
 	}
+}
 
+/** 实现分词的函数
+ * 以《知网》词典为基础，采用正向最大匹配算法，实现句子的分词
+ * @param sentence String 分词的句子
+ * @return sortResult Array 分词结果数组
+ * sortResult = [{word: "", type: ["", "", ...]}, {}, {}, ...]
+*/
+function participleSentence(sentence) {
+	if (!allWordsInGlossary) {
+		loadGlossary();
+	}
+
+	var sentenceStr = sentence;
+
+	/** 
+	 * initResult = [{
+			word: String,
+			type: Array,   // 词语类型数组
+			index: Number   // 该词语第一个字所在的下标，为之后排序分词结果提供依据
+	 }]
+	*/
+	var initResult = [];
+
+	var cutWordLength = sentence.length>maxLength ? maxLength : sentence.length, specialStr = "";
+	participleSentenceDetail(sentence, sentenceStr, cutWordLength, initResult);
+	
 	var sortResult = [];
 	// 将上面的分词结果按照句子中词语出现的顺序排序
 	while(initResult.length > 0) {

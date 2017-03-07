@@ -397,7 +397,6 @@ module.exports = function(app) {
 	});
 
 	app.post("/shortAnswerCheck", function(req, res) {
-		console.log(req.body.professionalNounsArr);
 		// console.log(segment.doSegment("你好，你好，在做什么呢？我好想你呢，超级超级想你呢。"));
 		// res.send(WordSimilary(req.body.text1, req.body.text2)+"");
 		// res.send(textSimilaryCal(req.body.text1, req.body.text2)+"");
@@ -438,11 +437,11 @@ module.exports = function(app) {
 		// }
 
 		// res.send(result.toString());
-		let professionalNounsArr = req.body.professionalNounsArr;
+
 		res.send(textSimilaryCal({
 				text1: req.body.correctAnswerContent, 
 				text2: req.body.studentAnswerContent, 
-				professionalNounsArr: (professionalNounsArr ? professionalNounsArr : []), 
+				professionalNounsArr: req.body.professionalNounsArr, 
 				totalScore: req.body.score
 			})+"");
 	});
