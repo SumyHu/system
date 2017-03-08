@@ -31,6 +31,7 @@
 }
 
 .showTotalScore {
+	padding: 0 0 50px 0;
 	text-align: center;
 }
 
@@ -40,4 +41,44 @@
 	font-size: 100px;
 	color: red;
 	border-bottom: 3px solid red;
+}
+
+.seeMoreBtn {
+	position: relative;
+	width: 520px;
+	left: 50%;
+	transform: translateX(-50%);
+	margin: 40px 40px 0;
+	border: 1px solid #e5e5e5 !important;
+	box-shadow: 1px 2px #d1d1d1;
+	text-align: center;
+	line-height: 36px;
+	border-radius: 30px;
+	letter-spacing: 0;
+	font-family: "宋体";
+	font-size: 22px;
+	background: #fff;
+	transition: all 0.3s linear;
+	cursor: pointer;
+}
+
+.seeMoreBtn:hover {
+	background: #e8eaed;
+}
+
+.seeMoreBtn > span {
+	display: inline-block;
+	margin: -10px;
+}
+
+.goBack {
+	position: relative;
+	top: -2px !important;
+	width: 80px;
+	height: 30px;
+	background-image: url("../image/go_back.png");
+	background-size: 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	cursor: pointer;
 }

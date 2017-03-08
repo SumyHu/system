@@ -1,1 +1,4 @@
-function bindEvent() {}
+function bindEvent() {
+	$(".seeMoreBtn").click(function(e) {
+	});
+}

@@ -33,8 +33,6 @@
 		</nav>
 	</section>
 
-	<% console.log(scoresDetail) %>
-
 	<section class="showScoresDetail">
 		<div class="showTotalScore"><span class="score"><%= scoresDetail.totalScore %></span></div>
 		<section class="scoresDetail">
@@ -42,7 +40,8 @@
 				<div class="details"><span class="title"><%= k %>得分</span>：<span class="score"><%= scoresDetail.details[k] %></span></div>
 			<% } %>
 		</section>
-		<div class="seeMoreBtn"><input type="image" class="goBack">查看详情</div>
+		<input type="hidden" value="<%= scoresDetail.urlParam %>">
+		<div class="seeMoreBtn"><span class="goBack"></span><span>查看详情</span></div>
 	</section>
 
 	<script src="javascripts/jquery.min.js"></script>

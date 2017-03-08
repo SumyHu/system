@@ -679,7 +679,11 @@ function checkAnswer() {
 		totalScore = 0, 
 		scoresDetail = {
 			totalScore: 0,
-			details: {}
+			details: {},
+			correctAnswerContent: examinationCorrectAnswer,
+			studentAnswerContent: examinationStudentAnswer,
+			urlParam: window.location.href.split("?")[1],
+			timestamp: new Date().getTime()
 		};
 
 	if (SingleChoiceCorrectAnswer) {
@@ -713,7 +717,16 @@ function checkAnswer() {
 			scoresDetail.details[typeChiness.ShortAnswer] = score;
 			scoresDetail.totalScore = totalScore;
 
-			window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+			$.ajax({
+				url: "../showScore",
+				type: "GET",
+				data: scoresDetail,
+				success: function() {
+					window.location.href = "../showScore";
+				}
+			});
+
+			// window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 		});
 	}
 	else {

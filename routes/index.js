@@ -448,7 +448,14 @@ module.exports = function(app) {
 
 	app.get("/showScore", function(req, res) {
 		if (req.query.scoresDetail) {
-			let scoresDetail = JSON.parse(req.query.scoresDetail);
+			// let scoresDetail = JSON.parse(req.query.scoresDetail);
+			let scoresDetail = req.query.scoresDetail;
+
+			req.session.scoresDetailData = {
+				correctAnswerContent: scoresDetail.correctAnswerContent,
+				studentAnswerContent: scoresDetail.studentAnswerContent
+			}
+
 			res.render("showScore", {
 				fullName: req.session.userId,
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
@@ -459,6 +466,7 @@ module.exports = function(app) {
 				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/showScoreJS.js"],
 				innerHtml: initInterface.showScoreInterface
 			});
+			// res.end();
 		}
 		else {
 			isLoginIn(req, res, function() {
