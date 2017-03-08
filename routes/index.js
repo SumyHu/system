@@ -396,7 +396,7 @@ module.exports = function(app) {
 		res.render("wordSimilarTest");
 	});
 
-	app.post("/shortAnswerCheck", function(req, res) {
+	app.post("/calShortAnswerScore", function(req, res) {
 		// console.log(segment.doSegment("你好，你好，在做什么呢？我好想你呢，超级超级想你呢。"));
 		// res.send(WordSimilary(req.body.text1, req.body.text2)+"");
 		// res.send(textSimilaryCal(req.body.text1, req.body.text2)+"");
@@ -444,6 +444,35 @@ module.exports = function(app) {
 				professionalNounsArr: req.body.professionalNounsArr, 
 				totalScore: req.body.score
 			})+"");
+	});
+
+	app.get("/showScore", function(req, res) {
+		if (req.query.scoresDetail) {
+			let scoresDetail = JSON.parse(req.query.scoresDetail);
+			res.render("showScore", {
+				fullName: req.session.userId,
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
+				imageSrc: req.session.imageSrc,
+				scoresDetail: scoresDetail,
+				cssFilePath: ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/showScoreStyle.css"],
+				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/showScoreJS.js"],
+				innerHtml: initInterface.showScoreInterface
+			});
+		}
+		else {
+			isLoginIn(req, res, function() {
+				res.render("comment", {
+					fullName: req.session.userId,
+					username: req.session.userId.substr(req.session.userId.length-5, 5),
+					identity: req.session.identity,
+					imageSrc: req.session.imageSrc,
+					cssFilePath: ["stylesheets/indexStyle.css"],
+					scriptFilePath: ["javascripts/indexJS.js"],
+					innerHtml: initInterface.indexInterface
+				});
+			});
+		}
 	});
 
 	app.post("/callDataProcessing", function(req, res) {

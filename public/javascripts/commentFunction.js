@@ -120,6 +120,11 @@ function radioRest() {
 
 // 获取当前的导航栏内容并正确显示
 function getCurrentToolbar() {
+	let requireLocation = window.location.href.split("?")[0].substr(22);
+	if (requireLocation === "showScore") {
+		return;
+	}
+
 	let subjectName;
 	let location = "http://localhost:3000/pratice?";
 	if (window.location.href.split("?").length < 2) return;
@@ -360,4 +365,12 @@ function findPraticesById(praticeId, callback) {
 		},
 		success: callback
 	});
+}
+
+// 在界面添加正在加载蒙层
+function addLoadingInterface() {
+	let div = document.createElement("div");
+	div.className = "showLoadingWin";
+	div.innerHTML = `<div class="loading"></div>`;
+	$("body").append(div);
 }

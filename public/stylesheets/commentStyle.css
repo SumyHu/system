@@ -321,7 +321,7 @@ footer div {
 	margin: 0 30px;
 }
 
-.winBg {
+.winBg, .showLoadingWin {
 	display: none;
 	position: fixed;
 	width: 100%;
@@ -332,6 +332,10 @@ footer div {
 	/*background: rgba(255, 255, 255, 0.3);*/
 	background: rgba(0, 0, 0, 0.7);
 	z-index: 200;
+}
+.showLoadingWin {
+	display: block;
+	background: #fff;
 }
 
 .win {
@@ -401,6 +405,21 @@ footer div {
 	width: 25px;
 	height: 25px;
 	background-image: url("../image/loading.gif");
+	background-size: 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.showLoadingWin .loading {
+	position: absolute;
+	width: 9%;
+	height: 30%;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	background-image: url("../image/big_loading2.gif");
 	background-size: 100%;
 	background-position: center center;
 	background-repeat: no-repeat;

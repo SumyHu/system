@@ -1,0 +1,43 @@
+.showScoresDetail {
+	position: relative;
+	top: 150px;
+	/*width: 40%;*/
+	overflow: hidden;
+	letter-spacing: 15px;
+	/*text-align: left;*/
+	/*text-align: center;*/
+	font-family: "华文行楷";
+	font-size: 40px;
+	color: #333;
+}
+
+.title {
+	display: inline-block;
+	width: 280px;
+}
+
+.score {
+	display: inline-block;
+	width: 100px;
+}
+
+.showTotalScore, .details {
+	position: relative;
+	width: 460px;
+	left: 50%;
+	padding: 7px 100px;
+	border-bottom: 1px solid #e8eaed;
+	transform: translateX(-50%);
+}
+
+.showTotalScore {
+	text-align: center;
+}
+
+.showTotalScore > .score {
+	position: relative;
+	height: 90px;
+	font-size: 100px;
+	color: red;
+	border-bottom: 3px solid red;
+}

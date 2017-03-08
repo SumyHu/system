@@ -610,7 +610,7 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 
 		if (studentAnswerContent) {
 			$.ajax({
-				url: "./shortAnswerCheck",
+				url: "./calShortAnswerScore",
 				type: "POST",
 				data: {
 					correctAnswerContent: correctAnswerContent,
@@ -676,28 +676,50 @@ function checkAnswer() {
 		ShortAnswerStudentAnswer = examinationStudentAnswer.ShortAnswer,
 		ProgrammingCorrectAnswer = examinationCorrectAnswer.Programming,
 		ProgrammingStudentAnswer = examinationStudentAnswer.Programming,
-		totalScore = 0;
+		totalScore = 0, 
+		scoresDetail = {
+			totalScore: 0,
+			details: {}
+		};
 
 	if (SingleChoiceCorrectAnswer) {
-		totalScore += checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score);
+		let SingleChoiceScore = checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score);
+		scoresDetail.details[typeChiness.SingleChoice] = SingleChoiceScore;
+		totalScore += SingleChoiceScore;
 	}
 	if (MultipleChoicesCorrectAnswer) {
-		totalScore += checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score);
+		let MultipleChoicesScore = checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score);
+		scoresDetail.details[typeChiness.MultipleChoices] = MultipleChoicesScore;
+		totalScore += MultipleChoicesScore;
 	}
 	if (TrueOrFalseCorrectAnswer) {
-		totalScore += checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score);
+		let TrueOrFalseScore = checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score);
+		scoresDetail.details[typeChiness.TrueOrFalse] = TrueOrFalseScore;
+		totalScore += TrueOrFalseScore;
 	}
 	if (FillInTheBlankCorrectAnswer) {
-		totalScore += checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer.answer, FillInTheBlankStudentAnswer, FillInTheBlankCorrectAnswer.score);
+		let FillInTheBlankScore = checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer.answer, FillInTheBlankStudentAnswer, FillInTheBlankCorrectAnswer.score);
+		scoresDetail.details[typeChiness.FillInTheBlank] = FillInTheBlankScore;
+		totalScore += FillInTheBlankScore;
 	}
 	if (ProgrammingCorrectAnswer) {
-		totalScore += checkProgrammingAnswer(ProgrammingCorrectAnswer);
+		let ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
+		scoresDetail.details[typeChiness.Programming] = ProgrammingScore;
+		totalScore += ProgrammingScore;
 	}
 	if (ShortAnswerCorrectAnswer) {
 		checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, function(score) {
 			totalScore += score;
-			console.log(totalScore);
+			scoresDetail.details[typeChiness.ShortAnswer] = score;
+			scoresDetail.totalScore = totalScore;
+
+			window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 		});
+	}
+	else {
+		scoresDetail.totalScore = totalScore;
+
+		window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 	}
 }
 
@@ -1029,6 +1051,7 @@ function bindEvent() {
 				return;
 			}
 			showWin("是否确定提交答案？（提交后将不能修改）", function() {
+				addLoadingInterface();
 				checkAnswer();
 			});
 			return;

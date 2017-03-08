@@ -344,6 +344,17 @@ initInterface = {
 							</section>
 
 							<div class="addMore">+</div>
+						</section>`,
+
+	showScoreInterface: `<section class="showScoresDetail">
+							<div class="showTotalScore">您的总分为：<%= scoresDetail.totalScore %></div>
+							<section class="scoresDetail">
+								<div class="title">具体得分情况如下：</div>
+								<% for(var k in scoresDetail.details) { %>
+									<div class="details"><%= k %>得分：<%= scoresDetail.details[k] %></div>
+								<% } %>
+							</section>
+							<div class="seeMore"><input type="image" class="goBack"><input type="button" value="查看详情"></div>
 						</section>`
 }
 
