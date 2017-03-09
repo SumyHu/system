@@ -195,6 +195,10 @@ module.exports = function(app) {
 				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/doPraticeStyle.css"];
 				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;
+
+				if (req.query.showScore && req.session.scoresDetail) {
+					renderContent.scriptFilePath.push("javascripts/doPratice_showScore.js");
+				}
 			}
 			else if (req.query.praticeType) {
 				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/addPraticeStyle.css"];
@@ -207,20 +211,6 @@ module.exports = function(app) {
 				renderContent.innerHtml = initInterface.praticeInterface;
 			}
 			res.render("comment", renderContent);
-		});
-	});
-
-	app.get("/doPratice", function(req, res) {
-		isLoginIn(req, res, function() {
-			res.render("comment", {
-				fullName: req.session.userId,
-				username: req.session.userId.substr(req.session.userId.length-5, 5),
-				identity: req.session.identity,
-				imageSrc: req.session.imageSrc,
-				cssFilePath: ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/doPraticeStyle.css"],
-				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/doPraticeJS.js"],
-				innerHtml: initInterface.doPraticeInterface
-			});
 		});
 	});
 
@@ -448,13 +438,7 @@ module.exports = function(app) {
 
 	app.get("/showScore", function(req, res) {
 		if (req.query.scoresDetail) {
-			// let scoresDetail = JSON.parse(req.query.scoresDetail);
-			let scoresDetail = req.query.scoresDetail;
-
-			req.session.scoresDetailData = {
-				correctAnswerContent: scoresDetail.correctAnswerContent,
-				studentAnswerContent: scoresDetail.studentAnswerContent
-			}
+			let scoresDetail = JSON.parse(req.query.scoresDetail);
 
 			res.render("showScore", {
 				fullName: req.session.userId,
@@ -466,7 +450,6 @@ module.exports = function(app) {
 				scriptFilePath: ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/showScoreJS.js"],
 				innerHtml: initInterface.showScoreInterface
 			});
-			// res.end();
 		}
 		else {
 			isLoginIn(req, res, function() {
@@ -481,6 +464,19 @@ module.exports = function(app) {
 				});
 			});
 		}
+	});
+	app.post("/showScore", function(req, res) {
+		req.session.scoresDetail = {
+			correctAnswerContent: req.body.correctAnswerContent,
+			studentAnswerContent: req.body.studentAnswerContent,
+			scoresObj: req.body.scoresObj
+		}
+		res.send("success");
+	});
+
+	app.get("/scoresDetail", function(req, res) {
+		console.log(req.session.scoresDetail);
+		res.send(req.session.scoresDetail);
 	});
 
 	app.post("/callDataProcessing", function(req, res) {

@@ -34,13 +34,16 @@
 	</section>
 
 	<section class="showScoresDetail">
-		<div class="showTotalScore"><span class="score"><%= scoresDetail.totalScore %></span></div>
+		<div class="showTotalScore">
+			<span class="score"><%= scoresDetail.totalScore %></span>
+		</div>
 		<section class="scoresDetail">
 			<% for(var k in scoresDetail.details) { %>
 				<div class="details"><span class="title"><%= k %>得分</span>：<span class="score"><%= scoresDetail.details[k] %></span></div>
 			<% } %>
 		</section>
-		<input type="hidden" value="<%= scoresDetail.urlParam %>">
+		<input type="hidden" value="<%= scoresDetail.urlParam %>" class="urlParam">
+		<p class="ps">ps:简答题得分为建议给分，仅供参考，如有误差，请见谅.</p>
 		<div class="seeMoreBtn"><span class="goBack"></span><span>查看详情</span></div>
 	</section>
 

@@ -20,7 +20,7 @@ let currentIndexArray = {};   // 存储当前所有类型的题目下标
 let hasContentTypeArr = [];   // 存储当前有题目的类型名
 
 // 当练习类型为考试模拟时，进行正确答案和考生答案存储及匹配
-let examinationCorrectAnswer = {}, examinationStudentAnswer = {};
+let examinationCorrectAnswer = {}, examinationStudentAnswer = {}, scoresObj = {};
 
 // 记录Programing添加的editor，用于后面判断editor是否都不为空
 let programingEditorArray = [];
@@ -525,7 +525,7 @@ function getNotChoiceAnswer(getType) {
 			if (!showResult || showResult === '<pre><div class="loading"></div></pre>') {
 				return false;
 			}
-			// examinationStudentAnswer[getType].push([programingEditorArray[i].editor.getValue()]);
+			examinationStudentAnswer[getType].push(programingEditorArray[i].editor.getValue());
 		}
 		return true;
 	}
@@ -549,19 +549,26 @@ function getAllAnswer() {
  * @param choiceStudentAnswer Array 考生答案
  * @param score Number 每题分值
 */
-function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score) {
+function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score, type) {
 	let totalScore = 0;
 	outer: for(let i=0, len=choiceCorrectAnswer.length; i<len; i++) {
+		if (!scoresObj[type]) {
+			scoresObj[type] = [];
+		}
+
 		if (choiceCorrectAnswer[i].length !== choiceStudentAnswer[i].length) {
+			scoresObj[type].push(0);
 			totalScore += 0;
 			continue;
 		}
 		for(let j=0, len1=choiceCorrectAnswer[i].length; j<len1; j++) {
 			if (choiceCorrectAnswer[i][j] !== choiceStudentAnswer[i][j]) {
+				scoresObj[type].push(0);
 				totalScore += 0;
 				continue outer;
 			}
 		}
+		scoresObj[type].push(score);
 		totalScore += score;
 		console.log("choice: " + i + ", score: " + score);
 	}
@@ -576,10 +583,18 @@ function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score) {
 function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, score) {
 	let totalScore = 0;
 	outer: for(let i=0, len=FillInTheBlankCorrectAnswer.length; i<len; i++) {
+		if (!scoresObj["FillInTheBlank"]) {
+			scoresObj["FillInTheBlank"] = [];
+		}
+
+		scoresObj["FillInTheBlank"].push(0);
+
 		for(let j=0, len1=FillInTheBlankCorrectAnswer[i].length; j<len1; j++) {
 			for(let t=0, len2=FillInTheBlankCorrectAnswer[i][j].length; t<len2; t++) {
 				if (FillInTheBlankStudentAnswer[i][j][0] === FillInTheBlankCorrectAnswer[i][j][t]) {
-					totalScore += score/len1;
+					let realScore = score/len1;
+					scoresObj["FillInTheBlank"][scoresObj["FillInTheBlank"].length-1] += realScore;
+					totalScore += realScore;
 					console.log(i, j, score/len1);
 					break;
 				}
@@ -601,6 +616,10 @@ function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStud
 function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, callback) {
 	let totalScore = 0, count = 0;
 	for(let i=0, len1=ShortAnswerCorrectAnswer.length; i<len1; i++) {
+		if (!scoresObj["ShortAnswer"]) {
+			scoresObj["ShortAnswer"] = [];
+		}
+
 		let answer = ShortAnswerCorrectAnswer[i].answer[0];
 		let correctAnswerContent = answer.content, professionalNounsArr = (answer.professionalNounsArr ? answer.professionalNounsArr : []), 
 			score = ShortAnswerCorrectAnswer[i].score,
@@ -619,7 +638,7 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 					score: score
 				},
 				success: function(result) {
-					console.log(result, count);
+					scoresObj["ShortAnswer"].push(Number(result));
 					totalScore += Number(result);
 					count++;
 
@@ -651,12 +670,19 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 function checkProgrammingAnswer(ProgrammingCorrectAnswer) {
 	let allContent = $(".Programming > .content"), totalScore = 0;
 	for(let i=0, len=ProgrammingCorrectAnswer.length; i<len; i++) {
+		if (!scoresObj["Programming"]) {
+			scoresObj["Programming"] = [];
+		}
+
 		let result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML, 
 			score = ProgrammingCorrectAnswer[i].score, correctRate;
 
+		let realScore = 0;
 		if (result.indexOf("编译通过率：") > -1) {
-			totalScore += parseFloat(result.substr(6))/100*score;
+			realScore = parseFloat(result.substr(6))/100*score;
+			totalScore += realScore;
 		}
+		scoresObj["Programming"].push(realScore);
 	}
 	return totalScore;
 }
@@ -680,24 +706,21 @@ function checkAnswer() {
 		scoresDetail = {
 			totalScore: 0,
 			details: {},
-			correctAnswerContent: examinationCorrectAnswer,
-			studentAnswerContent: examinationStudentAnswer,
-			urlParam: window.location.href.split("?")[1],
-			timestamp: new Date().getTime()
+			urlParam: encodeURIComponent(window.location.href.split("?")[1])
 		};
 
 	if (SingleChoiceCorrectAnswer) {
-		let SingleChoiceScore = checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score);
+		let SingleChoiceScore = checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score, "SingleChoice");
 		scoresDetail.details[typeChiness.SingleChoice] = SingleChoiceScore;
 		totalScore += SingleChoiceScore;
 	}
 	if (MultipleChoicesCorrectAnswer) {
-		let MultipleChoicesScore = checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score);
+		let MultipleChoicesScore = checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score, "MultipleChoices");
 		scoresDetail.details[typeChiness.MultipleChoices] = MultipleChoicesScore;
 		totalScore += MultipleChoicesScore;
 	}
 	if (TrueOrFalseCorrectAnswer) {
-		let TrueOrFalseScore = checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score);
+		let TrueOrFalseScore = checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score, "TrueOrFalse");
 		scoresDetail.details[typeChiness.TrueOrFalse] = TrueOrFalseScore;
 		totalScore += TrueOrFalseScore;
 	}
@@ -706,33 +729,53 @@ function checkAnswer() {
 		scoresDetail.details[typeChiness.FillInTheBlank] = FillInTheBlankScore;
 		totalScore += FillInTheBlankScore;
 	}
-	if (ProgrammingCorrectAnswer) {
-		let ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
-		scoresDetail.details[typeChiness.Programming] = ProgrammingScore;
-		totalScore += ProgrammingScore;
-	}
+	
 	if (ShortAnswerCorrectAnswer) {
 		checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, function(score) {
-			totalScore += score;
 			scoresDetail.details[typeChiness.ShortAnswer] = score;
-			scoresDetail.totalScore = totalScore;
+			totalScore += score;
+
+			if (ProgrammingCorrectAnswer) {
+				let ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
+				scoresDetail.details[typeChiness.Programming] = ProgrammingScore;
+				totalScore += ProgrammingScore;
+			}
+
+			scoresDetail.totalScore = totalScore.toFixed(1);
 
 			$.ajax({
 				url: "../showScore",
-				type: "GET",
-				data: scoresDetail,
+				type: "POST",
+				data: {
+					correctAnswerContent: examinationCorrectAnswer,
+					studentAnswerContent: examinationStudentAnswer,
+					scoresObj: scoresObj
+				},
 				success: function() {
-					window.location.href = "../showScore";
+					window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 				}
 			});
-
-			// window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 		});
 	}
 	else {
-		scoresDetail.totalScore = totalScore;
+		if (ProgrammingCorrectAnswer) {
+			let ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
+			scoresDetail.details[typeChiness.Programming] = ProgrammingScore;
+			totalScore += ProgrammingScore;
+		}
+		scoresDetail.totalScore = totalScore.toFixed(1);
 
-		window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+		$.ajax({
+			url: "../showScore",
+			type: "POST",
+			data: {
+				correctAnswerContent: examinationCorrectAnswer,
+				studentAnswerContent: examinationStudentAnswer
+			},
+			success: function() {
+				window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+			}
+		});
 	}
 }
 

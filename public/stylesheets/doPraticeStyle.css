@@ -212,3 +212,27 @@
 	color: red;
 	text-decoration: underline;
 }
+
+.answer > .correctChoiceBorder {
+	border: 1px solid red;
+}
+
+.correctLogo, .errorLogo {
+	display: inline-block;
+	position: relative;
+	width: 25px;
+	height: 25px;
+	float: right;
+	background-size: 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.correctLogo {
+	background-image: url("../image/correct.png");
+}
+
+.errorLogo {
+	background-image: url("../image/error.png");
+}
