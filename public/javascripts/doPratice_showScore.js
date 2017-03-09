@@ -1,9 +1,12 @@
+let editorCount = 0;
+
 let changePraticeContentFn = changePraticeContent;
 changePraticeContent = function(index) {
 	changePraticeContentFn(index);
 	if ($(".next").val() === "提交") {
 		$(".next").val(">");
 		$(".next").addClass("disable");
+		// $(".next").val("→");
 	}
 }
 
@@ -43,24 +46,46 @@ function addLogo($target, classname) {
  * @param $target Object 添加div的对象
 */
 function addShortScoreDetailDiv($target, score, studentAnswer, correctAnswer) {
-	console.log(correctAnswer);
 	let div = document.createElement("div");
 	div.className = "showScoreDetails";
 	div.innerHTML = '<div>本题得分：<span class="score">' + score + '</span></div>' +
 					'<div>你的答案：<span class="studentAnswer">' + studentAnswer + '</span></div>' +
 					'<div>正确答案：<span class="correctAnswer">' + correctAnswer + '</span></div>';
-	console.log($target);
 	$target.append(div);
 }
 function addLongScoreDetailDiv($target, score, studentAnswer, correctAnswer) {
-	console.log(correctAnswer);
 	let div = document.createElement("div");
 	div.className = "showScoreDetails";
 	div.innerHTML = '<div>本题得分：<span class="score">' + score + '</span></div>' +
 					'<div>你的答案：<pre class="studentAnswer">' + studentAnswer + '</pre></div>' +
 					'<div>正确答案：<pre class="correctAnswer">' + correctAnswer + '</pre></div>';
-	console.log($target);
 	$target.append(div);
+}
+function addProgrammingScoreDetailDiv($target, score, studentAnswer, correctAnswer, mode) {
+	let div = document.createElement("div");
+	div.className = "showScoreDetails";
+	div.innerHTML = '<div>本题得分：<span class="score">' + score + '</span></div>' +
+					'<div>你的答案：<textarea id="studentAnswer' + editorCount + '"></textarea></div>' +
+					'<div>正确答案：<textarea id="correctAnswer' + editorCount + '"></textarea></div>';
+	$target.append(div);
+
+	let editor1 = editorStyle("studentAnswer" + editorCount, mode);
+	editor1.setValue(studentAnswer);
+	editor1.setSize("auto", "auto");
+	editor1.setOption("readOnly", true);
+	setTimeout(function() {
+		editor1.refresh();
+	}, 1);
+
+	let editor2 = editorStyle("correctAnswer" + editorCount, mode);
+	editor2.setValue(correctAnswer);
+	editor2.setSize("auto", "auto");
+	editor2.setOption("readOnly", true);
+	setTimeout(function() {
+		editor2.refresh();
+	}, 1);
+
+	editorCount++;
 }
 
 /** 在题目答案框中显示考生答案
@@ -77,28 +102,34 @@ function showStudentAnswer(studentAnswerContent, correctAnswerContent) {
 		switch(k) {
 			case "SingleChoice":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					let answerIndex = answer[i][0].charCodeAt()-65;
-					let $studentSelectTarget = $($(allContent[i]).find(".answer > div")[answerIndex]);
-					$studentSelectTarget.find("input")[0].checked = true;
-					addLogoInChoice($studentSelectTarget);
-				}
-				break;
-			case "MultipleChoices":
-				for(let i=0, len=allContent.length; i<len; i++) {
-					for(let j=0, len1=answer[i].length; j<len1; j++) {
-						let answerIndex = answer[i][j].charCodeAt()-65;
+					if (answer[i][0]) {
+						let answerIndex = answer[i][0].charCodeAt()-65;
 						let $studentSelectTarget = $($(allContent[i]).find(".answer > div")[answerIndex]);
 						$studentSelectTarget.find("input")[0].checked = true;
 						addLogoInChoice($studentSelectTarget);
 					}
 				}
 				break;
+			case "MultipleChoices":
+				for(let i=0, len=allContent.length; i<len; i++) {
+					for(let j=0, len1=answer[i].length; j<len1; j++) {
+						if (answer[i][j]) {
+							let answerIndex = answer[i][j].charCodeAt()-65;
+							let $studentSelectTarget = $($(allContent[i]).find(".answer > div")[answerIndex]);
+							$studentSelectTarget.find("input")[0].checked = true;
+							addLogoInChoice($studentSelectTarget);
+						}
+					}
+				}
+				break;
 			case "TrueOrFalse":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					let answerIndex = (answer[i][0] === "T" ? 0 : 1);
-					let $studentSelectTarget = $($(allContent[i]).find(".answer > div")[answerIndex]);
-					$studentSelectTarget.find("input")[0].checked = true;
-					addLogoInChoice($studentSelectTarget);
+					if (answer[i][0]) {
+						let answerIndex = (answer[i][0] === "T" ? 0 : 1);
+						let $studentSelectTarget = $($(allContent[i]).find(".answer > div")[answerIndex]);
+						$studentSelectTarget.find("input")[0].checked = true;
+						addLogoInChoice($studentSelectTarget);
+					}
 				}
 				break;
 			case "FillInTheBlank":
@@ -143,13 +174,13 @@ function showCorrectAnswer(result) {
 	console.log(result);
 	let correctAnswerContent = result.correctAnswerContent, studentAnswerContent = result.studentAnswerContent, scoresObj = result.scoresObj;
 	for(var k in correctAnswerContent) {
-		let allContent = $("." + k + " > .content"), answer = correctAnswerContent[k].answer;
+		let allContent = $("." + k + " > .content"), answer = correctAnswerContent[k].answer, studentAnswer = studentAnswerContent[k];
 		switch(k) {
 			case "SingleChoice":
 				for(let i=0, len=allContent.length; i<len; i++) {
 					let answerIndex = answer[i][0].charCodeAt()-65;
 					$($(allContent[i]).find(".answer > div")[answerIndex]).addClass("correctChoiceBorder");
-					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswerContent[k][i][0], answer[i][0]);
+					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i][0], answer[i][0]);
 				}
 				break;
 			case "MultipleChoices":
@@ -158,29 +189,30 @@ function showCorrectAnswer(result) {
 						let answerIndex = answer[i][j].charCodeAt()-65;
 						$($(allContent[i]).find(".answer > div")[answerIndex]).addClass("correctChoiceBorder");
 					}
-					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswerContent[k][i].join(","), answer[i].join(","));
+					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i].join(","), answer[i].join(","));
 				}
 				break;
 			case "TrueOrFalse":
 				for(let i=0, len=allContent.length; i<len; i++) {
 					let answerIndex = (answer[i][0] === "T" ? 0 : 1);
 					$($(allContent[i]).find(".answer > div")[answerIndex]).addClass("correctChoiceBorder");
-					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswerContent[k][i][0], answer[i][0]);
+					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i][0], answer[i][0]);
 				}
 				break;
 			case "FillInTheBlank":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswerContent[k][i][0], answer[i].join("或"));
+					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i][0], answer[i].join("或"));
 				}
 				break;
 			case "ShortAnswer":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					addLongScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswerContent[k][i], correctAnswerContent[k][i].answer[0].content);
+					addLongScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i], correctAnswerContent[k][i].answer[0].content);
 				}
 				break;
 			case "Programming":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					addLongScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswerContent[k][i], correctAnswerContent[k][i].answer[0].content);
+					let thisAnswerObj = correctAnswerContent[k][i].answer[0];
+					addProgrammingScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i], thisAnswerObj.content, thisAnswerObj.programmingTypeMode);
 				}
 				break;
 		}

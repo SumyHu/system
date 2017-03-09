@@ -10,6 +10,7 @@ function init() {
 
 function bindEvent() {
 	$(".seeMoreBtn").click(function(e) {
-		window.location.href = "../pratice?" + $(".urlParam").val() + "&showScore=true";
+		let preWindowLocationHref = window.location.href;
+		window.location.href = "../pratice?" + $(".urlParam").val() + "&showScore=" + encodeURIComponent(preWindowLocationHref);
 	});
 }

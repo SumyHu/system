@@ -20,7 +20,15 @@ let currentIndexArray = {};   // 存储当前所有类型的题目下标
 let hasContentTypeArr = [];   // 存储当前有题目的类型名
 
 // 当练习类型为考试模拟时，进行正确答案和考生答案存储及匹配
-let examinationCorrectAnswer = {}, examinationStudentAnswer = {}, scoresObj = {};
+let examinationCorrectAnswer = {}, examinationStudentAnswer = {}, 
+	scoresObj = {
+		SingleChoice: [],
+		MultipleChoices: [],
+		TrueOrFalse: [],
+		FillInTheBlank: [],
+		ShortAnswer: [],
+		Programming: []
+	};
 
 // 记录Programing添加的editor，用于后面判断editor是否都不为空
 let programingEditorArray = [];
@@ -36,6 +44,7 @@ function editorStyle(id, mode) {
 
 	        //设置主题
 	        theme: "seti",
+	        // theme: "monokai",
 
 	        //绑定Vim
 	        // keyMap: "vim",
@@ -483,12 +492,18 @@ function getChoiceAnswer(getType) {
 		examinationStudentAnswer[getType].push([]);
 		let currentIndex = examinationStudentAnswer[getType].length-1;
 
-		let allAnswer = $(allContent[i]).find(".answer input[type=" + inputType + "]");
+		let allAnswer = $(allContent[i]).find(".answer input[type=" + inputType + "]"), hadSelected = false;
 		for(let j=0, len1=allAnswer.length; j<len1; j++) {
 			if (allAnswer[j].checked) {
+				hadSelected = true;
 				let label = $(allContent[i]).find(".answer .num")[j].innerHTML;
 				examinationStudentAnswer[getType][currentIndex].push(label);
+				break;
 			}
+		}
+
+		if (!hadSelected) {
+			examinationStudentAnswer[getType][currentIndex].push("");
 		}
 	}
 }
@@ -514,6 +529,7 @@ function getNotChoiceAnswer(getType) {
 	else if (getType === "ShortAnswer") {
 		let allContent = $("." + getType + " > .content");
 		for(let i=0, len=allContent.length; i<len; i++) {
+			console.log($(allContent[i]).find(".answer > textarea").val());
 			examinationStudentAnswer[getType].push($(allContent[i]).find(".answer > textarea").val());
 		}
 	}
@@ -552,10 +568,6 @@ function getAllAnswer() {
 function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score, type) {
 	let totalScore = 0;
 	outer: for(let i=0, len=choiceCorrectAnswer.length; i<len; i++) {
-		if (!scoresObj[type]) {
-			scoresObj[type] = [];
-		}
-
 		if (choiceCorrectAnswer[i].length !== choiceStudentAnswer[i].length) {
 			scoresObj[type].push(0);
 			totalScore += 0;
@@ -583,10 +595,6 @@ function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score, type
 function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, score) {
 	let totalScore = 0;
 	outer: for(let i=0, len=FillInTheBlankCorrectAnswer.length; i<len; i++) {
-		if (!scoresObj["FillInTheBlank"]) {
-			scoresObj["FillInTheBlank"] = [];
-		}
-
 		scoresObj["FillInTheBlank"].push(0);
 
 		for(let j=0, len1=FillInTheBlankCorrectAnswer[i].length; j<len1; j++) {
@@ -616,10 +624,6 @@ function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStud
 function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, callback) {
 	let totalScore = 0, count = 0;
 	for(let i=0, len1=ShortAnswerCorrectAnswer.length; i<len1; i++) {
-		if (!scoresObj["ShortAnswer"]) {
-			scoresObj["ShortAnswer"] = [];
-		}
-
 		let answer = ShortAnswerCorrectAnswer[i].answer[0];
 		let correctAnswerContent = answer.content, professionalNounsArr = (answer.professionalNounsArr ? answer.professionalNounsArr : []), 
 			score = ShortAnswerCorrectAnswer[i].score,
@@ -651,6 +655,8 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 		else {
 			count++;
 
+			scoresObj["ShortAnswer"].push(0);
+
 			if (count === ShortAnswerCorrectAnswer.length) {
 				callback(totalScore);
 			}
@@ -670,10 +676,6 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 function checkProgrammingAnswer(ProgrammingCorrectAnswer) {
 	let allContent = $(".Programming > .content"), totalScore = 0;
 	for(let i=0, len=ProgrammingCorrectAnswer.length; i<len; i++) {
-		if (!scoresObj["Programming"]) {
-			scoresObj["Programming"] = [];
-		}
-
 		let result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML, 
 			score = ProgrammingCorrectAnswer[i].score, correctRate;
 

@@ -9,7 +9,7 @@
 .title, .answer > div, .choiceAnswerBlock {
 	height: 35px;
 	padding: 15px 20px;
-	border: 1px dashed #dbd0d0;
+	border: 1px dashed #dbd0d0 !important;
 	border-radius: 5px;
 	line-height: 35px;
 	/*background: rgba(34, 34, 34, 0.6);*/
@@ -214,7 +214,7 @@
 }
 
 .answer > .correctChoiceBorder {
-	border: 1px solid red;
+	border: 1px solid red !important;
 }
 
 .correctLogo, .errorLogo {
@@ -235,4 +235,40 @@
 
 .errorLogo {
 	background-image: url("../image/error.png");
+}
+
+.showScoreDetails {
+	margin: 20px 0 0;
+	border: 1px dashed #dbd0d0 !important;
+	border-radius: 5px;
+	font-family: "楷体";
+	font-size: 20px;
+	color: rgba(0, 0, 0, 0.7);
+	background: #e8eaed !important;
+}
+
+.showScoreDetails > div {
+	padding: 20px;
+}
+
+.showScoreDetails > div+div {
+	border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+pre {
+	margin: 20px 0 0;
+}
+
+.ShortAnswer .showScoreDetails pre {
+	text-indent: 44px;
+	font-family: "楷体";
+}
+
+.score, .studentAnswer, .correctAnswer {
+	font-size: 22px;
+	color: #000;
+}
+
+.showScoreDetails .score {
+	color: red;
 }
