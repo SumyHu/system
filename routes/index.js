@@ -585,4 +585,29 @@ module.exports = function(app) {
 		let content = fs.readFileSync(testFilePath);
 		res.render("help", {mode: mode, topic: topic, input: input, output: output, content: content, notice: notice});
 	});
+
+	app.get("/ShortAnswerHelp", function(req, res) {
+		res.render("ShortAnswerHelp")
+	});
+
+	app.post("/findTheSameWordInTwoSentence", function(req, res) {
+		let wordArr1 = participle(req.body.sentence1, req.body.professionalNounsArr),
+			wordArr2 = participle(req.body.sentence2, req.body.professionalNounsArr), 
+			result = {
+				theSameWordArr1: [],
+				theSameWordArr2: []
+			};
+
+		for(let i=0, len1=wordArr1.length; i<len1; i++) {
+			for(let j=0, len2=wordArr2.length; j<len2; j++) {
+				let word1 = wordArr1[i].word, word2 = wordArr2[j].word;
+				if(WordSimilary(word1, word2) === 1) {
+					result.theSameWordArr1.push(word1);
+					result.theSameWordArr2.push(word2);
+					break;
+				}
+			}
+		}
+		res.send(result);
+	});
 }

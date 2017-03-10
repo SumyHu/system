@@ -4,9 +4,9 @@ let changePraticeContentFn = changePraticeContent;
 changePraticeContent = function(index) {
 	changePraticeContentFn(index);
 	if ($(".next").val() === "提交") {
-		$(".next").val(">");
-		$(".next").addClass("disable");
-		// $(".next").val("→");
+		// $(".next").val(">");
+		// $(".next").addClass("disable");
+		$(".next").val("总分 →");
 	}
 }
 
@@ -53,12 +53,12 @@ function addShortScoreDetailDiv($target, score, studentAnswer, correctAnswer) {
 					'<div>正确答案：<span class="correctAnswer">' + correctAnswer + '</span></div>';
 	$target.append(div);
 }
-function addLongScoreDetailDiv($target, score, studentAnswer, correctAnswer) {
+function addShortAnswerScoreDetailDiv($target, score, studentAnswer, correctAnswer) {
 	let div = document.createElement("div");
 	div.className = "showScoreDetails";
 	div.innerHTML = '<div>本题得分：<span class="score">' + score + '</span></div>' +
 					'<div>你的答案：<pre class="studentAnswer">' + studentAnswer + '</pre></div>' +
-					'<div>正确答案：<pre class="correctAnswer">' + correctAnswer + '</pre></div>';
+					'<div>正确答案：<pre class="correctAnswer">' + correctAnswer.replace(/[【】（\d*）{}]/g, "") + '</pre></div>';
 	$target.append(div);
 }
 function addProgrammingScoreDetailDiv($target, score, studentAnswer, correctAnswer, mode) {
@@ -206,7 +206,29 @@ function showCorrectAnswer(result) {
 				break;
 			case "ShortAnswer":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					addLongScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i], correctAnswerContent[k][i].answer[0].content);
+					let sentence1 = studentAnswer[i], sentence2 = correctAnswerContent[k][i].answer[0].content, scores = scoresObj[k],
+						professionalNounsArr = correctAnswerContent[k][i].answer[0].professionalNounsArr;
+					$.ajax({
+						url: "../findTheSameWordInTwoSentence",
+						type: "POST",
+						data: {
+							sentence1: sentence1,
+							sentence2: sentence2,
+							professionalNounsArr: professionalNounsArr
+						},
+						success: function(result) {
+							let theSameWordArr1 = result.theSameWordArr1, theSameWordArr2 = result.theSameWordArr2;
+							console.log(theSameWordArr1, theSameWordArr2, sentence1, sentence2);
+							for(let i=0, len=theSameWordArr1.length; i<len; i++) {
+								sentence1 = sentence1.replace(new RegExp(theSameWordArr1[i], "ig"), "<span style='background: yellow;'>$&</span>");
+							}
+							for(let i=0, len=theSameWordArr2.length; i<len; i++) {
+								sentence2 = sentence2.replace(new RegExp(theSameWordArr2[i], "ig"), "<span style='background: yellow;'>$&</span>");
+							}
+							addShortAnswerScoreDetailDiv($(allContent[i]), scores[i], sentence1, sentence2);
+						}
+					});
+					// addShortAnswerScoreDetailDiv($(allContent[i]), scoresObj[k][i], sentence1, sentence2);
 				}
 				break;
 			case "Programming":
@@ -299,5 +321,92 @@ function init() {
 			showCorrectAnswer(result);
 			showStudentAnswer(result.studentAnswerContent, result.correctAnswerContent);
 		}
+	});
+}
+
+bindEvent = function() {
+	// 当为考试模拟时，点击练习类型事件
+	$(".showPraticeBlockIndex").click(function(e) {
+		let className = getTarget(e).className;
+		if ($("." + className.substr(0, className.length-5)).length > 0) {
+			type = className.substr(0, className.length-5);
+			changeTypeStyle();
+			addPraticeIndex(currentIndexArray[type].length);
+			changePraticeContent(currentIndexArray[type].index);
+		}
+	});
+
+	// 点击题目编号事件
+	$(".showPraticeIndex").click(function(e) {
+		if (Number(getTarget(e).innerHTML)) {
+			let index = getTarget(e).innerHTML-1;
+			currentIndexArray[type].index = index;
+			changePraticeContent(index);
+		}
+	});
+
+	$(".previous").click(function() {
+		// 将滚动条滚动到顶部，并添加动画效果
+		$("body").animate({
+			scrollTop: 0
+		}, 300);
+
+		if ($(this).hasClass("disable")) return;
+
+		if (currentIndexArray[type].index === 0) {
+			for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
+				if (hasContentTypeArr[i] === type) {
+					if (i !== 0) {
+						type = hasContentTypeArr[--i];
+						changeTypeStyle();
+						addPraticeIndex(currentIndexArray[type].length);
+						currentIndexArray[type].index = currentIndexArray[type].length-1;
+						changePraticeContent(currentIndexArray[type].index);
+					}
+					return;
+				}
+			}
+		}
+
+		changePraticeContent(--currentIndexArray[type].index);
+	});
+
+	$(".runningBtn").click(function(e) {
+		let $target = $(getTarget(e));
+		if (!$target.hasClass("disable")) {
+			// changeRunningBtnToDisableStatus($target, 15000);
+			$target.addClass("disable");
+			runningProgramming($(getTarget(e)).parent());
+		}
+	});
+
+	$(".next").click(function() {
+		if (this.value === "总分 →") {
+			console.log(decodeURIComponent(getValueInUrl("showScore")));
+			window.location.href = decodeURIComponent(getValueInUrl("showScore"));
+			return;
+		}
+
+		// 将滚动条滚动到顶部，并添加动画效果
+		$("body").animate({
+			scrollTop: 0
+		}, 300);
+
+		if ($(this).hasClass("disable")) return;
+
+		if (currentIndexArray[type].index === currentIndexArray[type].length-1) {
+			for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
+				if (hasContentTypeArr[i] === type) {
+					type = hasContentTypeArr[++i];
+					changeTypeStyle();
+					addPraticeIndex(currentIndexArray[type].length);
+					currentIndexArray[type].index = 0;
+					changePraticeContent(0);
+					return;
+				}
+			}
+		}
+
+		changePraticeContent(++currentIndexArray[type].index);
 	});
 }

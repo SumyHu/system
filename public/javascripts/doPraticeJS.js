@@ -336,7 +336,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				if (addPraticeType === "Programming") {
 					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
 											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent"><pre>` + result.answer[0].content + `</pre></div>
+											<div class="answerContent"><textarea id="editor` + index + `">` + result.answer[0].content + `</textarea></div>
 										</div>`;
 				}
 			}
@@ -367,6 +367,15 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				$(section).find(".runningResult > .runningContent")[0].innerHTML
 				 = "";
 			});
+
+			if ($("#editor" + index).length) {
+				let editor1 = editorStyle("editor" + index, mode);
+				editor1.setSize("auto", "auto");
+				editor1.setOption("readOnly", true);
+				setTimeout(function() {
+					editor1.refresh();
+				}, 1);
+			}
 
 		}
 		$(sec).css("display", "none");
@@ -498,7 +507,9 @@ function getChoiceAnswer(getType) {
 				hadSelected = true;
 				let label = $(allContent[i]).find(".answer .num")[j].innerHTML;
 				examinationStudentAnswer[getType][currentIndex].push(label);
-				break;
+				if (getType !== "MultipleChoices") {
+					break;
+				}
 			}
 		}
 

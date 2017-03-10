@@ -1,0 +1,23 @@
+body {
+	position: absolute;
+	top: 35%;
+	left: 20%;
+	line-height: 30px;
+	font-family: "楷体";
+	font-size: 18px;
+}
+
+header {
+	font-size: 28px;
+}
+
+.details p {
+	border-bottom: 1px solid #e8eaed;
+	text-indent: 36px;
+}
+
+.ps {
+	display: inline-block;
+	text-indent: 36px;
+	color: red;
+}

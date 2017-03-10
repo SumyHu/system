@@ -196,6 +196,7 @@ function addShortAnswer() {
 					`</span>：<input type="text" class="textInput"></div>
 					<div class="answer">
 						<textarea></textarea>
+						<a class="ShortAnswerHelp" href="../ShortAnswerHelp" target="blank">答案书写规则？</a>
 					</div>
 					<div class="addProfessionalNouns">
 						答案中的专有名词有：
