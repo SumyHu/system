@@ -90,7 +90,7 @@ module.exports = function(app) {
 	});
 
 	app.post('/uploadImage',uploadImage.single('uploadImage'), function (req, res) {
-		console.log(req.file);
+		console.log(req.file.path);
 		if (req.file == undefined) {
 			res.redirect('/');
 		}
