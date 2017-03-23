@@ -687,14 +687,17 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 function checkProgrammingAnswer(ProgrammingCorrectAnswer) {
 	let allContent = $(".Programming > .content"), totalScore = 0;
 	for(let i=0, len=ProgrammingCorrectAnswer.length; i<len; i++) {
-		let result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML, 
-			score = ProgrammingCorrectAnswer[i].score, correctRate;
-
 		let realScore = 0;
-		if (result.indexOf("编译通过率：") > -1) {
-			realScore = parseFloat(result.substr(6))/100*score;
-			totalScore += realScore;
-		}
+		try {
+			let result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML, 
+				score = ProgrammingCorrectAnswer[i].score, correctRate;
+
+			if (result.indexOf("编译通过率：") > -1) {
+				realScore = parseFloat(result.substr(6))/100*score;
+				totalScore += realScore;
+			}
+		} catch(e) {}
+
 		scoresObj["Programming"].push(realScore);
 	}
 	return totalScore;
@@ -948,6 +951,8 @@ function init() {
 			let hours = $(".hours")[0].innerHTML, minutes = $(".minutes")[0].innerHTML, seconds = $(".seconds")[0].innerHTML;
 			if (seconds === "00" && minutes === "00" && hours === "00") {
 				clearInterval(countdown);
+				addLoadingInterface();
+				checkAnswer();
 				return;
 			}
 

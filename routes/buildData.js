@@ -39,13 +39,13 @@ buildData.subjectsObj = commentDataProcessing(subjects);
 
 // 建立以一个完整单元（如章节、试卷）为单位的数据库
 var unitsSchema = new Schema ({
-	SingleChoice: [],
-	MultipleChoices: [],
-	TrueOrFalse: [],
-	FillInTheBlank: [],
-	ShortAnswer: [],
-	Programming: [],
-	time: {}
+	SingleChoice: [],   // 单选题
+	MultipleChoices: [],   // 多选题
+	TrueOrFalse: [],   // 判断题
+	FillInTheBlank: [],   // 填空题
+	ShortAnswer: [],   // 简答题
+	Programming: [],   // 编程题
+	time: {}   // 时间
 });
 
 var units = mongoose.model('units', unitsSchema);

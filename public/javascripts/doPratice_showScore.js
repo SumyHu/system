@@ -232,9 +232,11 @@ function showCorrectAnswer(result) {
 				}
 				break;
 			case "Programming":
-				for(let i=0, len=allContent.length; i<len; i++) {
-					let thisAnswerObj = correctAnswerContent[k][i].answer[0];
-					addProgrammingScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i], thisAnswerObj.content, thisAnswerObj.programmingTypeMode);
+				if (studentAnswer) {
+					for(let i=0, len=allContent.length; i<len; i++) {
+						let thisAnswerObj = correctAnswerContent[k][i].answer[0];
+						addProgrammingScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i], thisAnswerObj.content, thisAnswerObj.programmingTypeMode);
+					}
 				}
 				break;
 		}
