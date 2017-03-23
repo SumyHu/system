@@ -1284,6 +1284,10 @@ function bindEvent() {
 			showTips("存在没有填写的空格！", 1000);
 			return;
 		}
+		if (!checkMultipleChoicesAnswerExit()) {
+			showTips("存在题目没有勾选标准答案！", 1000);
+			return;
+		}
 		if (!checkAllProgrammingRunningSuccess()) {
 			showTips("请确保所有编译都能成功运行！", 1000);
 			return;
