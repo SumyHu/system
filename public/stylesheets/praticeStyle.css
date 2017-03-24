@@ -70,15 +70,12 @@
 .examinationContent > .content > section, .examinationContent .addMore {
 	width: 300px;
 	height: 500px;
+	padding: 0 0 20px 0;
 }
 
 .examinationContent .addMore {
 	font-size: 200px;
 	line-height: 500px;
-}
-
-.examinationContent .showEg {
-	padding: 0 0 20px 0;
 }
 
 .addMore {
