@@ -141,7 +141,7 @@ function getCurrentToolbar() {
 	if (paramArray.length > 0) {
 		let keyValuePair = paramArray[0].split("=");
 		location = location + paramArray[0];
-		$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + keyValuePair[1] +"</a>";
+		$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + decodeURIComponent(keyValuePair[1]) +"</a>";
 	}
 }
 
