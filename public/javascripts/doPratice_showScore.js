@@ -206,6 +206,7 @@ function showCorrectAnswer(result) {
 				break;
 			case "ShortAnswer":
 				for(let i=0, len=allContent.length; i<len; i++) {
+					console.log(scoresObj[k]);
 					let sentence1 = studentAnswer[i], sentence2 = correctAnswerContent[k][i].answer[0].content, scores = scoresObj[k],
 						professionalNounsArr = correctAnswerContent[k][i].answer[0].professionalNounsArr;
 					$.ajax({

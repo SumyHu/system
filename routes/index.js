@@ -273,7 +273,7 @@ module.exports = function(app) {
         }
 
         if (req.body.type === "sql(oracle)") {
-        	fs.writeFileSync(filePath, req.body.code+"\n/\nexit");
+        	fs.writeFileSync(filePath, "ALTER SESSION SET NLS_LANGUAGE=AMERICAN;\n" + req.body.code + "\n/\nexit");
         }
         else {
 	        fs.writeFileSync(filePath, req.body.code);
@@ -338,6 +338,16 @@ module.exports = function(app) {
 	        		res.send({error: (stderr?stderr:stdout)});
 	        	} else {
 	        		console.log("stdout", stdout);
+	        		if (cmd1.indexOf("sqlplus") > -1) {
+	        			if (stdout.indexOf("PL/SQL") === -1) {
+	        				stdout = stdout.substr(stdout.indexOf("Session altered.")+16);
+	        				stdout = stdout.substring(0, stdout.indexOf("Disconnected from Oracle Database 10g Enterprise")).replace(/(^\s*)|(\s*$)/g, "");
+			        		res.send({error: stdout});
+			        		return;
+	        			}
+
+	        			stdout = stdout.substring(stdout.indexOf("Session altered.")+16, stdout.indexOf("PL/SQL")).replace(/(^\s*)|(\s*$)/g, "");
+	        		}
 	        		res.send({success: stdout, inputCount: inputCount});
 	        	} 
         	});

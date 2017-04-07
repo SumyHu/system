@@ -148,12 +148,10 @@ function addTrueOrFalse() {
 					<div class="allChoices">
 						<div class="choice">
 							<span class="num true">T</span>.
-							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `" checked>
 						</div>
 						<div class="choice">
 							<span class="num false">F</span>.
-							<input type="text" class="textInput">
 							<input type="radio" name="` + name + `">
 						</div>
 					</div>`;

@@ -19,7 +19,7 @@ function getRandomChar() {
 
 function getRandomString() {
 	let str = "";
-	let strLength = getRandomNumber("int", 30);
+	let strLength = getRandomNumber("int", 30)+1;
 	for(let i=0; i<strLength; i++) {
 		str = str + getRandomChar();
 	}

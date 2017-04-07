@@ -14,14 +14,14 @@ const CustomizeParticiple = require("./participle"),   // 自定义中文分词
 
 let unimportantAttr = ["ECHO", "PREP", "STRU", "CONJ", "SpecialSTRU", "COOR"],   // 不重要的词语词性
 	wordWeightByAttr = {
-		N: 0.3,
-		PRON: 0.3,
-		V: 0.3,
+		N: 0.3,   // 名称
+		PRON: 0.3,   // 人称代词
+		V: 0.3,   // 动词
 		AUX: 0.3,   // 助动词
-		ADJ: 0.2,
-		ADV: 0.2,
-		NUM: 0.1,
-		CLAS: 0.1
+		ADJ: 0.2,   // 形容词
+		ADV: 0.2,   // 副词
+		NUM: 0.1,   // 数词
+		CLAS: 0.1   // 度量单位
 	};
 
 const nVal = 0.3;   // 名词比重
@@ -853,7 +853,7 @@ function calTotalSentenceSimilary(paramObj) {
 
 	// return (sum + delta * (big - matchCount)) / big;
 	// return (sum + delta * (totalLength - matchCount)) / totalLength;
-	return sum;
+	return sum.toFixed(1);
 }
 
 /** 文本之间的总体相似度计算

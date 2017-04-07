@@ -487,8 +487,10 @@ function init() {
 
 	// 正确显示当前添加题目的title
 	if (praticeType === "random") {
-		$(".addPratice .title")[0].innerHTML = typeChiness[type];
-		$(".addPraticeToolbar").css("display", "none");
+		$(".time")[0].innerHTML += " — " + typeChiness[type];
+		$(".navContent > div").css("display", "none");
+		$(".navContent > ." + type).css("display", "block");
+		$(".navContent > ." + type).css("background", "rgba(249, 90, 78, 0.8)");
 		$(".addPraticeContent > section").css("display", "none");
 		$(".addPraticeContent > .add" + type).css("display", "block");
 		// $(".previous").css("display", "none");

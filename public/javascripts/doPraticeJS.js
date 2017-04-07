@@ -114,12 +114,13 @@ function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
 			inputType = "radio";
 		}
 		for(let i=0, len=result.choices.length; i<len; i++) {
+			let choiceContent = result.choices[i].choiceContent;
 			innerHtml = innerHtml
 							+ `<div>
 									<input type="` + inputType + `" id="` + addPraticeType + showIndex + i + `" name="` + addPraticeType +  showIndex + `">
 									<label for="` + addPraticeType + showIndex + i + `">
 										<span class="num">` + result.choices[i].num + `</span>
-									` + result.choices[i].choiceContent + `</label>
+									` + (choiceContent?choiceContent:"") + `</label>
 							   </div>`;
 		}
 
@@ -252,7 +253,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			$(".flip").before(section);
 		}
 		else if (addPraticeType === "ShortAnswer") {
-			innerHtml += "<textarea></textarea>"
+			innerHtml += "<textarea></textarea><p class='ShortAnswerTips'>ps：尽量将带有否定意义的词写成“否定词+形容词”的形式，如将“不变”写成“不改变”或“不会变化”之类的。</p>";
 			sec.innerHTML = innerHtml + `</div>`;
 
 			if (praticeType !== "examination") {
@@ -260,7 +261,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				
 				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
 											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent">` + answerHtml + `</div>
+											<div class="answerContent">` + answerHtml.replace(/[【】（\d*）{}]/g, "") + `</div>
 										</div>`;
 			}
 			else {
@@ -610,8 +611,9 @@ function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStud
 
 		for(let j=0, len1=FillInTheBlankCorrectAnswer[i].length; j<len1; j++) {
 			for(let t=0, len2=FillInTheBlankCorrectAnswer[i][j].length; t<len2; t++) {
-				if (FillInTheBlankStudentAnswer[i][j][0] === FillInTheBlankCorrectAnswer[i][j][t]) {
+				if (FillInTheBlankStudentAnswer[i][j] === FillInTheBlankCorrectAnswer[i][j][t]) {
 					let realScore = score/len1;
+					console.log("realScore: " + realScore);
 					scoresObj["FillInTheBlank"][scoresObj["FillInTheBlank"].length-1] += realScore;
 					totalScore += realScore;
 					console.log(i, j, score/len1);
@@ -653,7 +655,7 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 					score: score
 				},
 				success: function(result) {
-					scoresObj["ShortAnswer"].push(Number(result));
+					scoresObj["ShortAnswer"][i] = Number(result);
 					totalScore += Number(result);
 					count++;
 
@@ -666,7 +668,7 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 		else {
 			count++;
 
-			scoresObj["ShortAnswer"].push(0);
+			scoresObj["ShortAnswer"][i] = 0;
 
 			if (count === ShortAnswerCorrectAnswer.length) {
 				callback(totalScore);
@@ -749,6 +751,7 @@ function checkAnswer() {
 	if (ShortAnswerCorrectAnswer) {
 		checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, function(score) {
 			scoresDetail.details[typeChiness.ShortAnswer] = score;
+			console.log(scoresDetail);
 			totalScore += score;
 
 			if (ProgrammingCorrectAnswer) {
