@@ -129,12 +129,9 @@ module.exports = function(app) {
 				if (data.password != md(req.body.password)) {
 					res.send({error: {message: "密码错误！", reason: "password"}});
 				}
-				else if (data.identity != req.body.identity) {
-					res.send({error: {message: "登录失败，请确定登录信息无误！", reason: "identity"}});
-				}
 				else {
 					req.session.userId = req.body.userId;
-					req.session.identity = req.body.identity;
+					req.session.identity = data.identity;
 					req.session.imageSrc = data.imageSrc;
 					res.send({success: "login success!"});
 				}
@@ -175,7 +172,21 @@ module.exports = function(app) {
 				scriptFilePath: ["javascripts/settingsJS.js"],
 				innerHtml: initInterface.settingsInterface
 			});
-		})
+		});
+	});
+
+	app.get("/usersManage", function(req, res) {
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				fullName: req.session.userId,
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
+				imageSrc: req.session.imageSrc,
+				cssFilePath: ["stylesheets/usersManageStyle.css"],
+				scriptFilePath: ["javascripts/usersManageJS.js"],
+				innerHtml: initInterface.usersManageInterface
+			});
+		});
 	});
 
 	app.get("/pratice", function(req, res) {

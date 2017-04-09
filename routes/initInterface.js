@@ -61,6 +61,33 @@ initInterface = {
 								</section>
 							</section>
 						</section>`,
+	usersManageInterface: `<section class="showUsersInfo body">
+								<table>
+									<thead>
+										<tr>
+											<th>用户ID</th>
+											<th>用户密码（md5加密后）</th>
+											<th>用户身份</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+								<section class="bottomSec">
+									<div class="btnDiv">
+										<input type="button" value="+" class="addBtn">
+									</div>
+									<div class="flip">
+										<input type="button" value="<" class="previous">
+										<div class="showPage">
+											<input type="text" value=1 class="currentPage">/
+											<span class="totalPage"></span>
+										</div>
+										<input type="button" value=">" class="next">
+									</div>
+								</section>
+							</section>`,
 	praticeInterface: `<nav class="typeNav">
 							<div class="navContent">
 								<div class="chapter">章节练习</div>

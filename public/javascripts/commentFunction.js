@@ -129,15 +129,7 @@ function getCurrentToolbar() {
 	let location = "http://localhost:3000/pratice?";
 	if (window.location.href.split("?").length < 2) return;
 	let paramArray = window.location.href.split("?")[1].split("&");
-	// for(let i=0, len=paramArray.length; i<len; i++) {
-	// 	let keyValuePair = paramArray[i].split("=");
-	// 	if (i != 0) {
-	// 		location = location + "&";
-	// 	}
-	// 	location = location + paramArray[i];
-	// 	$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + keyValuePair[1] +"</a>";
-	// }
-
+	
 	if (paramArray.length > 0) {
 		let keyValuePair = paramArray[0].split("=");
 		location = location + paramArray[0];
@@ -147,19 +139,6 @@ function getCurrentToolbar() {
 
 // 绑定顶部导航栏事件
 function toobarEvent() {
-	// $(".tab").hover(function() {
-	// 	$(".navigation").css("height", "30px");
-	// 	$(".navigation").css("opacity", 1);
-	// });
-
-	// $(".naviSec").hover(function() {
-	// }, function() {
-	// 	if ($(".navigation").css("opacity") == 1) {
-	// 		$(".navigation").css("height", 0);
-	// 		$(".navigation").css("opacity", 0);
-	// 	}
-	// });
-
 	//绑定导航目录事件
 	$(".naviSec").click(function(e) {
 		let className = getTarget(e).className;

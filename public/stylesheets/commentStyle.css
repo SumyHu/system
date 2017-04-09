@@ -139,28 +139,6 @@ input[type=button], input[type=submit] {
 	display: none;
 }
 
-.logo {
-	position: absolute;
-	left: 0;
-	height: 50px;
-	margin: 18px 20px;
-	padding: 5px 10px;
-	/*float: left;*/
-	/*border: 2px solid #514F02;*/
-	border: 2px solid #A4CD33;
-	border-radius: 30%;
-	font-family: "Brush Script Std";
-	/*font-family: "Chiller";*/
-	font-size: 28px;
-	letter-spacing: 3px;
-	line-height: 50px;
-	/*background: #A4CD33;*/
-	/*color: #2C1A18;*/
-	/*color: #514F02*/
-	/*color: #FA050D;*/
-	color: #A4CD33;
-}
-
 .time {
 	position: absolute;
 	left: 50%;
@@ -168,6 +146,28 @@ input[type=button], input[type=submit] {
 	transform: translate(-50%, -50%);
 	font-size: 23px;
 	color: #fff;
+}
+
+.usersManage {
+	display: none;
+	position: relative;
+	top: -10px;
+	margin-right: 50px;
+	float: right;
+}
+
+.usersManage > input {
+	height: 30px;
+	padding: 0 10px;
+	border-radius: 10px;
+	font-size: 17px;
+	line-height: 30px;
+	background: rgba(255, 0, 0, 0.7);
+	transition: 0.3s all linear;
+}
+
+.usersManage > input:hover {
+	background: red;
 }
 
 .userInfo {

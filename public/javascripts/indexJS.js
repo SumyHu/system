@@ -16,7 +16,7 @@ function addSubjectInView(subjectName, updateTime) {
 	let addSubject = $(".addSubject");
 	addSubject.before(section);
 
-	if (identity !== "teacher") {
+	if (identity === "student") {
 		$(".remove").css("display", "none");
 		$(".modify").css("display", "none");
 	}
@@ -263,7 +263,7 @@ function modifySubjectName($modifyTarget) {
 
 function init() {
 	identity = $(".identity")[0].id;
-	if (identity !== "teacher") {
+	if (identity === "student") {
 		$(".addSubject").css("display", "none");
 	}
 

@@ -21,21 +21,12 @@ function bindEvent() {
 			return;
 		}
 
-		let identity;
-		if ($("#teacher")[0].checked) {
-			identity = $("#teacher").val();
-		}
-		else {
-			identity = $("#student").val();
-		}
-
 		$.ajax({
 			url: "../login",
 			type: "POST",
 			data: {
 				userId: $(".username").val(),
-				password: $(".password").val(),
-				identity: identity
+				password: $(".password").val()
 			},
 			success: function(data) {
 				if (data.error) {

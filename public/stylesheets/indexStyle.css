@@ -50,6 +50,22 @@
 	font-size: 40px;
 }
 
+.usersManage {
+	position: absolute;
+	left: 50%;
+	top: 87%;
+	clear: both;
+	transform: translate(-50%, -50%);
+	font-size: 23px;
+	color: #fff;
+}
+
+.usersManage > input {
+	height: 35px;
+	font-size: 20px;
+	line-height: 35px;
+}
+
 .naviSec {
 	display: none;
 }

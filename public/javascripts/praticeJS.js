@@ -146,14 +146,14 @@ function doPratice(queryParam) {
 }
 
 function authorityControl() {
-	if (identity !== "teacher") {
+	if (identity === "student") {
 		$(".addMore").css("display", "none");
 	}
 	else {
 		$(".addMore").css("display", "inline-block");
 	}
 
-	if (identity !== "teacher") {
+	if (identity === "student") {
 		$(".removeIndex").css("display", "none");
 		$(".modifyBtn").css("display", "none");
 	}
@@ -173,7 +173,7 @@ function showChapterIndex(indexCount) {
 		showOneChapterContentType(chapterPratices[0]);
 	}
 
-	if (identity === "teacher") {
+	if (identity !== "student") {
 		$(".chapterContent > aside > ul > li").hover(function(e) {
 			$(getTarget(e)).find(".btnDiv").css("display", "block");
 		}, function(e) {
@@ -325,7 +325,7 @@ function addExamination(unitId, index) {
 							</section>`;
 		$(".examinationContent .addMore").before(section);
 
-		if (identity === "teacher") {
+		if (identity !== "student") {
 			$(section).hover(function(e) {
 				$(this).find(".showEg > .btnDiv").css("display", "block");
 				// let target = getTarget(e);
@@ -444,7 +444,7 @@ function bindEvent() {
 		window.location.href = window.location.href + "&praticeType=" + currentPraticeType;
 	});
 
-	if (identity === "teacher") {
+	if (identity !== "student") {
 		$(".randomContent > .content > section").hover(function(e) {
 			$(this).find(".showEg > .btnDiv").css("display", "block");
 		}, function(e) {

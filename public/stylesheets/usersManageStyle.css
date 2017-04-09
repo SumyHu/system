@@ -1,0 +1,147 @@
+.showUsersInfo {
+	width: 90%;
+}
+
+.showUsersInfo > table {
+	width: 100%;
+	border-collapse: collapse;
+	overflow: hidden;
+}
+
+tr {
+	border-bottom: 1px dashed #8c8c8c;
+	line-height: 30px;
+}
+
+td {
+	text-align: center;
+	overflow: hidden;
+}
+
+.flip {
+	/*width: 70%;*/
+}
+
+.previous {
+	float: left;
+}
+
+.showPage {
+	position: absolute;
+	display: inline-block;
+	width: 85px;
+	left: 50%;
+	transform: translateX(-50%);
+	line-height: 25px;
+}
+
+.currentPage {
+	display: inline-block;
+	width: 50px;
+	height: 25px;
+	float: left;
+	margin: 0 5px 0 0;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.totalPage {
+	padding: 0 0 0 5px;
+}
+
+.next {
+	float: right;
+}
+
+.previous, .next {
+	width: 50px;
+	height: 30px !important;
+	border-radius: 5px;
+	background: rgba(67, 135, 253, 0.6);
+	line-height: 30px !important;
+}
+
+.previous:hover, .next:hover {
+	background: rgba(67, 135, 253, 0.8);
+}
+
+.btnDiv > .addBtn {
+	width: 100%;
+	margin: 10px 0;
+    border: 1px solid #e8eaed;
+    border-radius: 5px;
+    box-shadow: 1px 3px 5px #e0e3e6;
+    background: rgba(255, 255, 255, 0.3) !important;
+	transition: 0.3s all linear;
+	font-size: 40px;
+    color: #000;
+}
+
+.btnDiv > .addBtn:hover {
+	/*background: rgba(0, 0, 0, 0.1) !important;*/
+	background: #cccfd1 !important;
+}
+
+.modify, .remove {
+	display: inline-block;
+	position: relative;
+	width: 25px;
+	height: 25px !important;
+	margin: 10px 0;
+	padding: 0;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 25px !important;
+	font-size: 25px !important;
+	color: red !important;
+	/*background: red;*/
+	background-image: url("../image/pen.png");
+	background-size: 80%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	transition: 0.1s all linear;
+}
+
+.remove {
+	background-image: url("../image/error.png");
+}
+
+.remove:hover, .modify:hover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.win {
+	height: 360px;
+}
+
+.winContentBg {
+	height: 310px;
+	margin: 0;
+}
+
+.winContent {
+	top: 0;
+	transform: translateY(0);
+}
+
+.title {
+	padding: 20px 0;
+	text-align: center;
+	border-radius: 20px 20px 0 0;
+	background: #e8eaed;
+}
+
+.userIdInWin, .passwordInWin, .identityInWin {
+	margin: 20px;
+	font-size: 18px;
+}
+
+.textInput {
+	width: 350px;
+	font-size: 18px;
+}
+
+label {
+	margin: 0 20px 0 0;
+}
