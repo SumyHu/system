@@ -46,7 +46,7 @@ function addSubject(subjectName) {
 			},
 			success: function(result) {
 				if (!result.err) {
-					let updateTime = new Date().toLocaleDateString();
+					let updateTime = new Date().toLocaleString();
 					callDataProcessingFn({
 						data: {
 							data: "subjects",
