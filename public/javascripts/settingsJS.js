@@ -145,7 +145,7 @@ function changeFindPassword() {
 
 function showSettingsContent(changeContentName) {
 	$(".navContent > div").css("background-color", "transparent");
-	$(".navContent .change" + changeContentName.substr(0, 1).toUpperCase() + changeContentName.substr(1))[0].style.backgroundColor = "rgba(249, 90, 78, 0.5)"
+	$(".navContent .change" + changeContentName.substr(0, 1).toUpperCase() + changeContentName.substr(1))[0].style.backgroundColor = "#f5f6eb"
 
 	$(".content > section").css("display", "none");
 	$(".content > ." + changeContentName + "Info").css("display", "block");

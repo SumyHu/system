@@ -12,7 +12,7 @@
 	transform: translateX(-50%);
 	text-align: center;
 	line-height: 70px;
-	color: #fff;
+	/*color: #fff;*/
 }
 
 .showTitle > .title {
@@ -115,7 +115,8 @@
 	/*background-color: #71777d !important;*/
 	line-height: 45px;
 	font-size: 13px;
-	background-color: #cccfd1 !important;
+	/*background-color: #cccfd1 !important;*/
+	background-color: #c9cabb !important;
 }
 
 .addSubject {

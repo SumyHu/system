@@ -43,8 +43,8 @@ function editorStyle(id, mode) {
             lineNumbers: true,   // 显示行号
 
 	        //设置主题
-	        theme: "seti",
-	        // theme: "monokai",
+	        // theme: "seti",
+	        theme: "monokai",
 
 	        //绑定Vim
 	        // keyMap: "vim",
@@ -447,8 +447,8 @@ function addNotChoicePratices(praticeIdArr, addPraticeType) {
 
 // 根据当前题目类型改变类型索引块的样式
 function changeTypeStyle() {
-	$(".showPraticeBlockIndex > div").css("background", "#e8eaed");
-	$("." + type + "Block").css("background", "rgba(249, 90, 78, 0.8)");
+	$(".showPraticeBlockIndex > div").css("background", "#eff0dc");
+	$("." + type + "Block").css("background", "#c9cabb");
 }
 
 /** 根据当前类型和题目下标显示对应的内容
@@ -457,8 +457,8 @@ function changeTypeStyle() {
 function changePraticeContent(index) {
 	// 修改对应索引的样式
 	let $allIndex = $(".showPraticeIndex > div");
-	$allIndex.css("background", "#e8eaed");
-	$($allIndex[index]).css("background", "rgba(249, 90, 78, 0.8");
+	$allIndex.css("background", "#eff0dc");
+	$($allIndex[index]).css("background", "#c9cabb");
 
 	// 显示对应题目
 	let $allContent = $("." + type + " > .content");
@@ -789,7 +789,8 @@ function checkAnswer() {
 			type: "POST",
 			data: {
 				correctAnswerContent: examinationCorrectAnswer,
-				studentAnswerContent: examinationStudentAnswer
+				studentAnswerContent: examinationStudentAnswer,
+				scoresObj: scoresObj
 			},
 			success: function() {
 				window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);

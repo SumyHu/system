@@ -40,7 +40,8 @@ function editorStyle(id, mode) {
             autofocus: true,
 
 	        //设置主题
-	        theme: "seti",
+	        // theme: "seti",
+	        theme: "monokai",
 
 	        //绑定Vim
 	        // keyMap: "vim",
@@ -366,8 +367,8 @@ function showSomePraticeType(praticeType) {
 	// 	// $(".next").css("width", "70px");
 	// 	$(".next").val(">");
 	// }
-	$(".navContent > div").css("background", "rgba(0, 0, 0, 0.5)");
-	$("." + praticeType).css("background", "rgba(249, 90, 78, 0.8)");
+	$(".navContent > div").css("background", "#eff0dc");
+	$("." + praticeType).css("background", "#f5f6eb");
 
 	$(".addPraticeContent > section").css("display", "none");
 	$(".add" + praticeType).css("display", "block");
@@ -826,7 +827,8 @@ function savePraticesInData(contentObj, totalCount, examinationTime) {
 			update: {
 				updateTime: new Date().toLocaleString()
 			}
-		}
+		},
+		success: function() {}
 	});
 }
 
@@ -1078,7 +1080,7 @@ function runningProgramming($programmingContent) {
 }
 
 function init() {
-	subjectName = getValueInUrl("subjectName");
+	subjectName = decodeURIComponent(getValueInUrl("subjectName"));
 	praticeType = getValueInUrl("praticeType");
 
 	$(".time")[0].innerHTML = subjectName + " — " + praticeTypeChiness[praticeType];

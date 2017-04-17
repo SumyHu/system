@@ -78,7 +78,7 @@ function newSubjectName() {
 						 style="color: #000; border-bottom-color: #000; margin: 20px 0;" maxLength=20>
 						 </div>`;
 	showWin(contentHTML, function() {
-		let subjectName = $(".textInput").val();
+		let subjectName = decodeURIComponent($(".textInput").val());
 		if (subjectName) {
 			addSubject($(".textInput").val());
 		}
@@ -185,7 +185,7 @@ function removeOneUnitAllContent(unitId) {
  * @param $removeTarget Object 删除的对象（jq对象）
 */
 function removeOneSubjectAllContent($removeTarget) {
-	let subjectName = $removeTarget.find(".subjectName")[0].innerHTML;
+	let subjectName = decodeURIComponent($removeTarget.find(".subjectName")[0].innerHTML);
 	findSubjectByName(subjectName, function(result) {
 		console.log('subject result', result);
 		let chapterPratices = result.chapterPratices,
@@ -211,13 +211,13 @@ function removeOneSubjectAllContent($removeTarget) {
  * @param $modifyTarget Object 修改对象（jq对象）
 */
 function modifySubjectName($modifyTarget) {
-	let oldSubjectName = $modifyTarget.find(".subjectName")[0].innerHTML;
+	let oldSubjectName = decodeURIComponent($modifyTarget.find(".subjectName")[0].innerHTML);
 	let contentHTML = '<div>请输入新的科目名称：</div>'
 						+ '<div><input class="textInput" type="text" autofocus=true value="'
 						+ oldSubjectName 
 						+ '" style="color: #000; border-bottom-color: #000; margin: 20px 0;"></div>';
 	showWin(contentHTML, function() {
-		let newSubjectName = $(".textInput").val();
+		let newSubjectName = decodeURIComponent($(".textInput").val());
 		if (newSubjectName && newSubjectName != oldSubjectName) {
 			findSubjectByName(newSubjectName, function() {
 				showTips("该科目已存在！", 2000);
@@ -306,7 +306,7 @@ function init() {
 		},
 		success: function(result) {
 			console.log("pratices", result);
-			// for(let i=0, len=result.length; i<len; i++) {
+			// for(let i=result.length-1, len=result.length; i<len; i++) {
 			// 	console.log(result[i]._id);
 			// 	removePratice(result[i]._id, function() {
 			// 		console.log('success');

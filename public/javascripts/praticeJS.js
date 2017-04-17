@@ -403,7 +403,7 @@ function bindEvent() {
 		currentPraticeType = classname;
 
 		$(".navContent div").css("background", "transparent");
-		$(target).css("background", "rgba(249, 90, 78, 0.8)");
+		$(target).css("background", "#f5f6eb");
 
 		$(".praticeContent > section").css("display", "none");
 		$("." + target.className + "Content").css("display", "block");

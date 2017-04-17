@@ -62,7 +62,8 @@
 	border-radius: 50%;
 	text-align: center;
 	color: #000;
-	background: #e8eaed;
+	/*background: #e8eaed;*/
+	background: #eff0dc;
 }
 
 .titleNum {
@@ -103,8 +104,9 @@
 .runningResult {
 	margin: 20px 0 0;
 	padding: 20px;
-	color: #fff;
-	background: #000;
+	/*color: #fff;*/
+	/*background: #000;*/
+	background: #fff;
 }
 
 .runningContent {
@@ -166,16 +168,19 @@
 }
 
 .showPraticeIndex > div:first-child, .showPraticeBlockIndex > div:first-child {
-	background: rgba(249, 90, 78, 0.8);
+	/*background: rgba(249, 90, 78, 0.8);*/
+	background: #c9cabb;
 }
 
 .showPraticeIndex > div:hover, .showPraticeBlockIndex > div:hover {
-	background: rgba(249, 90, 78, 0.8) !important;
+	/*background: rgba(249, 90, 78, 0.8) !important;*/
+	background: #c9cabb !important;
 }
 
 .answerBlock, .choiceAnswerBlock {
 	overflow: hidden;
-	background: #e8eaed !important;
+	/*background: #e8eaed !important;*/
+	background: #eff0dc !important;
 }
 
 .answerBlock {

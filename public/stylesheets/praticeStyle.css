@@ -17,7 +17,9 @@
 }
 
 .chapterContent > aside > ul > li.select {
-	background: rgba(249, 90, 78, 0.8);
+	/*background: rgba(249, 90, 78, 0.8);*/
+	/*background: #c9cabb;*/
+	background: #fff;
 }
 
 .chapterContent > aside > ul > li, .chapterContent .addMore {
@@ -25,12 +27,15 @@
 	width: 65px;
 	height: 65px;
 	margin: 0 10px;
+	border: 1px solid #e8eaed;
+    box-shadow: 1px 3px 5px #e0e3e6;
 	border-radius: 50%;
 	text-align: center;
 	line-height: 65px;
 	font-size: 20px;
-	color: #fff;
-	background: rgba(0, 0, 0, 0.5);
+	/*color: #fff;*/
+	background: rgba(255, 255, 255, 0.3);
+	/*background: #fff;*/
 	cursor: pointer;
 }
 
@@ -123,7 +128,7 @@
 	border-radius: 5px 5px 0 0;
 	line-height: 50px;
 	font-size: 18px;
-	background: #cccfd1 !important;
+	background: #c9cabb !important;
 }
 
 .content > section .eg {

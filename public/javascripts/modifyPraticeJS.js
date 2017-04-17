@@ -478,7 +478,7 @@ removePratice = function($target) {
 }
 
 function init() {
-	subjectName = getValueInUrl("subjectName");
+	subjectName = decodeURIComponent(getValueInUrl("subjectName"));
 	praticeType = getValueInUrl("praticeType");
 	type = getValueInUrl("type");
 	index = getValueInUrl("index");

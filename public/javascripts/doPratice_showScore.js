@@ -245,7 +245,7 @@ function showCorrectAnswer(result) {
 }
 
 function init() {
-	subjectName = getValueInUrl("subjectName");
+	subjectName = decodeURIComponent(getValueInUrl("subjectName"));
 	praticeType = getValueInUrl("praticeType");
 	selectIndex = getValueInUrl("index");
 	type = getValueInUrl("type");
