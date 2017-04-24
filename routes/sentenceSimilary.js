@@ -150,7 +150,7 @@ function wordSim(keywordArr1, keywordArr2) {
 	for(let i=0; i<len2; i++) {
 		count2 = count2 + keywordArr2[i].count;
 	}
-	console.log(simCount, count1, count2);
+	// console.log(simCount, count1, count2);
 
 	return 2*simCount/(count1+count2);
 }

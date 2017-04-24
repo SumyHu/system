@@ -407,6 +407,10 @@ module.exports = function(app) {
 		res.render("wordSimilarTest");
 	});
 
+	app.post("/calWordSimilary", function(req, res) {
+		res.send(WordSimilary("上次", "之前")+'');
+	});
+
 	app.post("/calShortAnswerScore", function(req, res) {
 		// console.log(segment.doSegment("你好，你好，在做什么呢？我好想你呢，超级超级想你呢。"));
 		// res.send(WordSimilary(req.body.text1, req.body.text2)+"");

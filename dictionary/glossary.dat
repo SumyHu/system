@@ -39938,6 +39938,7 @@ X射线               	N    	lights|光,*diagnose|诊察,medical|医
 上船                	V    	climb|攀登,LocationFin=ship|船
 上床                	V    	sleep|睡
 上唇                	N    	part|部件,%AnimalHuman|动物,mouth|口
+上次                	N    	time|时间,past|昔
 上代                	N    	human|人,past|昔
 上当                	V    	misunderstand|误信
 上当受骗            	V    	misunderstand|误信
@@ -40105,6 +40106,7 @@ X射线               	N    	lights|光,*diagnose|诊察,medical|医
 上夜班              	V    	engage|从事,content=affairs|事务,#duty|责任,#sequence|次序,night|晚
 上衣                	N    	clothing|衣物,#body|身,generic|统称
 上移                	V    	MoveItUp|上移
+上一次                	N    	time|时间,past|昔
 上议院              	N    	institution|机构,politics|政
 上议院              	N    	institution|机构,politics|政,ProperName|专,(UK|英国)
 上映                	V    	perform|表演,content=shows|表演物,entertainment|艺
@@ -60886,6 +60888,10 @@ X射线               	N    	lights|光,*diagnose|诊察,medical|医
 转播                	V    	disseminate|传播
 转产                	V    	alter|改变,patient=produce|制造
 转车                	V    	alter|改变,patient=TakeVehicle|搭乘
+转储                    V    	store|保存
+转储                    V    	store|保存,#computer|电脑
+转储                    V    	produce|制造
+转储                    V    	TakeAway|搬动
 转达                	V    	tell|告诉
 转道                	V    	alter|改变,patient=route|路
 转调                	V    	alter|改变,entertainment|艺

@@ -211,7 +211,7 @@ function participle(sentence, professionalNounsArr) {
 
 		if (sentenceStr != sentence) {
 			let sentenceArr = sentenceStr.split("N");
-			console.log("sentenceArr", sentenceArr);
+			// console.log("sentenceArr", sentenceArr);
 			for(let i=0, len1=sentenceArr.length; i<len1; i++) {
 				if (sentenceArr[i]) {
 					let sortResult = participleSentence(sentenceArr[i]);
@@ -229,7 +229,7 @@ function participle(sentence, professionalNounsArr) {
 					});
 				}
 			}
-			console.log("result", result);
+			// console.log("result", result);
 			return result;
 		}
 		else {

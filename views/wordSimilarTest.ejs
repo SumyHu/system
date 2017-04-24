@@ -2,7 +2,7 @@
 <html>
 <head>
 	<script src="javascripts/jquery.min.js"></script>
-	<script src="javascripts/matchShortAnswer.js"></script>
+	<!-- <script src="javascripts/matchShortAnswer.js"></script> -->
 	<script type="text/javascript">
 		$(function() {
 			$(".button").click(function() {
@@ -24,7 +24,7 @@
 				}
 
 				$.ajax({
-					url: "http://127.0.0.1:3000/calShortAnswerScore",
+					url: "http://127.0.0.1:3000/calWordSimilary",
 					type: "POST",
 					crossDomain: true,
 					defaultType: "json",

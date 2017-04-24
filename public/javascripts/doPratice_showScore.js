@@ -58,7 +58,7 @@ function addShortAnswerScoreDetailDiv($target, score, studentAnswer, correctAnsw
 	div.className = "showScoreDetails";
 	div.innerHTML = '<div>本题得分：<span class="score">' + score + '</span></div>' +
 					'<div>你的答案：<pre class="studentAnswer">' + studentAnswer + '</pre></div>' +
-					'<div>正确答案：<pre class="correctAnswer">' + correctAnswer.replace(/[【】（\d*）{}]/g, "") + '</pre></div>';
+					'<div>正确答案：<pre class="correctAnswer">' + correctAnswer.replace(/[【】（\d*.\d*）{}]/g, "") + '</pre></div>';
 	$target.append(div);
 }
 function addProgrammingScoreDetailDiv($target, score, studentAnswer, correctAnswer, mode) {

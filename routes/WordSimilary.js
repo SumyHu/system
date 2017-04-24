@@ -303,7 +303,7 @@ function calSimWordStr(wordstr1, wordstr2) {
         return max;
     }
     else {
-        console.log("其中有词没有被收录");
+        // console.log("其中有词没有被收录");
         if (wordstr1 == wordstr2) {
             return 1;
         }
