@@ -384,7 +384,7 @@ function showRandomIndex() {
 
 function init() {
 	identity = $(".identity")[0].id;
-	subjectName = getValueInUrl("subjectName");
+	subjectName = decodeURIComponent(getValueInUrl("subjectName"));
 
 	authorityControl();
 

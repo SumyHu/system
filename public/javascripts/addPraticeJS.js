@@ -40,8 +40,8 @@ function editorStyle(id, mode) {
             autofocus: true,
 
 	        //设置主题
-	        // theme: "seti",
-	        theme: "monokai",
+	        theme: "seti",
+	        // theme: "monokai",
 
 	        //绑定Vim
 	        // keyMap: "vim",

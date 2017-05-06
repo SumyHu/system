@@ -43,8 +43,8 @@ function editorStyle(id, mode) {
             lineNumbers: true,   // 显示行号
 
 	        //设置主题
-	        // theme: "seti",
-	        theme: "monokai",
+	        theme: "seti",
+	        // theme: "monokai",
 
 	        //绑定Vim
 	        // keyMap: "vim",
@@ -261,7 +261,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 				
 				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
 											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent">` + answerHtml.replace(/[【】（\d*）{}]/g, "") + `</div>
+											<div class="answerContent"><pre>` + answerHtml.replace(/[【】（\d*）{}]/g, "") + `<pre></div>
 										</div>`;
 			}
 			else {
@@ -768,7 +768,8 @@ function checkAnswer() {
 				data: {
 					correctAnswerContent: examinationCorrectAnswer,
 					studentAnswerContent: examinationStudentAnswer,
-					scoresObj: scoresObj
+					scoresObj: scoresObj,
+					scoresDetail: scoresDetail
 				},
 				success: function() {
 					window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
@@ -790,7 +791,8 @@ function checkAnswer() {
 			data: {
 				correctAnswerContent: examinationCorrectAnswer,
 				studentAnswerContent: examinationStudentAnswer,
-				scoresObj: scoresObj
+				scoresObj: scoresObj,
+				scoresDetail: scoresDetail
 			},
 			success: function() {
 				window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
@@ -929,7 +931,7 @@ function runningProgramming($programmingContent) {
 function init() {
 	$(".time").css("display", "block");
 
-	subjectName = getValueInUrl("subjectName");
+	subjectName = decodeURIComponent(getValueInUrl("subjectName"));
 	praticeType = getValueInUrl("praticeType");
 	selectIndex = getValueInUrl("index");
 	type = getValueInUrl("type");

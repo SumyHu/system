@@ -187,7 +187,7 @@
 }
 
 .topic > .textInput, .input .textInput, .output .textInput {
-	width: 93%;
+	width: 91%;
 }
 
 .choice {
@@ -312,9 +312,9 @@
 .runningResult {
 	margin: 20px 0 0;
 	padding: 20px;
-	/*color: #fff;*/
-	/*background: #000;*/
-	background: #f5f6eb;
+	color: #fff;
+	background: #000;
+	/*background: #f5f6eb;*/
 }
 
 .runningContent {

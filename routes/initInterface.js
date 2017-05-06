@@ -88,6 +88,149 @@ initInterface = {
 									</div>
 								</section>
 							</section>`,
+	testResultsManageInterface: `<section class="showUsersInfo body">
+									<section class="dateSearch">
+										<input type="text" class="year">年
+										<input type="text" class="month">月
+										<input type="text" class="day">日
+										<input type="button" value="search">
+									</section>
+								<table>
+									<thead>
+										<tr>
+											<th>用户账号</th>
+											<th>总得分</th>
+											<th>具体得分</th>
+											<td>提交时间</td>
+											<th>删除</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr><td colspan=5>java | 试卷1</tr>
+										<tr>
+											<td>201330810410</td>
+											<td>60</td>
+											<td>
+												<table>
+													<thead>
+														<tr>
+															<th>单选题</th>
+															<th>多选题</th>
+															<th>判断题</th>
+															<th>填空题</th>
+															<th>简答题</th>
+															<th>编程题</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>4</td>
+															<td>3</td>
+															<td>5</td>
+															<td>10</td>
+															<td>8<input type="button" class="modify"></td>
+															<td>30</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td>2017/05/04 10:10:05</td>
+											<td>
+												<input type="button" class="remove">
+											</td>
+										</tr>
+										<tr><td colspan=5>c | 试卷4</tr>
+										<tr>
+											<td>201330810410</td>
+											<td>7</td>
+											<td>
+												<table>
+													<thead>
+														<tr>
+															<th>单选题</th>
+															<th>多选题</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>4</td>
+															<td>3</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td>2017/05/06 20:10:01</td>
+											<td>
+												<input type="button" class="remove">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<section class="bottomSec">
+									<div class="btnDiv">
+										<input type="button" value="+" class="addBtn">
+									</div>
+									<div class="flip">
+										<input type="button" value="<" class="previous">
+										<div class="showPage">
+											<input type="text" value=1 class="currentPage">/
+											<span class="totalPage"></span>
+										</div>
+										<input type="button" value=">" class="next">
+									</div>
+								</section>
+							</section>`,
+	testHistoryInterface: `<section class="showUsersInfo body">
+								<table>
+									<thead>
+										<tr>
+											<th>试卷名</th>
+											<th>总得分</th>
+											<th>具体得分</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan=4>2017/05</td>
+										</tr>
+										<tr>
+											<td>oracle | 试卷2</td>
+											<td>7</td>
+											<td>
+												<table>
+													<thead>
+														<tr>
+															<th>单选题</th>
+															<th>多选题</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>4</td>
+															<td>3</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td>查看详情</td>
+										</tr>
+									</tbody>
+								</table>
+								<section class="bottomSec">
+									<div class="btnDiv">
+										<input type="button" value="+" class="addBtn">
+									</div>
+									<div class="flip">
+										<input type="button" value="<" class="previous">
+										<div class="showPage">
+											<input type="text" value=1 class="currentPage">/
+											<span class="totalPage"></span>
+										</div>
+										<input type="button" value=">" class="next">
+									</div>
+								</section>
+							</section>`,
 	praticeInterface: `<nav class="typeNav">
 							<div class="navContent">
 								<div class="chapter">章节练习</div>

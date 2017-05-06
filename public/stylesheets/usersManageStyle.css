@@ -3,9 +3,12 @@
 }
 
 .showUsersInfo > table {
-	width: 100%;
 	border-collapse: collapse;
 	overflow: hidden;
+}
+
+table {
+	width: 100%;
 }
 
 tr {
@@ -13,9 +16,17 @@ tr {
 	line-height: 30px;
 }
 
+tbody tr:hover {
+	background: #fff;
+}
+
 td {
 	text-align: center;
 	overflow: hidden;
+}
+
+td+td {
+	border-left: 1px dashed #8c8c8c;
 }
 
 .flip {
@@ -129,7 +140,8 @@ td {
 	padding: 20px 0;
 	text-align: center;
 	border-radius: 20px 20px 0 0;
-	background: #e8eaed;
+	/*background: #e8eaed;*/
+	background: #eff0dc;
 }
 
 .userIdInWin, .passwordInWin, .identityInWin {

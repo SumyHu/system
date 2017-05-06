@@ -1,4 +1,4 @@
 ALTER SESSION SET NLS_LANGUAGE=AMERICAN;
-te
+test
 /
 exit

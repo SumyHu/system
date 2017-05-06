@@ -1,0 +1,26 @@
+.dateSearch {
+	margin-bottom: 70px;
+	text-align: center;
+}
+
+.dateSearch input[type=text] {
+	width: 100px;
+	height: 25px;
+	margin: 0 10px;
+	text-align: center;
+	font-size: 18px;
+}
+
+.dateSearch input[type=button] {
+	width: 100px;
+	height: 35px !important;
+	margin-left: 30px;
+	border-radius: 5px;
+	background: rgba(67, 135, 253, 0.6);
+	line-height: 35px !important;
+}
+
+.modify {
+	margin: 0;
+	margin-left: 10px;
+}

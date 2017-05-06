@@ -60174,6 +60174,7 @@ X射线               	N    	lights|光,*diagnose|诊察,medical|医
 重武器              	N    	weapon|武器
 重物                	N    	inanimate|无生物,heavy|重
 重现                	V    	appear|出现
+重写                    V       information|信息,manner=again|再
 重新                	ADV  	aValue|属性值,frequency|频率,again|再
 重心                	N    	part|部件,%entity|实体,important|主
 重型                	ADJ  	aValue|属性值,size|尺寸,big|大

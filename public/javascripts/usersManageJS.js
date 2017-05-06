@@ -71,12 +71,6 @@ function addRow(contentObj) {
 			getAllUsersInfo(showUserInfoByPage);
 		});
 	});
-
-	$(tr).hover(function() {
-		$(tr).css("background", "#fff");
-	}, function() {
-		$(tr).css("background", "transparent");
-	});
 }
 
 /** 显示特定的用户信息

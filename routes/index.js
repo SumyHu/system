@@ -189,6 +189,34 @@ module.exports = function(app) {
 		});
 	});
 
+	app.get("/testResultsManage", function(req, res) {
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				fullName: req.session.userId,
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
+				imageSrc: req.session.imageSrc,
+				cssFilePath: ["stylesheets/usersManageStyle.css", "stylesheets/testResultsManageStyle.css"],
+				scriptFilePath: ["javascripts/testResultsManageJS.js"],
+				innerHtml: initInterface.testResultsManageInterface
+			});
+		});
+	});
+
+	app.get("/testHistory", function(req, res) {
+		isLoginIn(req, res, function() {
+			res.render("comment", {
+				fullName: req.session.userId,
+				username: req.session.userId.substr(req.session.userId.length-5, 5),
+				identity: req.session.identity,
+				imageSrc: req.session.imageSrc,
+				cssFilePath: ["stylesheets/usersManageStyle.css", "stylesheets/testHistoryStyle.css"],
+				scriptFilePath: ["javascripts/testHistoryJS.js"],
+				innerHtml: initInterface.testHistoryInterface
+			});
+		});
+	});
+
 	app.get("/pratice", function(req, res) {
 		isLoginIn(req, res, function() {
 			let renderContent = {
@@ -325,11 +353,11 @@ module.exports = function(app) {
 				        			e.stdin.write(inputValueArray[i] + "\n");
 				        			inputCount++;
 			        			}
-			        		}, 320*i);
+			        		}, 500*i);
 			        	}
 			        	setTimeout(function() {
 			        		e.stdin.end();
-			        	}, 320*inputValueArray.length);
+			        	}, 500*inputValueArray.length);
 		        	}
 		        	else {
 		        		e.stdin.end();
@@ -372,11 +400,11 @@ module.exports = function(app) {
 		        			e.stdin.write(inputValueArray[i] + "\n");
 		        			inputCount++;
 	        			}
-	        		}, 320*i);
+	        		}, 500*i);
 	        	}
 	        	setTimeout(function() {
 	        		e.stdin.end();
-	        	}, 320*inputValueArray.length);
+	        	}, 500*inputValueArray.length);
         	}
         	else {
         		e.stdin.end();
@@ -408,7 +436,7 @@ module.exports = function(app) {
 	});
 
 	app.post("/calWordSimilary", function(req, res) {
-		res.send(WordSimilary("上次", "之前")+'');
+		res.send(WordSimilary("起", "发生")+'');
 	});
 
 	app.post("/calShortAnswerScore", function(req, res) {
@@ -491,11 +519,41 @@ module.exports = function(app) {
 		}
 	});
 	app.post("/showScore", function(req, res) {
+		// var correctAnswerContent = req.body.correctAnswerContent,
+		// 	studentAnswerContent = req.body.studentAnswerContent,
+		// 	scoresObj = req.body.scoresObj,
+		// 	scoresDetail = req.body.scoresDetail,
+		// 	urlParam = scoresDetail.urlParam.split("&");
+
+		// var subjectName = urlParam[0].split("=")[1],
+		// 	examIndex = urlParam[2].split("=")[1];
+
+		// buildData.subjectsObj.find({
+		// 	subjectName: subjectName
+		// }, function(data) {
+		// 	var unitId = data.examinationPratices[examIndex];
+		// 	buildData.testResultsObj.save({
+		// 		testName: "科目名称：" + subjectName + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
+		// 		testUnitId: unitId,   // 试卷的unitId
+		// 		date: new Date(),   // 提交试卷的时间
+		// 		correctAnswerContent: correctAnswerContent,   // 正确答案
+		// 		studentAnswerContent: studentAnswerContent,   // 用户答案
+		// 		scoresObj: scoresObj,   // 各个习题的实际得分
+		// 		scoresDetail: scoresDetail   // 各个类型习题得分和总得分
+		// 	}, function(result) {
+		// 		if (!result.err) {
+		// 			buildData.usersObj.update({_id: req.session.userId}, "addToSet", {testHistory: result.id}, function(data) {
+		// 			});
+		// 		}
+		// 	});
+		// });
+
 		req.session.scoresDetail = {
 			correctAnswerContent: req.body.correctAnswerContent,
 			studentAnswerContent: req.body.studentAnswerContent,
 			scoresObj: req.body.scoresObj
 		}
+
 		res.send("success");
 	});
 
@@ -517,8 +575,8 @@ module.exports = function(app) {
 				});
 				break;
 			case "save":
-				buildData[req.body.data+"Obj"].save(req.body.saveData, function(err) {
-					res.send(err);
+				buildData[req.body.data+"Obj"].save(req.body.saveData, function(result) {
+					res.send(result);
 				});
 				break;
 			case "update":

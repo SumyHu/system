@@ -201,7 +201,11 @@ function showCorrectAnswer(result) {
 				break;
 			case "FillInTheBlank":
 				for(let i=0, len=allContent.length; i<len; i++) {
-					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i][0], answer[i].join("或"));
+					let correctAnswer = "";
+					for(let j=0, len1=answer[i].length; j<len1; j++) {
+						correctAnswer += "<br><br>" + Number(j+1) + "." + answer[i][j].join("或");
+					}
+					addShortScoreDetailDiv($(allContent[i]), scoresObj[k][i], studentAnswer[i][0], correctAnswer);
 				}
 				break;
 			case "ShortAnswer":

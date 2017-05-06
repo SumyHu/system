@@ -104,9 +104,9 @@
 .runningResult {
 	margin: 20px 0 0;
 	padding: 20px;
-	/*color: #fff;*/
-	/*background: #000;*/
-	background: #fff;
+	color: #fff;
+	background: #000;
+	/*background: #fff;*/
 }
 
 .runningContent {
@@ -188,6 +188,7 @@
 }
 
 .choiceAnswerBlock {
+	height: 35px;
 	font-size: 18px;
 	transition: 0.3s all linear;
 }
@@ -265,7 +266,6 @@ pre {
 }
 
 .ShortAnswer .showScoreDetails pre {
-	text-indent: 44px;
 	font-family: "楷体";
 }
 
