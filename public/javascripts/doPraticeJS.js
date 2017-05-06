@@ -365,7 +365,7 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 			});
 
 			editor.on("change", function() {
-				$(section).find(".runningResult > .runningContent")[0].innerHTML
+				$(sec).find(".runningResult > .runningContent")[0].innerHTML
 				 = "";
 			});
 
@@ -899,8 +899,10 @@ function runningProgramming($programmingContent) {
 		return;
 	}
 
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre><div class='loading'></div></pre>`;
+
 	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function(result) {
-		let showResult = "<div class='loading'></div>";
+		let showResult;
 		console.log(result);
 		if (!result.error) {
 			if ((programmingLanguage !== "javascript") && result.inputCount !== inputTypeArray.length) {
@@ -924,8 +926,12 @@ function runningProgramming($programmingContent) {
 			$programmingContent.find(".runningBtn").removeClass("disable");
 		}
 
-		$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
-	})
+		console.log($programmingContent[0]);
+
+		if (showResult) {
+			$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+		}
+	});
 }
 
 function init() {
@@ -1161,6 +1167,7 @@ function bindEvent() {
 	});
 
 	$(".runningBtn").click(function(e) {
+		console.log("in");
 		let $target = $(getTarget(e));
 		if (!$target.hasClass("disable")) {
 			// changeRunningBtnToDisableStatus($target, 15000);

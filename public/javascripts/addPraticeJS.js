@@ -384,7 +384,7 @@ function addMoreChoice($addChoiceSection) {
 	let bgClassName = $addChoiceSection.parent().parent()[0].className;
 	if (bgClassName === "addSingleChoice") {
 		addInputType = "radio";
-		addInputName = 'singleChoice' + addSingleChoiceCount;
+		addInputName = $addChoiceSection.find(".choice input[type=radio]")[0].name;
 	}
 	else {
 		addInputType = "checkbox";

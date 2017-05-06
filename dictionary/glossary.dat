@@ -55778,7 +55778,6 @@ X射线               	N    	lights|光,*diagnose|诊察,medical|医
 有毒                	ADJ  	aValue|属性值,cleanness|洁净,poison|毒
 有毒性              	ADJ  	aValue|属性值,cleanness|洁净,poison|毒
 有法可依            	EXPR 	obey|遵循
-有方                	ADV  	aValue|属性值,ability|能力,able|能
 有福                	ADJ  	aValue|属性值,circumstances|境况,happy|福,desired|良
 有福气              	ADJ  	aValue|属性值,circumstances|境况,happy|福,desired|良
 有根有据            	ADJ  	aValue|属性值,correctness|正误,correct|正确,desired|良

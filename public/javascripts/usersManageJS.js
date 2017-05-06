@@ -135,9 +135,14 @@ function createWinToAddUser(callback) {
 					imageSrc: "upload/default.jpg"
 				}
 			},
-			success: function() {
-				showTips("添加成功！", 1000);
-				getAllUsersInfo(showUserInfoByPage);
+			success: function(result) {
+				if (result.err) {
+					showTips("该用户已存在，添加失败！", 1000);
+				}
+				else {
+					showTips("添加成功！", 1000);
+					getAllUsersInfo(showUserInfoByPage);
+				}
 			}
 		});
 	}, function() {}, true);
