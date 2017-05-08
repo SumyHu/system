@@ -148,6 +148,11 @@ module.exports = function(app) {
 	});
 
 	app.get("/", function(req, res) {
+		// buildData.testResultsObj.findAll(function(data) {
+		// 	buildData.testResultsObj.remove({_id: data[0]._id}, function() {});
+		// 	console.log(data);
+		// });
+
 		isLoginIn(req, res, function() {
 			res.render("comment", {
 				fullName: req.session.userId,
@@ -235,7 +240,11 @@ module.exports = function(app) {
 				renderContent.scriptFilePath = ["codemirror-5.23.0/lib/codemirror.js", "codemirror-5.23.0/mode/clike/clike.js", "codemirror-5.23.0/mode/php/php.js", "codemirror-5.23.0/mode/python/python.js", "codemirror-5.23.0/mode/ruby/ruby.js", "codemirror-5.23.0/mode/sql/sql.js", "codemirror-5.23.0/mode/javascript/javascript.js", "codemirror-5.23.0/addon/edit/matchbrackets.js", "javascripts/programmingRunningJS.js", "javascripts/doPraticeJS.js"];
 				renderContent.innerHtml = initInterface.doPraticeInterface;
 
-				if (req.query.showScore && req.session.scoresDetail) {
+				if (req.query.showScore && (req.session.scoresDetail || req.query.scoresDetail)) {
+					if (req.query.scoresDetail) {
+						console.log(req.query.scoresDetail);
+						req.session.scoresDetail = JSON.parse(decodeURIComponent(req.query.scoresDetail));
+					}
 					renderContent.scriptFilePath.push("javascripts/doPratice_showScore.js");
 				}
 			}
@@ -519,34 +528,36 @@ module.exports = function(app) {
 		}
 	});
 	app.post("/showScore", function(req, res) {
-		// var correctAnswerContent = req.body.correctAnswerContent,
-		// 	studentAnswerContent = req.body.studentAnswerContent,
-		// 	scoresObj = req.body.scoresObj,
-		// 	scoresDetail = req.body.scoresDetail,
-		// 	urlParam = scoresDetail.urlParam.split("&");
+		var correctAnswerContent = req.body.correctAnswerContent,
+			studentAnswerContent = req.body.studentAnswerContent,
+			scoresObj = req.body.scoresObj,
+			scoresDetail = req.body.scoresDetail,
+			urlParam = decodeURIComponent(scoresDetail.urlParam).split("&");
 
-		// var subjectName = urlParam[0].split("=")[1],
-		// 	examIndex = urlParam[2].split("=")[1];
+		var subjectName = urlParam[0].split("=")[1],
+			examIndex = urlParam[2].split("=")[1];
 
-		// buildData.subjectsObj.find({
-		// 	subjectName: subjectName
-		// }, function(data) {
-		// 	var unitId = data.examinationPratices[examIndex];
-		// 	buildData.testResultsObj.save({
-		// 		testName: "科目名称：" + subjectName + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
-		// 		testUnitId: unitId,   // 试卷的unitId
-		// 		date: new Date(),   // 提交试卷的时间
-		// 		correctAnswerContent: correctAnswerContent,   // 正确答案
-		// 		studentAnswerContent: studentAnswerContent,   // 用户答案
-		// 		scoresObj: scoresObj,   // 各个习题的实际得分
-		// 		scoresDetail: scoresDetail   // 各个类型习题得分和总得分
-		// 	}, function(result) {
-		// 		if (!result.err) {
-		// 			buildData.usersObj.update({_id: req.session.userId}, "addToSet", {testHistory: result.id}, function(data) {
-		// 			});
-		// 		}
-		// 	});
-		// });
+		buildData.subjectsObj.find({
+			subjectName: subjectName
+		}, function(data) {
+			var unitId = data.examinationPratices[examIndex];
+			buildData.testResultsObj.save({
+				userId: req.body.userId,
+				testName: subjectName + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
+				testUnitId: unitId,   // 试卷的unitId
+				date: new Date(),   // 提交试卷的时间
+				correctAnswerContent: correctAnswerContent,   // 正确答案
+				studentAnswerContent: studentAnswerContent,   // 用户答案
+				scoresObj: scoresObj,   // 各个习题的实际得分
+				scoresDetail: scoresDetail   // 各个类型习题得分和总得分
+			}, function(result) {
+				console.log(result);
+				if (!result.err) {
+					buildData.usersObj.update({_id: req.session.userId}, "addToSet", {testHistory: result.id}, function(data) {
+					});
+				}
+			});
+		});
 
 		req.session.scoresDetail = {
 			correctAnswerContent: req.body.correctAnswerContent,

@@ -70,6 +70,7 @@ buildData.praticesObj = commentDataProcessing(pratices);
 
 // 建立存储用户考试模拟结果的二维表
 var testResultsSchema = new Schema({
+	userId: String,
 	testName: String,   // 测试试卷名称
 	testUnitId: String,   // 试卷的unitId
 	date: Date,   // 提交试卷的时间

@@ -769,7 +769,8 @@ function checkAnswer() {
 					correctAnswerContent: examinationCorrectAnswer,
 					studentAnswerContent: examinationStudentAnswer,
 					scoresObj: scoresObj,
-					scoresDetail: scoresDetail
+					scoresDetail: scoresDetail,
+					userId: $(".showUsername")[0].id
 				},
 				success: function() {
 					window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
@@ -1167,7 +1168,6 @@ function bindEvent() {
 	});
 
 	$(".runningBtn").click(function(e) {
-		console.log("in");
 		let $target = $(getTarget(e));
 		if (!$target.hasClass("disable")) {
 			// changeRunningBtnToDisableStatus($target, 15000);

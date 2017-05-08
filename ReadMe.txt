@@ -2,7 +2,7 @@
 
 解决办法： 
 第一步 
-删除c:\windows\下面的my.ini （D:\mysql-5.7.17-winx64\my-default.ini）
+删除c:\windows\下面的my.ini （D:\mysql-5.7.17-winx64\my-default.ini），若没有，则跳到第二步。
 第二步 在dos下 输入 mysqld -nt -remove 删除服务 
 在接着输入 mysqld -nt -install 
 第三步 输入mysql 启动成功。

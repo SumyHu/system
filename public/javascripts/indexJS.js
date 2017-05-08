@@ -277,6 +277,16 @@ function init() {
 		}
 	});
 
+	// callDataProcessingFn({
+	// 	data: {
+	// 		data: "testResults",
+	// 		callFuntion: "findAll"
+	// 	},
+	// 	success: function(result) {
+	// 		console.log(result);
+	// 	}
+	// });
+
 	$(".time").css("display", "none");
 	
 	findAllSubject(function(result) {

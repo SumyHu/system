@@ -1,14 +1,19 @@
-.showUsersInfo {
+.showUsersInfo, .showtestResultsInfo, .showtestHistoryInfo {
 	width: 90%;
 }
 
-.showUsersInfo > table {
+.body > table {
 	border-collapse: collapse;
 	overflow: hidden;
 }
 
 table {
 	width: 100%;
+	background: #fff;
+}
+
+thead {
+	background: #f5f6eb;
 }
 
 tr {
@@ -16,8 +21,8 @@ tr {
 	line-height: 30px;
 }
 
-tbody tr:hover {
-	background: #fff;
+.testName:hover, .testTime:hover {
+	background: #C9CABB;
 }
 
 td {
@@ -31,6 +36,7 @@ td+td {
 
 .flip {
 	/*width: 70%;*/
+	margin-top: 20px;
 }
 
 .previous {
@@ -79,7 +85,7 @@ td+td {
 
 .btnDiv > .addBtn {
 	width: 100%;
-	margin: 10px 0;
+	margin: 20px 0 0;
     border: 1px solid #e8eaed;
     border-radius: 5px;
     box-shadow: 1px 3px 5px #e0e3e6;
@@ -156,4 +162,58 @@ td+td {
 
 label {
 	margin: 0 20px 0 0;
+}
+
+.testName, .testTime {
+	background: #f5f6eb;
+	cursor: pointer;
+}
+
+.icon {
+	margin: 0 30px;
+}
+
+tr.content {
+	display: none;
+	overflow: hidden;
+}
+
+.dateSearch {
+	margin-bottom: 70px;
+	text-align: center;
+}
+
+.dateSearch input[type=text] {
+	width: 100px;
+	height: 25px;
+	margin: 0 10px;
+	text-align: center;
+	font-size: 18px;
+}
+
+.dateSearch input[type=button] {
+	width: 100px;
+	height: 35px !important;
+	margin-left: 30px;
+	border-radius: 5px;
+	background: rgba(67, 135, 253, 0.6);
+	line-height: 35px !important;
+}
+
+.modify {
+	margin: 0;
+	margin-left: 10px;
+}
+
+.seeMore {
+	color: blue;
+	cursor: pointer;
+}
+
+.seeMore:hover {
+	text-decoration: underline;
+}
+
+.dateSearch input[type=text] {
+	border: 1px solid #d0d0d0;
 }
