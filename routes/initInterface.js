@@ -90,10 +90,10 @@ initInterface = {
 							</section>`,
 	testResultsManageInterface: `<section class="showtestResultsInfo body">
 									<section class="dateSearch">
-										<input type="text" class="year">年
-										<input type="text" class="month">月
-										<input type="text" class="day">日
-										<input type="button" value="search">
+										<input type="text" class="year" placeholder="all">年
+										<input type="text" class="month" placeholder="all">月
+										<input type="text" class="day" placeholder="all">日
+										<input type="button" value="search" class="searchBtn">
 									</section>
 								<table>
 									<thead>
@@ -111,9 +111,9 @@ initInterface = {
 							</section>`,
 	testHistoryInterface: `<section class="showtestHistoryInfo body">
 								<section class="dateSearch">
-									<input type="text" class="year">年
-									<input type="text" class="month">月
-									<input type="button" value="search">
+									<input type="text" class="year" placeholder="all">年
+									<input type="text" class="month" placeholder="all">月
+									<input type="button" value="search" class="searchBtn">
 								</section>
 								<table>
 									<thead>
