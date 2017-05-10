@@ -365,6 +365,8 @@ module.exports = function(app) {
 
 		        	e.stdout.pipe(process.stdout);
 		        	if (inputValueArray) {
+		        		let seconds = inputValueArray.length*170;
+
 		        		for(let i=0; i<inputValueArray.length; i++) {
 			        		setTimeout(function() {
 			        			console.log(inputValueArray[i]);
@@ -372,11 +374,11 @@ module.exports = function(app) {
 				        			e.stdin.write(inputValueArray[i] + "\n");
 				        			inputCount++;
 			        			}
-			        		}, 500*i);
+			        		}, seconds*i);
 			        	}
 			        	setTimeout(function() {
 			        		e.stdin.end();
-			        	}, 500*inputValueArray.length);
+			        	}, seconds*inputValueArray.length);
 		        	}
 		        	else {
 		        		e.stdin.end();
@@ -412,6 +414,8 @@ module.exports = function(app) {
 
         	e.stdout.pipe(process.stdout);
     		if (inputValueArray) {
+    			let seconds = inputValueArray.length*170;
+
         		for(let i=0; i<inputValueArray.length; i++) {
 	        		setTimeout(function() {
 	        			console.log(inputValueArray[i]);
@@ -419,11 +423,11 @@ module.exports = function(app) {
 		        			e.stdin.write(inputValueArray[i] + "\n");
 		        			inputCount++;
 	        			}
-	        		}, 500*i);
+	        		}, seconds*i);
 	        	}
 	        	setTimeout(function() {
 	        		e.stdin.end();
-	        	}, 500*inputValueArray.length);
+	        	}, seconds*inputValueArray.length);
         	}
         	else {
         		e.stdin.end();
