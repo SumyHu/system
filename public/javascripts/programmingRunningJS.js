@@ -1,5 +1,3 @@
-let commentJs;
-
 function getRandomNumber(numberType, numberLength) {
 	let random = Math.random()*numberLength;
 	switch(numberType) {
@@ -163,6 +161,31 @@ function runningCode(mode, code, inputTypeArray, outputTypeArray, callback) {
 	}
 }
 
+function runningOnceResult(type, code, inputValue, runCount, saveResultsArr, otherResultsArr, callback) {
+	runningCodeByCmd(type, code, inputValue[runCount], function(result) {
+		if (result.success || result.success === "") {
+			saveResultsArr[runCount] = result.success;
+		}
+		else {
+			runningOnceResult(type, code, inputValue,runCount, saveResultsArr);
+		}
+
+		if (saveResultsArr.length === 20 && otherResultsArr.length === 20) {
+			compareResultsTwentyTimes(saveResultsArr, otherResultsArr, callback);
+		}
+	});
+}
+
+function compareResultsTwentyTimes(resultArray1, resultArray2, callback) {
+	let rightCount = 0;
+	for(let i=0, len=resultArray1.length; i<len; i++) {
+		let compareSuccess1 = resultArray1[i].replace(/\s+/g, ' '),
+			compareSuccess2 = resultArray2[i].replace(/\s+/g, ' ');
+		if (compareSuccess1 == compareSuccess2) rightCount++;
+	}
+	callback(rightCount);
+}
+
 function runingOnceJavaCompare(type, correctCode, studentCode, inputValue, runCount, rightCount, callback) {
 	runningCodeByCmd(type, correctCode, inputValue[runCount], function(result1) {
 		runningCodeByCmd(type, studentCode, inputValue[runCount], function(result2) {
@@ -225,7 +248,12 @@ function runningCodeWithCorrectAnswer(mode, correctCode, studentCode, inputTypeA
 		case "Ruby":
 		case "sql(mysql)":
 		case "sql(oracle)":
-			runingOnceJavaCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
+			// runingOnceJavaCompare(mode, correctCode, studentCode, inputValue, runCount, rightCount, callback);
+			let resultArray1 = [], resultArray2 = [];
+			for(let i=0; i<20; i++) {
+				runningOnceResult(mode, correctCode, inputValue, i, resultArray1, resultArray2, callback);
+				runningOnceResult(mode, studentCode, inputValue, i, resultArray2, resultArray1, callback);
+			}
 			break;
 		case "javascript":
 			runingJavascriptsCompare(correctCode, studentCode, inputValue, runCount, rightCount, callback);

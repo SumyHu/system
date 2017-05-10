@@ -4,11 +4,11 @@ public class Main {
 		return a+b;
 	}
 	public static void main(String[] args) {
-		Scanner input1 = new Scanner(System.in);
-		Scanner input2 = new Scanner(System.in);
-		int n1 = input1.nextInt();
-		int n2 = input2.nextInt();
-		Main instance = new Main();
-		System.out.println(instance.sum(n1, n2));
+		 Scanner scan = new Scanner(System.in).useDelimiter("\\D");
+		 int n1 = scan.nextInt();
+		 int n2 = scan.nextInt();
+      scan.close();
+		 Main instance = new Main();
+		 System.out.println(instance.sum(n1, n2));
 	}
 }

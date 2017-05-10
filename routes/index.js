@@ -365,7 +365,11 @@ module.exports = function(app) {
 
 		        	e.stdout.pipe(process.stdout);
 		        	if (inputValueArray) {
-		        		let seconds = inputValueArray.length*170;
+		        		let time = 170;
+		        		if (req.body.type === "java") {
+		        			time = 15;
+		        		}
+		        		let seconds = inputValueArray.length*time;
 
 		        		for(let i=0; i<inputValueArray.length; i++) {
 			        		setTimeout(function() {
@@ -414,7 +418,7 @@ module.exports = function(app) {
 
         	e.stdout.pipe(process.stdout);
     		if (inputValueArray) {
-    			let seconds = inputValueArray.length*170;
+    			let seconds = inputValueArray.length*20;
 
         		for(let i=0; i<inputValueArray.length; i++) {
 	        		setTimeout(function() {
@@ -553,12 +557,12 @@ module.exports = function(app) {
 			examIndex = urlParam[2].split("=")[1];
 
 		buildData.subjectsObj.find({
-			subjectName: subjectName
+			subjectName: decodeURIComponent(subjectName)
 		}, function(data) {
 			var unitId = data.examinationPratices[examIndex];
 			buildData.testResultsObj.save({
 				userId: req.body.userId,
-				testName: subjectName + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
+				testName: decodeURIComponent(subjectName) + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
 				testUnitId: unitId,   // 试卷的unitId
 				date: new Date(),   // 提交试卷的时间
 				correctAnswerContent: correctAnswerContent,   // 正确答案
@@ -649,7 +653,7 @@ module.exports = function(app) {
 				break;
 			case "java":
 				testFilePath = javaCodeTestPath;
-				notice += "您可以写很多个类，但是必须有一个类名为Main，并且为public属性，并且Main为唯一的public class，Main类的里面必须包含一个名字为'main'的静态方法（函数），这个方法是程序的入口。";
+				notice += "（1）您可以写很多个类，但是必须有一个类名为Main，并且为public属性，并且Main为唯一的public class，Main类的里面必须包含一个名字为'main'的静态方法（函数），这个方法是程序的入口。（2）按照样例解答中的方法从控制台中读取值。";
 				break;
 			case "php":
 				testFilePath = phpCodeTestPath;
