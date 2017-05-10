@@ -283,3 +283,9 @@ pre {
 	font-size: 14px;
 	color: orange;
 }
+
+input.score {
+	display: inline-block;
+	width: 100px;
+	text-align: center;
+}

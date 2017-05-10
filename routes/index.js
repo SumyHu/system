@@ -247,6 +247,16 @@ module.exports = function(app) {
 					}
 					renderContent.scriptFilePath.push("javascripts/doPratice_showScore.js");
 				}
+				else if (req.query.modifyShortAnswerScore) {
+					// console.log(req.query.scoresObj.ShortAnswer);
+					req.session.scoresDetail = {
+						correctAnswerContent: JSON.parse(req.query.correctAnswerContent),
+						studentAnswerContent: JSON.parse(req.query.studentAnswerContent),
+						scoresObj: JSON.parse(req.query.scoresObj),
+						testId: req.query.testId
+					}
+					renderContent.scriptFilePath.push("javascripts/modifyShortAnswerScoreJS.js");
+				}
 			}
 			else if (req.query.praticeType) {
 				renderContent.cssFilePath = ["codemirror-5.23.0/lib/codemirror.css", "codemirror-5.23.0/theme/seti.css", "stylesheets/addPraticeStyle.css"];
@@ -528,6 +538,7 @@ module.exports = function(app) {
 		}
 	});
 	app.post("/showScore", function(req, res) {
+		console.log(req.body.userId);
 		var correctAnswerContent = req.body.correctAnswerContent,
 			studentAnswerContent = req.body.studentAnswerContent,
 			scoresObj = req.body.scoresObj,

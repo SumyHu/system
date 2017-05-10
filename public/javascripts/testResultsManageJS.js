@@ -7,6 +7,7 @@ function getAllTestHistory(callback) {
 			callFunction: "findAll"
 		},
 		success: function(data) {
+			console.log(data);
 			dataProcess(data);
 			callback(allDataGroupByNameAndDate);
 		}
@@ -140,22 +141,20 @@ function removeOneRecord($targetBtn) {
 function init() {
 	getAllTestHistory(addAllTestHistoryInTable);
 
-	// callDataProcessingFn({
-	// 	data: {
-	// 		data: "users",
-	// 		callFunction: "update",
-	// 		updateOpt: {
-	// 			_id: "201330810410"
-	// 		},
-	// 		operation: "pop",
-	// 		update: {
-	// 			"testHistory": "59106487135436c016dfc278"
-	// 		}
-	// 	},
-	// 	success: function(data) {
-	// 		console.log(data);
-	// 	}
-	// });
+	let testName = decodeURIComponent(getValueInUrl("testName"));
+	if (testName) {
+		let count = 0;
+		for(let name in allDataGroupByNameAndDate) {
+			if (name == testName) {
+				$(".testName" + count + "-content").css("display", "table-row");
+				$("#testName" + count + " .icon").html("︾");
+				break;
+			}
+			count ++;
+		}
+
+		window.history.pushState({}, 0, "../testResultsManage");
+	}
 }
 
 function bindEvent() {
@@ -173,12 +172,17 @@ function bindEvent() {
 			return;
 		}
 
-		if (year && month && day) {
+		if (!(year || month || day)) {
+			addAllTestHistoryInTable(allDataGroupByNameAndDate);
+		}
+		else {
+			let RegExpObject = new RegExp((year?year:"\\d+") + "\/" + (month?month:"\\d+") + "\/" + (day?day:"\\d+"));
+
 			let addData = {}, outerFlag = false;
 			for(let name in allDataGroupByNameAndDate) {
 				let flag = false, addDataByDate = {};
 				for(let date in allDataGroupByNameAndDate[name]) {
-					if (date == (year+"/"+month+"/"+day)) {
+					if (RegExpObject.test(date)) {
 						flag = true;
 						addDataByDate[date] = allDataGroupByNameAndDate[name][date];
 					}
@@ -191,7 +195,7 @@ function bindEvent() {
 			if (outerFlag) {
 				addAllTestHistoryInTable(addData);
 				$(".content").css("display", "table-row");
-				$(".icon")[0].innerHTML = "︾";
+				$(".icon").html("︾");
 			}
 			else {
 				let tbody = $(".showtestResultsInfo > table > tbody")[0];
@@ -201,12 +205,34 @@ function bindEvent() {
 	});
 
 	$(".showtestResultsInfo > table > tbody").click(function(e) {
-		console.log(getTarget(e));
 		let $target = $(getTarget(e)), classname = $target[0].className;
 		if (classname === "remove") {
 			showWin("确定删除该条记录？", function() {
 				removeOneRecord($target);
 			});
+		}
+		else if (classname === "modify") {
+			let index = $target.parent().parent().parent().parent().parent().parent()[0].id,
+				data = initData[index], 
+				testName = data.testName.replace(/\s+/g, "").split("|"),
+				correctAnswerContent = {
+					ShortAnswer: data.correctAnswerContent.ShortAnswer
+				},
+				studentAnswerContent = {
+					ShortAnswer: data.studentAnswerContent.ShortAnswer
+				},
+				scoresObj = {
+					ShortAnswer: data.scoresObj.ShortAnswer
+				}, 
+				testId = data._id;
+				console.log(data.scoresObj.ShortAnswer);
+
+			window.location.href = "../pratice?subjectName=" + testName[0] + "&index=" 
+									+ (testName[1].substr(2)-1) + "&modifyShortAnswerScore=true"
+									+ "&correctAnswerContent=" + JSON.stringify(correctAnswerContent)
+									+ "&studentAnswerContent=" + JSON.stringify(studentAnswerContent)
+									+ "&scoresObj=" + JSON.stringify(scoresObj)
+									+ "&testId=" + testId;
 		}
 		else if (classname === "icon") {
 			testNameClick($target.parent().parent());
@@ -214,65 +240,5 @@ function bindEvent() {
 		else if ($target[0].colSpan === 5 && $target.find(".icon").length) {
 			testNameClick($target.parent());
 		}
-	});
-
-	$(".remove").click(function() {
-		// let $removeTarget = $(this).parent().parent(), classname = $removeTarget[0].className;
-		// $removeTarget.remove();
-
-		// let testNameId = classname.substr(0, 9);
-
-		// if ($("." + testNameId + "-content").length === 0) {
-		// 	$("#" + testNameId).remove();
-		// }
-
-		// let index = $removeTarget[0].id, testResultsId = initData[index]._id, 
-		// 	userId = $removeTarget.find(".userId")[0].innerHTML;
-
-		// callDataProcessingFn({
-		// 	data: {
-		// 		data: "testResults",
-		// 		callFunction: "remove",
-		// 		removeOpt: {
-		// 			_id: testResultsId
-		// 		}
-		// 	},
-		// 	success: function() {
-		// 		callDataProcessingFn({
-		// 			data: {
-		// 				data: "users",
-		// 				callFunction: "find",
-		// 				findOpt: {
-		// 					_id: userId
-		// 				}
-		// 			},
-		// 			success: function(data) {
-		// 				let testHistory = data.testHistory;
-		// 				for(let i=0, len=testHistory.length; i<len; i++) {
-		// 					if (testHistory[i] === testResultsId) {
-		// 						testHistory.splice(i, 1);
-		// 						break
-		// 					}
-		// 				}
-		// 				callDataProcessingFn({
-		// 					data: {
-		// 						data: "users",
-		// 						callFunction: "update",
-		// 						updateOpt: {
-		// 							_id: userId
-		// 						},
-		// 						operation: "set",
-		// 						update: {
-		// 							testHistory: testHistory
-		// 						}
-		// 					},
-		// 					success: function() {
-		// 						showTips("删除成功！", 1000);
-		// 					}
-		// 				});
-		// 			}
-		// 		});
-		// 	}
-		// });
 	});
 }

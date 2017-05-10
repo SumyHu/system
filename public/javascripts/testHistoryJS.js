@@ -135,50 +135,23 @@ function bindEvent() {
 		if (!yearString && !monthString) {
 			addAllHistoryInTable(dataGroupByDate);
 		}
-		else if (yearString && !monthString) {
-			let addData = {}, flag = false;
-			for(let date in dataGroupByDate) {
-				if (date.split("/")[0] == year) {
-					flag = true;
-					addData[date] = dataGroupByDate[date];
-				}
-			}
-			if (flag) {
-				addAllHistoryInTable(addData);
-			}
-			else {
-				let tbody = $(".showtestHistoryInfo > table > tbody")[0];
-				tbody.innerHTML = "<tr><td colspan=5>暂无记录</td><tr>";
-			}
-		}
-		else if (!yearString && monthString) {
-			let addData = {}, flag = false;
-			for(let date in dataGroupByDate) {
-				if (date.split("/")[1] == month) {
-					flag = true;
-					addData[date] = dataGroupByDate[date];
-				}
-			}
-			if (flag) {
-				addAllHistoryInTable(addData);
-			}
-			else {
-				let tbody = $(".showtestHistoryInfo > table > tbody")[0];
-				tbody.innerHTML = "<tr><td colspan=5>暂无记录</td><tr>";
-			}
-		}
 		else {
+			let RegExpObject = new RegExp((year?year:"\\d+") + "\/" + (month?month:"\\d+"));
+			let addData = {}, flag = false;
 			for(let date in dataGroupByDate) {
-				if (date === (year + "/" + month)) {
-					let addData = {};
+				if (RegExpObject.test(date)) {
+					flag = true;
 					addData[date] = dataGroupByDate[date];
-					addAllHistoryInTable(addData);
-					break;
 				}
-				else {
-					let tbody = $(".showtestHistoryInfo > table > tbody")[0];
-					tbody.innerHTML = "<tr><td colspan=5>暂无记录</td><tr>";
-				}
+			}
+			if (flag) {
+				addAllHistoryInTable(addData);
+				$(".content").css("display", "table-row");
+				$(".icon").html("︾");
+			}
+			else {
+				let tbody = $(".showtestHistoryInfo > table > tbody")[0];
+				tbody.innerHTML = "<tr><td colspan=5>暂无记录</td><tr>";
 			}
 		}
 	});

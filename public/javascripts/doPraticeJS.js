@@ -793,7 +793,8 @@ function checkAnswer() {
 				correctAnswerContent: examinationCorrectAnswer,
 				studentAnswerContent: examinationStudentAnswer,
 				scoresObj: scoresObj,
-				scoresDetail: scoresDetail
+				scoresDetail: scoresDetail,
+				userId: $(".showUsername")[0].id
 			},
 			success: function() {
 				window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
@@ -1084,51 +1085,96 @@ function init() {
 	});
 }
 
+function showPraticeBlockIndexClick(e) {
+	let className = getTarget(e).className;
+	if ($("." + className.substr(0, className.length-5)).length > 0) {
+		type = className.substr(0, className.length-5);
+		changeTypeStyle();
+		addPraticeIndex(currentIndexArray[type].length);
+		changePraticeContent(currentIndexArray[type].index);
+	}
+}
+
+function showPraticeIndexClick(e) {
+	if (Number(getTarget(e).innerHTML)) {
+		let index = getTarget(e).innerHTML-1;
+		currentIndexArray[type].index = index;
+		changePraticeContent(index);
+	}
+}
+
+function previousClick(target) {
+	// 将滚动条滚动到顶部，并添加动画效果
+	$("body").animate({
+		scrollTop: 0
+	}, 300);
+
+	if ($(target).hasClass("disable")) return;
+
+	if (currentIndexArray[type].index === 0) {
+		for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
+			if (hasContentTypeArr[i] === type) {
+				if (i !== 0) {
+					type = hasContentTypeArr[--i];
+					changeTypeStyle();
+					addPraticeIndex(currentIndexArray[type].length);
+					currentIndexArray[type].index = currentIndexArray[type].length-1;
+					changePraticeContent(currentIndexArray[type].index);
+				}
+				return;
+			}
+		}
+	}
+
+	changePraticeContent(--currentIndexArray[type].index);
+}
+
+function nextClick(target) {
+	// 将滚动条滚动到顶部，并添加动画效果
+	$("body").animate({
+		scrollTop: 0
+	}, 300);
+
+	if ($(this).hasClass("disable")) return;
+
+	if (currentIndexArray[type].index === currentIndexArray[type].length-1) {
+		for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
+			if (hasContentTypeArr[i] === type) {
+				type = hasContentTypeArr[++i];
+				changeTypeStyle();
+				addPraticeIndex(currentIndexArray[type].length);
+				currentIndexArray[type].index = 0;
+				changePraticeContent(0);
+				return;
+			}
+		}
+	}
+
+	changePraticeContent(++currentIndexArray[type].index);
+}
+
+function runningBtnClick(e) {
+	let $target = $(getTarget(e));
+	if (!$target.hasClass("disable")) {
+		// changeRunningBtnToDisableStatus($target, 15000);
+		$target.addClass("disable");
+		runningProgramming($(getTarget(e)).parent());
+	}
+}
+
 function bindEvent() {
 	// 当为考试模拟时，点击练习类型事件
 	$(".showPraticeBlockIndex").click(function(e) {
-		let className = getTarget(e).className;
-		if ($("." + className.substr(0, className.length-5)).length > 0) {
-			type = className.substr(0, className.length-5);
-			changeTypeStyle();
-			addPraticeIndex(currentIndexArray[type].length);
-			changePraticeContent(currentIndexArray[type].index);
-		}
+		showPraticeBlockIndexClick(e);
 	});
 
 	// 点击题目编号事件
 	$(".showPraticeIndex").click(function(e) {
-		if (Number(getTarget(e).innerHTML)) {
-			let index = getTarget(e).innerHTML-1;
-			currentIndexArray[type].index = index;
-			changePraticeContent(index);
-		}
+		showPraticeIndexClick(e);
 	});
 
 	$(".previous").click(function() {
-		// 将滚动条滚动到顶部，并添加动画效果
-		$("body").animate({
-			scrollTop: 0
-		}, 300);
-
-		if ($(this).hasClass("disable")) return;
-
-		if (currentIndexArray[type].index === 0) {
-			for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
-				if (hasContentTypeArr[i] === type) {
-					if (i !== 0) {
-						type = hasContentTypeArr[--i];
-						changeTypeStyle();
-						addPraticeIndex(currentIndexArray[type].length);
-						currentIndexArray[type].index = currentIndexArray[type].length-1;
-						changePraticeContent(currentIndexArray[type].index);
-					}
-					return;
-				}
-			}
-		}
-
-		changePraticeContent(--currentIndexArray[type].index);
+		previousClick(this);
 	});
 
 	$(".next").click(function() {
@@ -1143,36 +1189,10 @@ function bindEvent() {
 			});
 			return;
 		}
-
-		// 将滚动条滚动到顶部，并添加动画效果
-		$("body").animate({
-			scrollTop: 0
-		}, 300);
-
-		if ($(this).hasClass("disable")) return;
-
-		if (currentIndexArray[type].index === currentIndexArray[type].length-1) {
-			for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
-				if (hasContentTypeArr[i] === type) {
-					type = hasContentTypeArr[++i];
-					changeTypeStyle();
-					addPraticeIndex(currentIndexArray[type].length);
-					currentIndexArray[type].index = 0;
-					changePraticeContent(0);
-					return;
-				}
-			}
-		}
-
-		changePraticeContent(++currentIndexArray[type].index);
+		nextClick(this);
 	});
 
 	$(".runningBtn").click(function(e) {
-		let $target = $(getTarget(e));
-		if (!$target.hasClass("disable")) {
-			// changeRunningBtnToDisableStatus($target, 15000);
-			$target.addClass("disable");
-			runningProgramming($(getTarget(e)).parent());
-		}
+		runningBtnClick(e);
 	});
 }
