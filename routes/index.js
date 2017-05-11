@@ -418,7 +418,7 @@ module.exports = function(app) {
 
         	e.stdout.pipe(process.stdout);
     		if (inputValueArray) {
-    			let seconds = inputValueArray.length*20;
+    			let seconds = inputValueArray.length*30;
 
         		for(let i=0; i<inputValueArray.length; i++) {
 	        		setTimeout(function() {

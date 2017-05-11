@@ -24,3 +24,22 @@
 	margin: 0;
 	margin-left: 10px;
 }
+
+.testName td{
+	border-left: none;
+	border-right: none;
+}
+
+.win {
+	height: 250px;
+}
+
+.winContentBg {
+	height: 140px;
+	margin: 30px;
+}
+
+.winContent {
+	top: 50%;
+	transform: translateY(-50%);
+}

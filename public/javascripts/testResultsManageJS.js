@@ -1,4 +1,4 @@
-let initData = [], allDataGroupByNameAndDate = {};
+let initData = [], allDataGroupByNameAndDate = {}, allDataGroupByNameAndOrderByUserid = {};
 
 function getAllTestHistory(callback) {
 	callDataProcessingFn({
@@ -9,7 +9,7 @@ function getAllTestHistory(callback) {
 		success: function(data) {
 			console.log(data);
 			dataProcess(data);
-			callback(allDataGroupByNameAndDate);
+			callback(allDataGroupByNameAndOrderByUserid);
 		}
 	});
 }
@@ -22,6 +22,7 @@ function dataProcess(data) {
 			dateString = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate();
 		if (!allDataGroupByNameAndDate[testName]) {
 			allDataGroupByNameAndDate[testName] = {};
+			allDataGroupByNameAndOrderByUserid[testName] = [];
 		}
 		if (!allDataGroupByNameAndDate[testName][dateString]) {
 			allDataGroupByNameAndDate[testName][dateString] = [];
@@ -30,33 +31,67 @@ function dataProcess(data) {
 			index: i,
 			content: thisData
 		});
+		allDataGroupByNameAndOrderByUserid[testName].push({
+			index: i,
+			content: thisData
+		});
 	}
+
+	for(let testName in allDataGroupByNameAndDate) {
+		for(let date in allDataGroupByNameAndDate[testName]) {
+			allDataGroupByNameAndDate[testName][date].sort(function(a, b) {
+				return parseInt(a.content.userId)-parseInt(b.content.userId);
+			});
+		}
+	}
+
+	console.log(allDataGroupByNameAndOrderByUserid);
+
+	for(let testName in allDataGroupByNameAndOrderByUserid) {
+		allDataGroupByNameAndOrderByUserid[testName].sort(function(a, b) {
+			return parseInt(a.content.userId)-parseInt(b.content.userId);
+		});
+	}
+}
+
+function addRow(thisContent, testNameCount) {
+	let realContent = thisContent.content, scoresDetail = realContent.scoresDetail, details = scoresDetail.details, tbodyHtml = "", contentHtml = "";
+	contentHtml += "<tr class='testName" + testNameCount + "-content content' id='" 
+				+ thisContent.index + "'><td class='userId'>" + realContent.userId + "</td><td>"
+				+ scoresDetail.totalScore + "</td><td><table><thead>";
+	for(let type in details) {
+		contentHtml += "<th>" + type + "</th>";
+
+		if (type === "简答题") {
+			tbodyHtml += "<td>" + details[type] + "<input type='button' class='modify'></td>";
+		}
+		else {
+			tbodyHtml += "<td>" + details[type] + "</td>";
+		}
+	}
+	contentHtml += "</thead><tbody><tr>" + tbodyHtml + "</tr></tbody></table></td><td>" + new Date(realContent.date).toLocaleString() + "</td><td><input type='button' class='remove'></td>";
+
+	return contentHtml;
 }
 
 function addAllTestHistoryInTable(addData) {
 	let tbody = $(".showtestResultsInfo > table > tbody")[0], testNameCount = 0;
 	tbody.innerHTML = "";
 	for(let testName in addData) {
-		let contentHtml = "<tr class='testName' id='testName" + testNameCount + "'><td colspan=5>" + testName + "<span class='icon'>︽</span></td></tr>",
+		let contentHtml = "<tr class='testName' id='testName" + testNameCount + "'><td colspan=4>" + testName + "<span class='icon'>︽</span></td><td><input type='button' class='remove'></td></tr>",
 			thisContentObj = addData[testName];
-		for(let date in thisContentObj) {
-			let thisContentArray = thisContentObj[date];
-			for(let i=0, len=thisContentArray.length; i<len; i++) {
-				let thisContent = thisContentArray[i], realContent = thisContent.content, scoresDetail = realContent.scoresDetail, details = scoresDetail.details, tbodyHtml = "";
-				contentHtml += "<tr class='testName" + testNameCount + "-content content' id='" 
-							+ thisContent.index + "'><td class='userId'>" + realContent.userId + "</td><td>"
-							+ scoresDetail.totalScore + "</td><td><table><thead>";
-				for(let type in details) {
-					contentHtml += "<th>" + type + "</th>";
 
-					if (type === "简答题") {
-						tbodyHtml += "<td>" + details[type] + "<input type='button' class='modify'></td>";
-					}
-					else {
-						tbodyHtml += "<td>" + details[type] + "</td>";
-					}
+		if (thisContentObj instanceof Array) {
+			for(let i=0, len=thisContentObj.length; i<len; i++) {
+				contentHtml += addRow(thisContentObj[i], testNameCount);
+			}
+		}
+		else {
+			for(let date in thisContentObj) {
+				let thisContentArray = thisContentObj[date];
+				for(let i=0, len=thisContentArray.length; i<len; i++) {
+					contentHtml += addRow(thisContentArray[i], testNameCount);
 				}
-				contentHtml += "</thead><tbody><tr>" + tbodyHtml + "</tr></tbody></table></td><td>" + new Date(realContent.date).toLocaleString() + "</td><td><input type='button' class='remove'></td>";
 			}
 		}
 		testNameCount ++;
@@ -78,8 +113,19 @@ function testNameClick($trTarget) {
 	$("." + id + "-content").css("display", displayStyle);
 }
 
-function removeOneRecord($targetBtn) {
-	let $removeTarget = $targetBtn.parent().parent(), classname = $removeTarget[0].className;
+function removeOneTestNameAllRecord($removeTestName) {
+	let content = $("." + $removeTestName[0].id + "-content");
+	for(let i=0, len=content.length; i<len; i++) {
+		removeOneRecord($(content[i]), function() {
+			if (i === len-1) {
+				showTips("删除成功！", 1000);
+			}
+		});
+	}
+}
+
+function removeOneRecord($removeTarget, callback) {
+	let classname = $removeTarget[0].className;
 	$removeTarget.remove();
 
 	let testNameId = classname.substr(0, 9);
@@ -129,7 +175,12 @@ function removeOneRecord($targetBtn) {
 							}
 						},
 						success: function() {
-							showTips("删除成功！", 1000);
+							if (callback) {
+								callback();
+							}
+							else {
+								showTips("删除成功！", 1000);
+							}
 						}
 					});
 				}
@@ -173,7 +224,7 @@ function bindEvent() {
 		}
 
 		if (!(year || month || day)) {
-			addAllTestHistoryInTable(allDataGroupByNameAndDate);
+			addAllTestHistoryInTable(allDataGroupByNameAndOrderByUserid);
 		}
 		else {
 			let RegExpObject = new RegExp((year?year:"\\d+") + "\/" + (month?month:"\\d+") + "\/" + (day?day:"\\d+"));
@@ -207,9 +258,16 @@ function bindEvent() {
 	$(".showtestResultsInfo > table > tbody").click(function(e) {
 		let $target = $(getTarget(e)), classname = $target[0].className;
 		if (classname === "remove") {
+			let $tr = $target.parent().parent(), trClassName = $tr[0].className, removeFn;
+			if (trClassName === "testName") {
+				removeFn = removeOneTestNameAllRecord;
+			}
+			else {
+				removeFn = removeOneRecord;
+			}
 			showWin("确定删除该条记录？", function() {
-				removeOneRecord($target);
-			});
+				removeFn($tr);
+			}, function() {}, true);
 		}
 		else if (classname === "modify") {
 			let index = $target.parent().parent().parent().parent().parent().parent()[0].id,
@@ -237,7 +295,7 @@ function bindEvent() {
 		else if (classname === "icon") {
 			testNameClick($target.parent().parent());
 		}
-		else if ($target[0].colSpan === 5 && $target.find(".icon").length) {
+		else if ($target.parent()[0].className === "testName") {
 			testNameClick($target.parent());
 		}
 	});
