@@ -46,7 +46,8 @@ var unitsSchema = new Schema ({
 	FillInTheBlank: [],   // 填空题
 	ShortAnswer: [],   // 简答题
 	Programming: [],   // 编程题
-	time: {}   // 时间
+	time: {},   // 时间
+	effectiveTime: {}   // 试卷有效时间，若为空，则永久有效
 });
 
 var units = mongoose.model('units', unitsSchema);

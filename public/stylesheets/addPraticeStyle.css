@@ -143,21 +143,33 @@
 	background: #e8eaed;
 }
 
-.examinationTime {
+.examinationTime, .existTime {
 	display: none;
 	position: relative;
 	width: 100%;
-	height: 70px;
 	margin: 0 0 20px 0;
 	border: 1px solid #e8eaed;
 	text-align: center;
-	line-height: 70px;
 	font-size: 20px;
 	font-family: "幼圆";
 	/*background: #fff;*/
 }
 
-.examinationTime > input {
+.examinationTime {
+	height: 70px;
+	line-height: 70px;
+}
+
+.existTime {
+	padding: 10px 0;
+	line-height: 40px;
+}
+
+.existTime div {
+	display: inline-block;
+}
+
+.examinationTime > input, .existTime input {
 	position: relative;
 	display: inline-block;
 	top: -1px;
@@ -167,7 +179,20 @@
 	border-radius: 5px;
 	outline: none;
 	border: 1px solid orange;
+	text-align: center;
 	font-size: 18px;
+}
+
+.existTime input {
+	border: none;
+	border-radius: 0;
+	border-bottom: 1px solid green;
+	color: green;
+	background: transparent;
+}
+
+.existTime .year {
+	width: 60px;
 }
 
 .examinationTime .invalid {

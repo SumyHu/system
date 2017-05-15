@@ -137,7 +137,7 @@ initInterface = {
 							</div>
 						</nav>
 
-						<section class="praticeContent body">
+						<section class="praticeContent">
 							<section class="chapterContent">
 								<aside>
 									<ul>
@@ -387,6 +387,24 @@ initInterface = {
 							</nav>
 
 							<section class="addPraticeContent">
+								<div class="existTime">试卷开放时间（某个日期不限则不填）：<br>
+									<div class="beginTime">
+										<input type="number" class="year">年/
+										<input type="number" max=12 min=1 class="month">月/
+										<input type="number" max=31 min=1 class="day">日
+										<input type="number" max=23 min=0 class="H" placeholder="00"> :
+										<input type="number" max=59 min=0 class="M" placeholder="00"> :
+										<input type="number" max=59 min=0 class="S" placeholder="00">
+									</div> 至
+									<div class="endTime">
+										<input type="number" class="year">年/
+										<input type="number" max=12 min=1 class="month">月/
+										<input type="number" max=31 min=1 class="day">日
+										<input type="number" max=23 min=0 class="H" placeholder="00"> :
+										<input type="number" max=59 min=0 class="M" placeholder="00"> :
+										<input type="number" max=59 min=0 class="S" placeholder="00">
+									</div>
+								</div>
 								<div class="examinationTime">考试时间：
 									<input type="number" max=99 min=0 class="hours" placeholder=0>小时
 									<input type="number" max=59 min=0 class="minutes" placeholder=0>分钟

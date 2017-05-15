@@ -559,9 +559,30 @@ module.exports = function(app) {
 		buildData.subjectsObj.find({
 			subjectName: decodeURIComponent(subjectName)
 		}, function(data) {
-			var unitId = data.examinationPratices[examIndex];
+			var unitId = data.examinationPratices[examIndex], userId = req.body.userId;
+
+			buildData.testResultsObj.findAll(function(result) {
+				for(let i=0, len=result.length; i<len; i++) {
+					let thisUnitId = result[i].testUnitId, thisUserId = result[i].userId;
+					if (thisUnitId === unitId && thisUserId === userId) {
+						let removeTestId = result[i]._id;
+
+						buildData.testResultsObj.remove({
+							_id: removeTestId
+						}, function() {});
+
+						buildData.usersObj.update({
+							_id: userId
+						}, "pull", {
+							testHistory: removeTestId
+						}, function() {});
+						break;
+					}
+				}
+			});
+
 			buildData.testResultsObj.save({
-				userId: req.body.userId,
+				userId: userId,
 				testName: decodeURIComponent(subjectName) + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
 				testUnitId: unitId,   // 试卷的unitId
 				date: new Date(),   // 提交试卷的时间

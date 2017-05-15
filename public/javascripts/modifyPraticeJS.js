@@ -503,6 +503,7 @@ function init() {
 			$(".time")[0].innerHTML += " — 第 " + (Number(index)+1) +" 章";
 		}
 		else {
+			$(".existTime").css("display", "block");
 			$(".examinationTime").css("display", "block");
 			$(".showScore").css("display", "block");
 			$(".time")[0].innerHTML += " — 试卷 " + (Number(index)+1);
@@ -519,6 +520,31 @@ function init() {
 		}
 
 		findUnitById(unitId, function(data) {
+			if (data.effectiveTime) {
+				let effectiveTime = data.effectiveTime, 
+					beginTime = effectiveTime.beginTime,
+					endTime = effectiveTime.endTime;
+				if (beginTime) {
+					beginTime = new Date(beginTime);
+					$(".beginTime .year").val(beginTime.getFullYear());
+					$(".beginTime .month").val(Number(beginTime.getMonth()+1));
+					$(".beginTime .day").val(beginTime.getDate());
+					$(".beginTime .H").val(beginTime .getHours());
+					$(".beginTime .M").val(beginTime.getMinutes());
+					$(".beginTime .S").val(beginTime.getSeconds());
+				}
+
+				if (endTime) {
+					endTime = new Date(endTime);
+					$(".endTime .year").val(endTime.getFullYear());
+					$(".endTime .month").val(Number(endTime.getMonth()+1));
+					$(".endTime .day").val(endTime.getDate());
+					$(".endTime .H").val(endTime.getHours());
+					$(".endTime .M").val(endTime.getMinutes());
+					$(".endTime .S").val(endTime.getSeconds());
+				}
+			}
+
 			if (data.time) {
 				$(".examinationTime > .hours").val(data.time.hours);
 				$(".examinationTime > .minutes").val(data.time.minutes);
@@ -563,7 +589,7 @@ function init() {
 	...
  }
 */
-savePraticesInData = function(contentObj, totalCount, examinationTime) {
+savePraticesInData = function(contentObj, totalCount, examinationTime, existTime) {
 	console.log(contentObj);
 	console.log(removePraticeArr);
 
@@ -696,7 +722,8 @@ savePraticesInData = function(contentObj, totalCount, examinationTime) {
 				},
 				operation: "set",
 				update: {
-					time: examinationTime
+					time: examinationTime,
+					effectiveTime: existTime
 				}
 			},
 			success: function() {}

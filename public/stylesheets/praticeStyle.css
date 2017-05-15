@@ -1,8 +1,7 @@
 .praticeContent {
 	position: relative;
-	width: 90%;
+	width: 85%;
 	top: 100px;
-	margin: 0 10px;
 	float: right;
 }
 
@@ -74,7 +73,7 @@
 
 .examinationContent > .content > section, .examinationContent .addMore {
 	width: 300px;
-	height: 500px;
+	height: 560px;
 	padding: 0 0 20px 0;
 }
 

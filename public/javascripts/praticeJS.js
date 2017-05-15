@@ -284,7 +284,35 @@ function addExamination(unitId, index) {
 	findUnitById(unitId, function(result) {
 		let section = document.createElement("section");
 		section.className = "content";
-		let totalScore = calTotalScore(result), time = result.time;
+		let totalScore = calTotalScore(result), time = result.time,
+			beginTime = result.effectiveTime.beginTime, endTime = result.effectiveTime.endTime
+			openTimeHtml = "";
+
+		if (!beginTime && !endTime) {
+			openTimeHtml = '不限';
+		}
+		else {
+			openTimeHtml = '<br>';
+
+			if (beginTime) {
+				beginTime = new Date(beginTime);
+				openTimeHtml += '<span class="beginTime" id="' + beginTime.getTime() + '">' + beginTime.toLocaleString() + '</span>';
+			}
+			else {
+				openTimeHtml += '不限'; 
+			}
+
+			openTimeHtml += " — ";
+
+			if (endTime) {
+				endTime = new Date(endTime);
+				openTimeHtml += '<span class="endTime" id="' + endTime.getTime() + '">' + endTime.toLocaleString() + '</span>';
+			}
+			else {
+				openTimeHtml += '不限';
+			}
+		}
+
 		section.innerHTML = `<section class="showEg">
 								<div class="btnDiv"><input type="button" class="modifyBtn"><input type="button" class="removeIndex" value="X"></div>
 								<div class="title">试卷<span class="index">` + (index+1) + `</span></div>
@@ -313,6 +341,9 @@ function addExamination(unitId, index) {
 										</p>
 										<p class="totalScore">
 											总分：<span class="count">` + totalScore.totalScore + `</span>分
+										</p>
+										<p class="openTime">
+											开放时间：` + openTimeHtml + `
 										</p>
 									</div>
 									<div>
@@ -356,8 +387,36 @@ function addExamination(unitId, index) {
 				return;
 			}
 
-			let queryParam = "&index=" + index;
-			doPratice(queryParam);
+			let beginTime, endTime,
+			beginTimeDiv = $(this).find(".openTime > .beginTime")[0],
+			endTimeDiv = $(this).find(".openTime > .endTime")[0];
+			if (beginTimeDiv) {
+				beginTime = new Date(Number(beginTimeDiv.id));
+			}
+			if (endTimeDiv) {
+				endTime = new Date(Number(endTimeDiv.id));
+			}
+
+			let thisDate = new Date(), inDateFlag = true;
+			if (beginTime) {
+				if (beginTime > thisDate) {
+					inDateFlag = false;
+				}
+			}
+			if (endTime) {
+				if (endTime < thisDate) {
+					inDateFlag = false;
+				}
+			}
+
+			if (inDateFlag) {
+				let queryParam = "&index=" + index;
+				doPratice(queryParam);
+			}
+			else {
+				showTips("该试卷暂不开放！", 1000);
+				return;
+			}
 		});
 	});
 }

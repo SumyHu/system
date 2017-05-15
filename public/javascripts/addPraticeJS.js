@@ -752,7 +752,7 @@ function addOneUnitInSubject(param) {
 	...
  }
 */
-function savePraticesInData(contentObj, totalCount, examinationTime) {
+function savePraticesInData(contentObj, totalCount, examinationTime, existTime) {
 	if (totalCount === 0) {
 		return;
 	}
@@ -806,7 +806,8 @@ function savePraticesInData(contentObj, totalCount, examinationTime) {
 							},
 							operation: "set",
 							update: {
-								time: examinationTime
+								time: examinationTime,
+								effectiveTime: existTime
 							}
 						},
 						success: function() {}
@@ -867,7 +868,7 @@ function removePratice($target) {
 
 /** 存储添加的所有习题
 */
-function savePratices(examinationTime) {
+function savePratices(examinationTime, existTime) {
 	let SingleChoiceContentArr = [], MultipleChoicesContentArr = [], TrueOrFalseContentArr = [], FillInTheBlankContentArr = [], ShortAnswerContentArr = [], ProgrammingContentArr = [];
 
 	let SingleChoiceContent = $(".addSingleChoice > .content");
@@ -906,7 +907,7 @@ function savePratices(examinationTime) {
 		FillInTheBlank: FillInTheBlankContentArr,
 		ShortAnswer: ShortAnswerContentArr,
 		Programming: ProgrammingContentArr
-	}, totalCount, examinationTime);
+	}, totalCount, examinationTime, existTime);
 
 	window.location.href = "../pratice?subjectName=" + subjectName;
 }
@@ -1040,6 +1041,83 @@ function checkTimeValidation() {
 	}
 }
 
+// 获得试卷有效时间
+function getExistTime() {
+	let $beginTimeDiv = $(".existTime > .beginTime"), $endTimeDiv = $(".existTime > .endTime"),
+	$beginTimeInput = $beginTimeDiv.find("input"), $endTimeInput = $endTimeDiv.find("input"),
+	beginTimeDivHasEmptyInput = false, endTimeDivHasEmptyInput = false,
+	beginTimeDivEmptyInputCount = 0, endTimeDivEmptyInputCount = 0,
+	beginHour = $(".beginTime .H").val(), beginMinute = $(".beginTime .M").val(), beginSecond = $(".beginTime .S").val(),
+	endHour = $(".endTime .H").val(), endMinute = $(".endTime .M").val(), endSecond = $(".endTime .S").val(),
+	beginTime, endTime,
+	existTime = {};
+
+	beginHour = beginHour?Number(beginHour):0; beginMinute = beginMinute?Number(beginMinute):0; beginSecond = beginSecond?Number(beginSecond):0;
+	endHour = endHour?Number(endHour):0; endMinute = endMinute?Number(endMinute):0; endSecond = endSecond?Number(endSecond):0;
+
+	if ($(".existTime input").hasClass("invalid")) {
+		return false;
+	}
+
+	for(let i=0, len=$beginTimeInput.length; i<len; i++) {
+		if (!$beginTimeInput[i].value) {
+			let classname = $beginTimeInput[i].className;
+			if (classname !== "H" && classname !== "M" && classname !== "S") {
+				beginTimeDivHasEmptyInput = true;
+				beginTimeDivEmptyInputCount++;
+			}
+		}
+	}
+
+	for(let i=0, len=$endTimeInput.length; i<len; i++) {
+		if (!$endTimeInput[i].value) {
+			let classname = $endTimeInput[i].className;
+			if (classname !== "H" && classname !== "M" && classname !== "S") {
+				endTimeDivHasEmptyInput = true;
+				endTimeDivEmptyInputCount++;
+			}
+		}
+	}
+
+	if (beginTimeDivHasEmptyInput) {
+		if (beginTimeDivEmptyInputCount < 3) {
+			return false;
+		}
+	}
+
+	if (endTimeDivHasEmptyInput) {
+		if (endTimeDivEmptyInputCount < 3) {
+			return false;
+		}
+	}
+
+	if (beginTimeDivEmptyInputCount === 3) {
+		beginTime = "";
+	}
+	else {
+		beginTime = new Date(Number($(".beginTime .year").val()) + "/" + Number($(".beginTime .month").val()) + "/" + Number($(".beginTime .day").val()) + " " + beginHour + ":" + beginMinute + ":" + beginSecond);
+	}
+
+	if (endTimeDivEmptyInputCount === 3) {
+		endTime = "";
+	}
+	else {
+		endTime = new Date(Number($(".endTime .year").val()) + "/" + Number($(".endTime .month").val()) + "/" + Number($(".endTime .day").val()) + " " + endHour + ":" + endMinute + ":" + endSecond);
+	}
+
+	if (beginTime && endTime) {
+		if (beginTime > endTime) {
+			return false;
+		}
+	}
+
+	existTime = {
+		beginTime: beginTime,
+		endTime: endTime
+	};
+	return existTime;
+}
+
 /** 进行代码运行
  * @param $programmingContent jQuery Object 该编程题目块
 */
@@ -1098,6 +1176,7 @@ function init() {
 				innerHTML = " — 第 " + (++count) +" 章";
 				break;
 			case "examination":
+				$(".existTime").css("display", "block");
 				$(".examinationTime").css("display", "block");
 				$(".showScore").css("display", "block");
 				innerHTML = " — 试卷 " + (++count);
@@ -1187,7 +1266,7 @@ function bindEvent() {
 		$(".examinationTime > input").change(function(e) {
 			let target = getTarget(e);
 			let classname = target.className,
-				value = target.value;
+				value = Number(target.value);
 
 			if (value < 0) {
 				$(target).addClass("invalid");
@@ -1197,6 +1276,35 @@ function bindEvent() {
 					$(target).addClass("invalid");
 				}
 				else if (value > 99) {
+					$(target).addClass("invalid");
+				}
+				else {
+					$(target).removeClass("invalid");
+				}
+			}
+		});
+
+		$(".existTime input").change(function(e) {
+			let target = getTarget(e), classname = target.className, 
+				value = target.value ? Number(target.value) : target.value;
+
+			if (value < 0) {
+				$(target).addClass("invalid");
+			}
+			else {
+				if (classname === "year" && value === 0) {
+					$(target).addClass("invalid");
+				}
+				if (classname === "month" && (value === 0 || value > 12)) {
+					$(target).addClass("invalid");
+				}
+				else if (classname === "day" && (value === 0 || value > 31)) {
+					$(target).addClass("invalid");
+				}
+				else if (classname === "H" && value > 23) {
+					$(target).addClass("invalid");
+				}
+				else if ((classname === "M" || classname === "S") && value > 59) {
 					$(target).addClass("invalid");
 				}
 				else {
@@ -1293,8 +1401,14 @@ function bindEvent() {
 			return;
 		}
 
-		let examinationTime;
+		let examinationTime, existTime;
 		if (praticeType === "examination") {
+			existTime = getExistTime();
+			console.log(existTime);
+			if (!existTime) {
+				showTips("请确保试卷开放时间的值符合要求！", 1500);
+				return;
+			}
 			examinationTime = checkTimeValidation();
 			if (!examinationTime) {
 				return;
@@ -1302,7 +1416,7 @@ function bindEvent() {
 		}
 
 		showWin("确定提交所添加的所有习题？", function() {
-			savePratices(examinationTime);
+			savePratices(examinationTime, existTime);
 		});
 	});
 }
