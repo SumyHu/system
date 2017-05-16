@@ -1,0 +1,133 @@
+.body {
+	width: 90%;
+}
+
+.body > table {
+	border-collapse: collapse;
+	overflow: hidden;
+}
+
+table {
+	width: 100%;
+	background: #fff;
+}
+
+thead {
+	background: #f5f6eb;
+}
+
+tr {
+	border-bottom: 1px dashed #8c8c8c;
+	line-height: 30px;
+}
+
+.testName:hover, .testTime:hover {
+	background: #C9CABB;
+}
+
+td {
+	text-align: center;
+	overflow: hidden;
+}
+
+td+td {
+	border-left: 1px dashed #8c8c8c;
+}
+
+.modify, .remove {
+	display: inline-block;
+	position: relative;
+	width: 25px;
+	height: 25px !important;
+	margin: 10px 0;
+	padding: 0;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 25px !important;
+	font-size: 25px !important;
+	color: red !important;
+	/*background: red;*/
+	background-image: url("../image/pen.png");
+	background-size: 80%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	transition: 0.1s all linear;
+}
+
+.remove {
+	background-image: url("../image/error.png");
+}
+
+.remove:hover, .modify:hover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.title {
+	padding: 20px 0;
+	text-align: center;
+	border-radius: 20px 20px 0 0;
+	/*background: #e8eaed;*/
+	background: #eff0dc;
+}
+.textInput {
+	width: 350px;
+	font-size: 18px;
+}
+
+label {
+	margin: 0 20px 0 0;
+}
+
+.testName, .testTime {
+	background: #f5f6eb;
+	cursor: pointer;
+}
+
+.icon {
+	margin: 0 30px;
+}
+
+tr.content {
+	display: none;
+	overflow: hidden;
+}
+
+.dateSearch {
+	margin-bottom: 70px;
+	text-align: center;
+}
+
+.dateSearch input[type=text] {
+	width: 100px;
+	height: 25px;
+	margin: 0 10px;
+	text-align: center;
+	font-size: 18px;
+}
+
+.dateSearch input[type=button] {
+	width: 100px;
+	height: 35px !important;
+	margin-left: 30px;
+	border-radius: 5px;
+	background: rgba(67, 135, 253, 0.6);
+	line-height: 35px !important;
+}
+
+.modify {
+	margin: 0;
+	margin-left: 10px;
+}
+
+.seeMore {
+	color: blue;
+	cursor: pointer;
+}
+
+.seeMore:hover {
+	text-decoration: underline;
+}
+
+.dateSearch input[type=text] {
+	border: 1px solid #d0d0d0;
+}

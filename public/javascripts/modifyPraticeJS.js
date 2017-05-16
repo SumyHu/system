@@ -1,14 +1,20 @@
-let type, index, typeArray = [], unitId;
+"use strict";
 
-let removePraticeArr = [];   // 记录被删除的习题
+var type = void 0,
+    index = void 0,
+    typeArray = [],
+    unitId = void 0;
+
+var removePraticeArr = []; // 记录被删除的习题
 
 /** 显示所有选择型的题目内容
  * @param praticeIdArr Array 习题id集合
  * @param showType String 习题类型
 */
 function showAllChoicesContent(praticeIdArr, showType) {
-	let score;
-	for(let i=0, len=praticeIdArr.length; i<len; i++) {
+	var score = void 0;
+
+	var _loop = function _loop(i, len) {
 		callDataProcessingFn({
 			data: {
 				data: "pratices",
@@ -17,13 +23,14 @@ function showAllChoicesContent(praticeIdArr, showType) {
 					_id: praticeIdArr[i]
 				}
 			},
-			success: function(result) {
+			success: function success(result) {
 				if (praticeType === "examination" && !score) {
 					score = result.score;
 				}
 
-				let section, inputType = "radio";
-				switch(showType) {
+				var section = void 0,
+				    inputType = "radio";
+				switch (showType) {
 					case "SingleChoice":
 						section = addSingleChoice();
 						break;
@@ -40,36 +47,38 @@ function showAllChoicesContent(praticeIdArr, showType) {
 
 				$(section).find(".topic > .textInput").val(result.topic);
 
-				let choices = result.choices;
+				var choices = result.choices;
 				if (choices.length > 4) {
-					for(let j=0, len1=choices.length-4; j<len1; j++) {
+					for (var j = 0, len1 = choices.length - 4; j < len1; j++) {
 						addMoreChoice($(section).find(".allChoices"));
 					}
 				}
 
-				let allChoicesDiv = $(section).find(".allChoices > .choice");
-				for(let j=0, len1=choices.length; j<len1; j++) {
-					$(allChoicesDiv[j]).find(".textInput").val(choices[j].choiceContent);
+				var allChoicesDiv = $(section).find(".allChoices > .choice");
+				for (var _j = 0, _len = choices.length; _j < _len; _j++) {
+					$(allChoicesDiv[_j]).find(".textInput").val(choices[_j].choiceContent);
 				}
 
-				let allAnswer = result.answer;
-				for(let j=0, len1=allAnswer.length; j<len1; j++) {
-					let answerIndex;
+				var allAnswer = result.answer;
+				for (var _j2 = 0, _len2 = allAnswer.length; _j2 < _len2; _j2++) {
+					var answerIndex = void 0;
 					if (showType === "TrueOrFalse") {
 						if (result.answer[0] === "T") {
 							answerIndex = 0;
-						}
-						else {
+						} else {
 							answerIndex = 1;
 						}
-					}
-					else {
-						answerIndex = result.answer[j].charCodeAt()-65;
+					} else {
+						answerIndex = result.answer[_j2].charCodeAt() - 65;
 					}
 					$(section).find("input[type=" + inputType + "]")[answerIndex].checked = true;
 				}
 			}
 		});
+	};
+
+	for (var i = 0, len = praticeIdArr.length; i < len; i++) {
+		_loop(i, len);
 	}
 
 	if (praticeType === "examination") {
@@ -81,8 +90,9 @@ function showAllChoicesContent(praticeIdArr, showType) {
  * @param praticeIdArr Array 习题id集合
 */
 function showAllFillInTheBlankContent(praticeIdArr) {
-	let score;
-	for(let i=0, len=praticeIdArr.length; i<len; i++) {
+	var score = void 0;
+
+	var _loop2 = function _loop2(i, len) {
 		callDataProcessingFn({
 			data: {
 				data: "pratices",
@@ -91,36 +101,40 @@ function showAllFillInTheBlankContent(praticeIdArr) {
 					_id: praticeIdArr[i]
 				}
 			},
-			success: function(result) {
+			success: function success(result) {
 				if (praticeType === "examination" && !score) {
 					score = result.score;
 				}
 
-				let section = addFillInTheBlank();
+				var section = addFillInTheBlank();
 
 				section.id = praticeIdArr[i];
 
 				$(section).find(".topic > .textInput").val(result.topic);
 
-				let allAnswer = result.answer;
-				for(let j=0, len1=allAnswer.length; j<len1; j++) {
-					let answer = allAnswer[j];
+				var allAnswer = result.answer;
+				for (var j = 0, len1 = allAnswer.length; j < len1; j++) {
+					var answer = allAnswer[j];
 					if (j > 0) {
 						addMoreBlank($(section).find(".allBlank"));
 					}
 
 					if (answer.length > 1) {
-						for(let t=0, len2=answer.length-1; t<len2; t++) {
+						for (var t = 0, len2 = answer.length - 1; t < len2; t++) {
 							addMoreOtherAnswer($($(section).find(".allBlank > .blank")[j]).find(".addOtherAnswer"));
 						}
 					}
 
-					for(let t=0, len2=answer.length; t<len2; t++) {
-						$($(section).find(".allBlank > .blank")[j]).find(".textInput")[t].value = answer[t];
+					for (var _t = 0, _len3 = answer.length; _t < _len3; _t++) {
+						$($(section).find(".allBlank > .blank")[j]).find(".textInput")[_t].value = answer[_t];
 					}
 				}
 			}
 		});
+	};
+
+	for (var i = 0, len = praticeIdArr.length; i < len; i++) {
+		_loop2(i, len);
 	}
 
 	if (praticeType === "examination") {
@@ -132,10 +146,10 @@ function showAllFillInTheBlankContent(praticeIdArr) {
  * @param praticeIdArr Array 习题id集合
 */
 function showAllShortAnswerContent(praticeIdArr) {
-	for(let i=0, len=praticeIdArr.length; i<len; i++) {
-		findPraticesById(praticeIdArr[i], function(result) {
+	var _loop3 = function _loop3(i, len) {
+		findPraticesById(praticeIdArr[i], function (result) {
 			console.log(result);
-			let section = addShortAnswer();
+			var section = addShortAnswer();
 
 			section.id = praticeIdArr[i];
 
@@ -144,11 +158,11 @@ function showAllShortAnswerContent(praticeIdArr) {
 
 			console.log(result.answer[0]);
 
-			let professionalNounsArr = result.answer[0].professionalNounsArr;
+			var professionalNounsArr = result.answer[0].professionalNounsArr;
 			if (professionalNounsArr) {
-				for(let i=0, len=professionalNounsArr.length; i<len; i++) {
-					let newDiv = addMoreProfessionalNouns($(section).find(".addProfessionalNouns .addProfessionalNounsBtn"));
-					$(newDiv).find(".textInput").val(professionalNounsArr[i]);
+				for (var _i = 0, _len4 = professionalNounsArr.length; _i < _len4; _i++) {
+					var newDiv = addMoreProfessionalNouns($(section).find(".addProfessionalNouns .addProfessionalNounsBtn"));
+					$(newDiv).find(".textInput").val(professionalNounsArr[_i]);
 				}
 			}
 
@@ -156,13 +170,17 @@ function showAllShortAnswerContent(praticeIdArr) {
 				$(section).find(".showScore > .textInput").val(result.score);
 			}
 		});
+	};
+
+	for (var i = 0, len = praticeIdArr.length; i < len; i++) {
+		_loop3(i, len);
 	}
 }
 
 function showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType) {
 	console.log("inputType", inputType);
-	let allRadio = $selectInputTypeDiv.find("> input[type=radio]");
-	for(let i=0, len=allRadio.length; i<len; i++) {
+	var allRadio = $selectInputTypeDiv.find("> input[type=radio]");
+	for (var i = 0, len = allRadio.length; i < len; i++) {
 		if (allRadio[i].value === inputType) {
 			allRadio[i].checked = true;
 			break;
@@ -171,13 +189,14 @@ function showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType) {
 }
 
 function showSelectTypeInProgramming($selectInputTypeDiv, type) {
-	let inputType = type.thisType, childType;
+	var inputType = type.thisType,
+	    childType = void 0;
 	showBasicSelectTypeInProgramming($selectInputTypeDiv, inputType);
 
 	if (type.childType) {
 		childType = type.childType;
 		$selectInputTypeDiv.find(".arrayChildType").css("display", "inline-block");
-		
+
 		showBasicSelectTypeInProgramming($selectInputTypeDiv.find(".arrayChildType"), childType);
 	}
 }
@@ -186,12 +205,12 @@ function showProgrammingObjContent(objContent, $section) {
 	$section.find(".description > .textInput").val(objContent.description);
 	$section.find(".example > .textInput").val(objContent.example);
 
-	let className = $section[0].className;
-	let inputTypeDiv = $section.find(".inputType");
+	var className = $section[0].className;
+	var inputTypeDiv = $section.find(".inputType");
 
 	if (objContent.type) {
-		for(let i=0, len=objContent.type.length; i<len; i++) {
-			let div = document.createElement("div");
+		for (var i = 0, len = objContent.type.length; i < len; i++) {
+			var div = document.createElement("div");
 			div.className = "selectInputType";
 			div.innerHTML = selectInputType(selectInputTypeCount);
 			$section.find(".addInputType").before(div);
@@ -200,8 +219,8 @@ function showProgrammingObjContent(objContent, $section) {
 		}
 	}
 
-	$section.find(".removeSelectType").click(function(e) {
-		let selectInputType = $(getTarget(e)).parent();
+	$section.find(".removeSelectType").click(function (e) {
+		var selectInputType = $(getTarget(e)).parent();
 		selectInputType.remove();
 	});
 }
@@ -210,7 +229,7 @@ function showProgrammingObjContent(objContent, $section) {
  * @param praticeIdArr Array 习题id集合
 */
 function showAllProgrammingContent(praticeIdArr) {
-	for(let i=0, len=praticeIdArr.length; i<len; i++) {
+	var _loop4 = function _loop4(i, len) {
 		callDataProcessingFn({
 			data: {
 				data: "pratices",
@@ -219,9 +238,9 @@ function showAllProgrammingContent(praticeIdArr) {
 					_id: praticeIdArr[i]
 				}
 			},
-			success: function(result) {
+			success: function success(result) {
 				console.log(result);
-				let section = addProgramming();
+				var section = addProgramming();
 
 				section.id = praticeIdArr[i];
 
@@ -230,8 +249,9 @@ function showAllProgrammingContent(praticeIdArr) {
 				showProgrammingObjContent(result.answer[0].input, $(section).find(".input"));
 				showProgrammingObjContent(result.answer[0].output, $(section).find(".output"));
 
-				let mode = result.answer[0].programmingTypeMode, modeIndex=0;
-				for(var k in programmingTypeMode) {
+				var mode = result.answer[0].programmingTypeMode,
+				    modeIndex = 0;
+				for (var k in programmingTypeMode) {
 					if (programmingTypeMode[k] === mode) {
 						mode = k;
 						break;
@@ -240,74 +260,78 @@ function showAllProgrammingContent(praticeIdArr) {
 				}
 				$(section).find(".programmingType > select").find("option")[modeIndex].selected = true;
 
-				let helpMode = mode;
+				var helpMode = mode;
 				if (helpMode === "c++") {
-				 	helpMode = "cpp";
-				 }
-				 else if (helpMode === "c#") {
-				 	helpMode = "cs";
-				 }
+					helpMode = "cpp";
+				} else if (helpMode === "c#") {
+					helpMode = "cs";
+				}
 				$(section).find(".help").attr("href", "help?mode=" + helpMode);
 
 				if (praticeType === "examination") {
 					$(section).find(".showScore > .textInput").val(result.score);
 				}
 
-				let answer = result.answer[0].content, editor = programingEditorArray[programingEditorArray.length-1].editor;
+				var answer = result.answer[0].content,
+				    editor = programingEditorArray[programingEditorArray.length - 1].editor;
 
 				$(section).find("textarea").val(answer);
 				editor.setOption("mode", result.answer[0].programmingTypeMode);
 				editor.setValue(answer);
-				setTimeout(function() {
+				setTimeout(function () {
 					editor.refresh();
 					$(section).find("textarea").focus();
 				}, 1);
 			}
 		});
+	};
+
+	for (var i = 0, len = praticeIdArr.length; i < len; i++) {
+		_loop4(i, len);
 	}
 }
 
 function selectInputType(count) {
-	return basicInputType(count) + `<input type="radio" id="Array` + count + `" name="selectInputType` + count + `" value="Array"><label for="Array` + count + `">Array</label>`
-		+ `<div class="arrayChildType">【数组类型：` + basicInputType(count+1, "array-", true) + `】</div><input type="button" value="X" class="removeSelectType">`;
+	return basicInputType(count) + "<input type=\"radio\" id=\"Array" + count + "\" name=\"selectInputType" + count + "\" value=\"Array\"><label for=\"Array" + count + "\">Array</label>" + "<div class=\"arrayChildType\">\u3010\u6570\u7EC4\u7C7B\u578B\uFF1A" + basicInputType(count + 1, "array-", true) + "\u3011</div><input type=\"button\" value=\"X\" class=\"removeSelectType\">";
 }
 
 /** 获取所要添加的选择题内容
  * @param $content Object 所要添加的全部content对象
 */
-getChoiceContent = function($content) {
+getChoiceContent = function getChoiceContent($content) {
 	if ($content.length === 0) return [];
-	let allContent = [], type;
+	var allContent = [],
+	    type = void 0;
 
-	let parentClassName = $content.parent()[0].className;
+	var parentClassName = $content.parent()[0].className;
 	if (parentClassName === "addSingleChoice" || parentClassName === "addTrueOrFalse") {
 		type = "radio";
-	}
-	else {
+	} else {
 		type = "checkbox";
 	}
 
-	let score;
+	var score = void 0;
 	if (praticeType === "examination" && $content.length) {
 		score = $content.parent().find(".showScore > .textInput").val();
 		if (!score) {
-			score = $content.parent().find(".showScore > .textInput")[0].placeholder;
+			score = $($content.parent().find(".showScore > .textInput")[0]).attr("placeholder");
 		}
 	}
 
-	for(let i=0, len=$content.length; i<len; i++) {
-		let topic = $($content[i]).find(".topic > .textInput").val();
+	for (var i = 0, len = $content.length; i < len; i++) {
+		var topic = $($content[i]).find(".topic > .textInput").val();
 
-		let allChoices = $($content[i]).find(".allChoices > .choice");
-		let choiceArray = [], answer = [];
-		for(let j=0, choiceLen=allChoices.length; j<choiceLen; j++) {
+		var allChoices = $($content[i]).find(".allChoices > .choice");
+		var choiceArray = [],
+		    answer = [];
+		for (var j = 0, choiceLen = allChoices.length; j < choiceLen; j++) {
 			choiceArray.push({
 				num: $(allChoices[j]).find(".num")[0].innerHTML,
 				choiceContent: $(allChoices[j]).find(".textInput").val()
 			});
 
 			if ($(allChoices[j]).find("input[type=" + type + "]")[0].checked) {
-				answer.push(choiceArray[choiceArray.length-1].num);
+				answer.push(choiceArray[choiceArray.length - 1].num);
 			}
 		}
 
@@ -318,42 +342,42 @@ getChoiceContent = function($content) {
 		});
 
 		if ($content[i].id) {
-			allContent[allContent.length-1].id = $content[i].id;
+			allContent[allContent.length - 1].id = $content[i].id;
 		}
 
 		if (praticeType === "examination") {
-			allContent[allContent.length-1].score = score;
+			allContent[allContent.length - 1].score = score;
 		}
 	}
 
 	return allContent;
-}
+};
 
 /** 获取所要添加的填空题内容
  * @param $content Object 所要添加的全部content对象
 */
 function getFillInTheBlankContent($content) {
-	let allContent = [];
+	var allContent = [];
 
-	let score;
-	if (praticeType === "examination"  && $content.length) {
+	var score = void 0;
+	if (praticeType === "examination" && $content.length) {
 		console.log($content);
 		console.log($content.parent()[0]);
 		score = $content.parent().find(".showScore > .textInput").val();
 		if (!score) {
-			score = $content.parent().find(".showScore > .textInput")[0].placeholder;
+			score = $($content.parent().find(".showScore > .textInput")[0]).attr("placeholder");
 		}
 	}
 
-	for(let i=0, len=$content.length; i<len; i++) {
-		let topic = $($content[i]).find(".topic > .textInput").val();
+	for (var i = 0, len = $content.length; i < len; i++) {
+		var topic = $($content[i]).find(".topic > .textInput").val();
 
-		let allBlank = $($content[i]).find(".allBlank > .blank");
-		let answer = [];
-		for(let j=0, blankLen=allBlank.length; j<blankLen; j++) {
-			let textInput = $(allBlank[j]).find(".textInput");
-			let answerChild = [];
-			for(let t=0, textInputLen=textInput.length; t<textInputLen; t++) {
+		var allBlank = $($content[i]).find(".allBlank > .blank");
+		var answer = [];
+		for (var j = 0, blankLen = allBlank.length; j < blankLen; j++) {
+			var textInput = $(allBlank[j]).find(".textInput");
+			var answerChild = [];
+			for (var t = 0, textInputLen = textInput.length; t < textInputLen; t++) {
 				answerChild.push(textInput[t].value);
 			}
 			answer.push(answerChild);
@@ -365,11 +389,11 @@ function getFillInTheBlankContent($content) {
 		});
 
 		if ($content[i].id) {
-			allContent[allContent.length-1].id = $content[i].id;
+			allContent[allContent.length - 1].id = $content[i].id;
 		}
 
 		if (praticeType === "examination") {
-			allContent[allContent.length-1].score = score;
+			allContent[allContent.length - 1].score = score;
 		}
 	}
 
@@ -380,18 +404,19 @@ function getFillInTheBlankContent($content) {
  * @param $content Object 所要添加的全部content对象
 */
 function getShortAnswerContent($content) {
-	let allContent = [];
+	var allContent = [];
 
-	for(let i=0, len=$content.length; i<len; i++) {
-		let topic = $($content[i]).find(".topic > .textInput").val();
+	for (var i = 0, len = $content.length; i < len; i++) {
+		var topic = $($content[i]).find(".topic > .textInput").val();
 
-		let answer = $($content[i]).find(".answer > textarea").val();
-		
-		let professionalNounsArr = [], allProfessionalNouns = $($content[i]).find(".addProfessionalNouns .professionalNounsDiv");
-		for(let i=0, len=allProfessionalNouns.length; i<len; i++) {
-			professionalNounsArr.push($(allProfessionalNouns[i]).find(".textInput").val());
+		var answer = $($content[i]).find(".answer > textarea").val();
+
+		var professionalNounsArr = [],
+		    allProfessionalNouns = $($content[i]).find(".addProfessionalNouns .professionalNounsDiv");
+		for (var _i2 = 0, _len5 = allProfessionalNouns.length; _i2 < _len5; _i2++) {
+			professionalNounsArr.push($(allProfessionalNouns[_i2]).find(".textInput").val());
 		}
-		
+
 		allContent.push({
 			topic: topic,
 			answer: [{
@@ -401,16 +426,16 @@ function getShortAnswerContent($content) {
 		});
 
 		if ($content[i].id) {
-			allContent[allContent.length-1].id = $content[i].id;
+			allContent[allContent.length - 1].id = $content[i].id;
 		}
 
 		if (praticeType === "examination") {
-			let score = $($content[i]).find(".showScore > .textInput").val();
+			var score = $($content[i]).find(".showScore > .textInput").val();
 			if (!score) {
-				score = $($content[i]).find(".showScore > .textInput")[0].placeholder;
+				score = $($($content[i]).find(".showScore > .textInput")[0]).attr("placeholder");
 			}
 
-			allContent[allContent.length-1].score = score;
+			allContent[allContent.length - 1].score = score;
 		}
 	}
 
@@ -421,20 +446,21 @@ function getShortAnswerContent($content) {
  * @param $content Object 所要添加的全部content对象
 */
 function getProgrammingContent($content) {
-	let allContent = [];
+	var allContent = [];
 
-	for(let i=0, len=$content.length; i<len; i++) {
-		let topic = $($content[i]).find(".topic > .textInput").val();
+	for (var i = 0, len = $content.length; i < len; i++) {
+		var topic = $($content[i]).find(".topic > .textInput").val();
 
-		let inputObj = getProgrammingObj($($content[i]).find(".input")), outputObj = getProgrammingObj($($content[i]).find(".output"));
+		var inputObj = getProgrammingObj($($content[i]).find(".input")),
+		    outputObj = getProgrammingObj($($content[i]).find(".output"));
 
 		console.log(inputObj, outputObj);
 
-		let programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
-		let mode = programmingTypeMode[programmingType];
+		var programmingType = $($content[i]).find(".answer .programmingType select").find("option:selected").text();
+		var mode = programmingTypeMode[programmingType];
 
-		let answer = programingEditorArray[i].editor.getValue();
-		
+		var answer = programingEditorArray[i].editor.getValue();
+
 		allContent.push({
 			topic: topic,
 			// programmingTypeMode: mode,
@@ -447,26 +473,26 @@ function getProgrammingContent($content) {
 		});
 
 		if ($content[i].id) {
-			allContent[allContent.length-1].id = $content[i].id;
+			allContent[allContent.length - 1].id = $content[i].id;
 		}
 
 		if (praticeType === "examination") {
-			let score = $($content[i]).find(".showScore > .textInput").val();
+			var score = $($content[i]).find(".showScore > .textInput").val();
 			if (!score) {
-				score = $($content[i]).find(".showScore > .textInput")[0].placeholder;
+				score = $($($content[i]).find(".showScore > .textInput")[0]).attr("placeholder");
 			}
 
-			allContent[allContent.length-1].score = score;
+			allContent[allContent.length - 1].score = score;
 		}
 	}
 
 	return allContent;
 }
 
-let commentRemovePratice = removePratice;
+var commentRemovePratice = removePratice;
 /** 删除题目
 */
-removePratice = function($target) {
+removePratice = function removePratice($target) {
 	console.log($target[0].id);
 	commentRemovePratice($target);
 	if ($target[0].id) {
@@ -475,7 +501,7 @@ removePratice = function($target) {
 			praticeId: $target[0].id
 		});
 	}
-}
+};
 
 function init() {
 	subjectName = decodeURIComponent(getValueInUrl("subjectName"));
@@ -497,39 +523,36 @@ function init() {
 		// $(".flip").css("width", "60px");
 		// $(".next").css("width", "60px");
 		// $(".next").val("提交");
-	}
-	else {
+	} else {
 		if (praticeType === "chapter") {
-			$(".time")[0].innerHTML += " — 第 " + (Number(index)+1) +" 章";
-		}
-		else {
+			$(".time")[0].innerHTML += " — 第 " + (Number(index) + 1) + " 章";
+		} else {
 			$(".existTime").css("display", "block");
 			$(".examinationTime").css("display", "block");
 			$(".showScore").css("display", "block");
-			$(".time")[0].innerHTML += " — 试卷 " + (Number(index)+1);
+			$(".time")[0].innerHTML += " — 试卷 " + (Number(index) + 1);
 		}
 	}
 
-	praticeIdObj = {};
-	findPraticesByType(praticeType, function(result) {
+	var praticeIdObj = {};
+	findPraticesByType(praticeType, function (result) {
 		if (index) {
 			unitId = result[index];
-		}
-		else {
+		} else {
 			unitId = result;
 		}
 
-		findUnitById(unitId, function(data) {
+		findUnitById(unitId, function (data) {
 			if (data.effectiveTime) {
-				let effectiveTime = data.effectiveTime, 
-					beginTime = effectiveTime.beginTime,
-					endTime = effectiveTime.endTime;
+				var effectiveTime = data.effectiveTime,
+				    beginTime = effectiveTime.beginTime,
+				    endTime = effectiveTime.endTime;
 				if (beginTime) {
 					beginTime = new Date(beginTime);
 					$(".beginTime .year").val(beginTime.getFullYear());
-					$(".beginTime .month").val(Number(beginTime.getMonth()+1));
+					$(".beginTime .month").val(Number(beginTime.getMonth() + 1));
 					$(".beginTime .day").val(beginTime.getDate());
-					$(".beginTime .H").val(beginTime .getHours());
+					$(".beginTime .H").val(beginTime.getHours());
 					$(".beginTime .M").val(beginTime.getMinutes());
 					$(".beginTime .S").val(beginTime.getSeconds());
 				}
@@ -537,7 +560,7 @@ function init() {
 				if (endTime) {
 					endTime = new Date(endTime);
 					$(".endTime .year").val(endTime.getFullYear());
-					$(".endTime .month").val(Number(endTime.getMonth()+1));
+					$(".endTime .month").val(Number(endTime.getMonth() + 1));
 					$(".endTime .day").val(endTime.getDate());
 					$(".endTime .H").val(endTime.getHours());
 					$(".endTime .M").val(endTime.getMinutes());
@@ -554,13 +577,12 @@ function init() {
 			if (type) {
 				praticeIdObj[type] = data[type];
 				currentAddType = type;
-			}
-			else {
+			} else {
 				praticeIdObj = data;
 			}
 
-			for(var k in praticeIdObj) {
-				switch(k) {
+			for (var k in praticeIdObj) {
+				switch (k) {
 					case "SingleChoice":
 					case "MultipleChoices":
 					case "TrueOrFalse":
@@ -589,22 +611,23 @@ function init() {
 	...
  }
 */
-savePraticesInData = function(contentObj, totalCount, examinationTime, existTime) {
+savePraticesInData = function savePraticesInData(contentObj, totalCount, examinationTime, existTime) {
 	console.log(contentObj);
 	console.log(removePraticeArr);
 
-	let randomUnitId;
+	var randomUnitId = void 0;
 	if (praticeType !== "random") {
-		findSubjectByName(subjectName, function(result) {
+		findSubjectByName(subjectName, function (result) {
 			randomUnitId = result.randomPratices;
 		});
 	}
 
-	for(var k in typeChiness) {
+	for (var k in typeChiness) {
 		console.log(k);
-		let praticeArr = contentObj[k];
-		for(let i=0, len=praticeArr.length; i<len; i++) {
-			let praticeContent = praticeArr[i];
+		var praticeArr = contentObj[k];
+
+		var _loop5 = function _loop5(i, len) {
+			var praticeContent = praticeArr[i];
 			console.log(praticeContent.answer);
 			if (praticeContent.id) {
 				callDataProcessingFn({
@@ -622,20 +645,18 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 							score: praticeContent.score
 						}
 					},
-					success: function(result) {
+					success: function success(result) {
 						console.log(result);
 					}
 				});
-			}
-			else {
-				(function(key) {
-					addPratice(praticeContent, function(praticeId) {
+			} else {
+				(function (key) {
+					addPratice(praticeContent, function (praticeId) {
 						addPraticeInUnits({
 							praticeType: key,
 							praticeId: praticeId,
 							unitId: unitId,
-							callback: function(result) {
-							}
+							callback: function callback(result) {}
 						});
 
 						if (randomUnitId) {
@@ -643,17 +664,20 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 								praticeType: key,
 								praticeId: praticeId,
 								unitId: randomUnitId,
-								callback: function(result) {
-								}
+								callback: function callback(result) {}
 							});
 						}
 					});
 				})(k);
 			}
+		};
+
+		for (var i = 0, len = praticeArr.length; i < len; i++) {
+			_loop5(i, len);
 		}
 	}
 
-	for(let i=0, len=removePraticeArr.length; i<len; i++) {
+	for (var i = 0, len = removePraticeArr.length; i < len; i++) {
 		callDataProcessingFn({
 			data: {
 				data: "pratices",
@@ -662,10 +686,10 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 					_id: removePraticeArr[i].praticeId
 				}
 			},
-			success: function() {}
+			success: function success() {}
 		});
 
-		let update = {};
+		var update = {};
 		update[removePraticeArr[i].type] = removePraticeArr[i].praticeId;
 		console.log(update);
 		callDataProcessingFn({
@@ -678,7 +702,7 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 				operation: "pull",
 				update: update
 			},
-			success: function() {}
+			success: function success() {}
 		});
 
 		if (randomUnitId) {
@@ -692,7 +716,7 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 					operation: "pull",
 					update: update
 				},
-				success: function() {}
+				success: function success() {}
 			});
 		}
 	}
@@ -709,7 +733,7 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 				updateTime: new Date().toLocaleString()
 			}
 		},
-		success: function() {}
+		success: function success() {}
 	});
 
 	if (examinationTime) {
@@ -726,7 +750,7 @@ savePraticesInData = function(contentObj, totalCount, examinationTime, existTime
 					effectiveTime: existTime
 				}
 			},
-			success: function() {}
+			success: function success() {}
 		});
 	}
-}
+};

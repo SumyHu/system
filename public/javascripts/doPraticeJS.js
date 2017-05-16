@@ -1,6 +1,8 @@
-let praticeTypeArr = ["SingleChoice", "MultipleChoices", "TrueOrFalse", "FillInTheBlank", "ShortAnswer", "Programming"];
+"use strict";
 
-let programmingTypeMode = {
+var praticeTypeArr = ["SingleChoice", "MultipleChoices", "TrueOrFalse", "FillInTheBlank", "ShortAnswer", "Programming"];
+
+var programmingTypeMode = {
 	c: "text/x-c",
 	"c++": "text/x-c++src",
 	"c#": "text/x-csharp",
@@ -11,65 +13,70 @@ let programmingTypeMode = {
 	Ruby: "text/x-ruby",
 	"sql(mysql)": "text/x-mysql",
 	"sql(oracle)": "text/x-sql"
-}
+};
 
-let subjectName, praticeType, selectIndex, type, allPraticeContent;
+var subjectName = void 0,
+    praticeType = void 0,
+    selectIndex = void 0,
+    type = void 0,
+    allPraticeContent = void 0;
 
-let currentIndexArray = {};   // 存储当前所有类型的题目下标
+var currentIndexArray = {}; // 存储当前所有类型的题目下标
 
-let hasContentTypeArr = [];   // 存储当前有题目的类型名
+var hasContentTypeArr = []; // 存储当前有题目的类型名
 
 // 当练习类型为考试模拟时，进行正确答案和考生答案存储及匹配
-let examinationCorrectAnswer = {}, examinationStudentAnswer = {}, 
-	scoresObj = {
-		SingleChoice: [],
-		MultipleChoices: [],
-		TrueOrFalse: [],
-		FillInTheBlank: [],
-		ShortAnswer: [],
-		Programming: []
-	};
+var examinationCorrectAnswer = {},
+    examinationStudentAnswer = {},
+    scoresObj = {
+	SingleChoice: [],
+	MultipleChoices: [],
+	TrueOrFalse: [],
+	FillInTheBlank: [],
+	ShortAnswer: [],
+	Programming: []
+};
 
 // 记录Programing添加的editor，用于后面判断editor是否都不为空
-let programingEditorArray = [];
+var programingEditorArray = [];
 
 /** 实现代码编辑器样式
  * @param id String textarea的id
  * @param mode String 代码类型
 */
 function editorStyle(id, mode) {
-	var editor=CodeMirror.fromTextArea(document.getElementById(id), {
-            mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
-            lineNumbers: true,   // 显示行号
+	var editor = CodeMirror.fromTextArea(document.getElementById(id), {
+		mode: mode, //实现Java代码高亮，通过CodeMirror.mimeModes查询支持哪些mode，不支持的mode可通过添加mode文件夹下的js文件将该类型添加
+		lineNumbers: true, // 显示行号
 
-	        //设置主题
-	        theme: "seti",
-	        // theme: "monokai",
+		//设置主题
+		theme: "seti",
+		// theme: "monokai",
 
-	        //绑定Vim
-	        // keyMap: "vim",
+		//绑定Vim
+		// keyMap: "vim",
 
-	        //代码折叠
-	        lineWrapping: true,
-	        foldGutter: true,
-	        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+		//代码折叠
+		lineWrapping: true,
+		foldGutter: true,
+		gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
 
-	        //全屏模式
-	        // fullScreen: true,
+		//全屏模式
+		// fullScreen: true,
 
-	        //括号匹配
-	        matchBrackets: true,
+		//括号匹配
+		matchBrackets: true,
 
-	        extraKeys: {"Ctrl-Space":"autocomplete"}   //ctrl-space唤起智能提示
-    });
-    return editor;
+		extraKeys: { "Ctrl-Space": "autocomplete" } //ctrl-space唤起智能提示
+	});
+	return editor;
 }
 
 // 当练习类型为考试模拟时，添加类型块索引
 function addPraticeBlockIndex() {
 	$(".showPraticeBlockIndex").css("display", "block");
-	for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
-		let div = document.createElement("div");
+	for (var i = 0, len = hasContentTypeArr.length; i < len; i++) {
+		var div = document.createElement("div");
 		div.className = hasContentTypeArr[i] + "Block";
 		div.innerHTML = typeChiness[hasContentTypeArr[i]];
 		$(".showPraticeBlockIndex").append(div);
@@ -81,8 +88,8 @@ function addPraticeBlockIndex() {
 */
 function addPraticeIndex(count) {
 	$(".showPraticeIndex")[0].innerHTML = "";
-	for(let i=1; i<=count; i++) {
-		let div = document.createElement("div");
+	for (var i = 1; i <= count; i++) {
+		var div = document.createElement("div");
 		div.innerHTML = i;
 		$(".showPraticeIndex").append(div);
 	}
@@ -95,44 +102,34 @@ function addPraticeIndex(count) {
  * @param addPraticeType 添加的习题类型
 */
 function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
-	findPraticesById(praticeId, function(result) {
-		let sec = document.createElement("section");
+	findPraticesById(praticeId, function (result) {
+		var sec = document.createElement("section");
 		sec.className = "content";
-		let showIndex = index+1, inputType;
+		var showIndex = index + 1,
+		    inputType = void 0;
 
-		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic;
+		var innerHtml = "<p class=\"title\"><span class=\"titleNum\">" + showIndex + "</span>" + result.topic;
 
 		if (praticeType === "examination") {
-			innerHtml += ` (  <span class="score">` + result.score + `</span>分 )`;
+			innerHtml += " (  <span class=\"score\">" + result.score + "</span>\u5206 )";
 		}
-		innerHtml += `</p><div class="answer">`;
+		innerHtml += "</p><div class=\"answer\">";
 
 		if (addPraticeType === "MultipleChoices") {
 			inputType = "checkbox";
-		}
-		else {
+		} else {
 			inputType = "radio";
 		}
-		for(let i=0, len=result.choices.length; i<len; i++) {
-			let choiceContent = result.choices[i].choiceContent;
-			innerHtml = innerHtml
-							+ `<div>
-									<input type="` + inputType + `" id="` + addPraticeType + showIndex + i + `" name="` + addPraticeType +  showIndex + `">
-									<label for="` + addPraticeType + showIndex + i + `">
-										<span class="num">` + result.choices[i].num + `</span>
-									` + (choiceContent?choiceContent:"") + `</label>
-							   </div>`;
+		for (var i = 0, len = result.choices.length; i < len; i++) {
+			var choiceContent = result.choices[i].choiceContent;
+			innerHtml = innerHtml + "<div>\n\t\t\t\t\t\t\t\t\t<input type=\"" + inputType + "\" id=\"" + addPraticeType + showIndex + i + "\" name=\"" + addPraticeType + showIndex + "\">\n\t\t\t\t\t\t\t\t\t<label for=\"" + addPraticeType + showIndex + i + "\">\n\t\t\t\t\t\t\t\t\t\t<span class=\"num\">" + result.choices[i].num + "</span>\n\t\t\t\t\t\t\t\t\t" + (choiceContent ? choiceContent : "") + "</label>\n\t\t\t\t\t\t\t   </div>";
 		}
 
-		sec.innerHTML = innerHtml + `</div>`;
+		sec.innerHTML = innerHtml + "</div>";
 
 		if (praticeType !== "examination") {
-			sec.innerHTML = sec.innerHTML + `<div class="choiceAnswerBlock">
-										<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-										<div class="answerContent">` + result.answer.join(",") + `</div>
-									</div>`;
-		}
-		else {
+			sec.innerHTML = sec.innerHTML + "<div class=\"choiceAnswerBlock\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"showAnswer\">\u67E5\u770B\u6B63\u786E\u7B54\u6848<span class=\"icon\">\uFE3D</span></div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"answerContent\">" + result.answer.join(",") + "</div>\n\t\t\t\t\t\t\t\t\t</div>";
+		} else {
 			examinationCorrectAnswer[addPraticeType].answer.push(result.answer);
 
 			if (index === 0) {
@@ -151,49 +148,46 @@ function addChoicePraticesContent(section, praticeId, index, addPraticeType) {
  * @param addPraticeType String 要添加的习题类型
 */
 function addChoicePratices(praticeIdArr, addPraticeType) {
-	let section = document.createElement("section");
+	var section = document.createElement("section");
 	section.className = addPraticeType;
 	if (praticeType === "random") {
-		let count = 0;
-		let length = praticeIdArr.length;
-		let tempArr = [];
-		for(let i=0, len=praticeIdArr.length; i<len; i++) {
+		var count = 0;
+		var length = praticeIdArr.length;
+		var tempArr = [];
+		for (var i = 0, len = praticeIdArr.length; i < len; i++) {
 			tempArr.push(praticeIdArr[i]);
 		}
-		while(count < length) {
-			let randomNum = parseInt(Math.random()*tempArr.length);
+		while (count < length) {
+			var randomNum = parseInt(Math.random() * tempArr.length);
 			addChoicePraticesContent(section, tempArr[randomNum], count, addPraticeType);
 			tempArr.splice(randomNum, 1);
 			count++;
 		}
-	}
-	else {
+	} else {
 		if (praticeType === "examination") {
 			examinationCorrectAnswer[addPraticeType] = {
 				answer: [],
 				score: 0
 			};
 		}
-		praticeIdArr.forEach(function(praticeId, index, array) {
+		praticeIdArr.forEach(function (praticeId, index, array) {
 			addChoicePraticesContent(section, praticeId, index, addPraticeType);
 		});
 	}
 
-	$(".choiceAnswerBlock > .showAnswer").click(function(e) {
-		let $shortAnswer;
+	$(".choiceAnswerBlock > .showAnswer").click(function (e) {
+		var $showAnswer = void 0;
 		if (getTarget(e).className === "icon") {
 			$showAnswer = $(getTarget(e)).parent();
-		}
-		else {
+		} else {
 			$showAnswer = $(getTarget(e));
 		}
-		let $answerBlock = $showAnswer.parent(".choiceAnswerBlock");
-		let height = $answerBlock.css("height");
+		var $answerBlock = $showAnswer.parent(".choiceAnswerBlock");
+		var height = $answerBlock.css("height");
 		if (height === "35px") {
 			$showAnswer.find(".icon")[0].innerHTML = "︾";
 			$answerBlock.css("height", "80px");
-		}
-		else {
+		} else {
 			$showAnswer.find(".icon")[0].innerHTML = "︽";
 			$answerBlock.css("height", "35px");
 		}
@@ -207,41 +201,34 @@ function addChoicePratices(praticeIdArr, addPraticeType) {
  * @param addPraticeType 添加的习题类型
 */
 function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) {
-	findPraticesById(praticeId, function(result) {
+	findPraticesById(praticeId, function (result) {
 		console.log(result);
-		let sec = document.createElement("section");
+		var sec = document.createElement("section");
 		sec.className = "content";
-		let showIndex = index+1;
+		var showIndex = index + 1;
 
-		let innerHtml = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic;
+		var innerHtml = "<p class=\"title\"><span class=\"titleNum\">" + showIndex + "</span>" + result.topic;
 
 		if (praticeType === "examination") {
-			innerHtml += ` (  <span class="score">` + result.score + `</span>分 )`;
+			innerHtml += " (  <span class=\"score\">" + result.score + "</span>\u5206 )";
 		}
-		innerHtml += `</p><div class="answer">`;
+		innerHtml += "</p><div class=\"answer\">";
 
 		if (addPraticeType === "FillInTheBlank") {
-			for(let i=1, len=result.answer.length; i<=len; i++) {
-				innerHtml = innerHtml
-							+ `<div>
-									<span class="num">` + i + `</span>
-									<input type="text" class="textInput">
-							    </div>`;
+			for (var i = 1, len = result.answer.length; i <= len; i++) {
+				innerHtml = innerHtml + "<div>\n\t\t\t\t\t\t\t\t\t<span class=\"num\">" + i + "</span>\n\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"textInput\">\n\t\t\t\t\t\t\t    </div>";
 			}
-			sec.innerHTML = innerHtml + `</div>`;
+			sec.innerHTML = innerHtml + "</div>";
 
 			if (praticeType !== "examination") {
-				let answer = result.answer, answerHtml = "";
-				for(let i=0, len=answer.length; i<len; i++) {
-					answerHtml = answerHtml + "<div>" + 	Number(Number(i)+1) + ". " + answer[i].join(" 或 ") + "</div>";
+				var answer = result.answer,
+				    answerHtml = "";
+				for (var _i = 0, _len = answer.length; _i < _len; _i++) {
+					answerHtml = answerHtml + "<div>" + Number(Number(_i) + 1) + ". " + answer[_i].join(" 或 ") + "</div>";
 				}
 
-				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
-											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent">` + answerHtml + `</div>
-										</div>`;
-			}
-			else {
+				sec.innerHTML = sec.innerHTML + "<div class=\"answerBlock\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"showAnswer\">\u67E5\u770B\u6B63\u786E\u7B54\u6848<span class=\"icon\">\uFE3D</span></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"answerContent\">" + answerHtml + "</div>\n\t\t\t\t\t\t\t\t\t\t</div>";
+			} else {
 				examinationCorrectAnswer[addPraticeType].answer.push(result.answer);
 
 				if (index === 0) {
@@ -251,20 +238,15 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 
 			$(section).append(sec);
 			$(".flip").before(section);
-		}
-		else if (addPraticeType === "ShortAnswer") {
+		} else if (addPraticeType === "ShortAnswer") {
 			innerHtml += "<textarea></textarea><p class='ShortAnswerTips'>ps：尽量将带有否定意义的词写成“否定词+形容词”的形式，如将“不变”写成“不改变”或“不会变化”之类的。</p>";
-			sec.innerHTML = innerHtml + `</div>`;
+			sec.innerHTML = innerHtml + "</div>";
 
 			if (praticeType !== "examination") {
-				let answerHtml = result.answer[0].content;
-				
-				sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
-											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent"><pre>` + answerHtml.replace(/[【】（\d*）{}]/g, "") + `<pre></div>
-										</div>`;
-			}
-			else {
+				var _answerHtml = result.answer[0].content;
+
+				sec.innerHTML = sec.innerHTML + "<div class=\"answerBlock\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"showAnswer\">\u67E5\u770B\u6B63\u786E\u7B54\u6848<span class=\"icon\">\uFE3D</span></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"answerContent\"><pre>" + _answerHtml.replace(/[【】（\d*）{}]/g, "") + "<pre></div>\n\t\t\t\t\t\t\t\t\t\t</div>";
+			} else {
 				examinationCorrectAnswer[addPraticeType].push({
 					answer: result.answer,
 					score: result.score
@@ -273,75 +255,55 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 
 			$(section).append(sec);
 			$(".flip").before(section);
-		}
-		else if (addPraticeType === "Programming") {
-			let inputContent = result.answer[0].input, outputContent = result.answer[0].output;
-			let inputType = [], outputType = [];
+		} else if (addPraticeType === "Programming") {
+			var inputContent = result.answer[0].input,
+			    outputContent = result.answer[0].output;
+			var inputType = [],
+			    outputType = [];
 			if (inputContent.type) {
-				for(let i=0, len=inputContent.type.length; i<len; i++) {
-					inputType.push(inputContent.type[i].thisType);
-					if (inputContent.type[i].childType) {
-						inputType[inputType.length-1] += "(" + inputContent.type[i].childType + ")";
-					}
-				}
-			}
-		
-			if (outputContent.type) {
-				for(let i=0, len=outputContent.type.length; i<len; i++) {
-					outputType.push(outputContent.type[i].thisType);
-					if (outputContent.type[i].childType) {
-						outputType[outputType.length-1] += "(" + outputContent.type[i].childType + ")";
+				for (var _i2 = 0, _len2 = inputContent.type.length; _i2 < _len2; _i2++) {
+					inputType.push(inputContent.type[_i2].thisType);
+					if (inputContent.type[_i2].childType) {
+						inputType[inputType.length - 1] += "(" + inputContent.type[_i2].childType + ")";
 					}
 				}
 			}
 
-			let modeChiness = result.answer[0].programmingTypeMode, showMode;
-			for(var k in programmingTypeMode) {
+			if (outputContent.type) {
+				for (var _i3 = 0, _len3 = outputContent.type.length; _i3 < _len3; _i3++) {
+					outputType.push(outputContent.type[_i3].thisType);
+					if (outputContent.type[_i3].childType) {
+						outputType[outputType.length - 1] += "(" + outputContent.type[_i3].childType + ")";
+					}
+				}
+			}
+
+			var modeChiness = result.answer[0].programmingTypeMode,
+			    showMode = void 0;
+			for (var k in programmingTypeMode) {
 				if (programmingTypeMode[k] === modeChiness) {
 					showMode = k;
 				}
 			}
 
-			let helpMode = showMode;
+			var helpMode = showMode;
 			if (helpMode === "c++") {
 				helpMode = "cpp";
-			}
-			else if (helpMode === "c#") {
+			} else if (helpMode === "c#") {
 				helpMode = "cs";
 			}
 
-			sec.innerHTML = `<p class="title"><span class="titleNum">` + showIndex + `</span>` + result.topic 
-							+ (praticeType === "examination" ? ` (  <span class="score">` + result.score + `</span>分 )` : ``) + `</p>
-							<div class="inputBlock">
-								<div class="description">输入要求：` + (inputContent.description ? inputContent.description : "无") + `</div>
-								<div class="example">输入样例：` + (inputContent.example ? inputContent.example : "无") + `</div>
-								<div class="inputType">输入类型（按照输入顺序）：` + (inputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + inputType.join("、") + `</span></div>
-							</div>
-							<div class="outputBlock">
-								<div class="description">输出要求：` + (outputContent.description ? outputContent.description : "无") + `</div>
-								<div class="example">输出样例：` + (outputContent.example ? outputContent.example : "无") + `</div>
-								<div class="inputType">输出类型（按照输出顺序）：` + (outputType.length>0 ? "" : "无") + `<span class="inputTypeContent">` + outputType.join("、") + `</span></div>
-							</div>
-							<div class="programmingTypeMode">编程语言：<span class="mode">` + showMode + `</span><a href="help?mode=` + helpMode + `" target="blank" class="help">在线帮助</a></div>
-						 <div class="longAnswer">` + `<div><textarea id="` + addPraticeType + `Editor` + index + `"></textarea></div></div>`;
+			sec.innerHTML = "<p class=\"title\"><span class=\"titleNum\">" + showIndex + "</span>" + result.topic + (praticeType === "examination" ? " (  <span class=\"score\">" + result.score + "</span>\u5206 )" : "") + "</p>\n\t\t\t\t\t\t\t<div class=\"inputBlock\">\n\t\t\t\t\t\t\t\t<div class=\"description\">\u8F93\u5165\u8981\u6C42\uFF1A" + (inputContent.description ? inputContent.description : "无") + "</div>\n\t\t\t\t\t\t\t\t<div class=\"example\">\u8F93\u5165\u6837\u4F8B\uFF1A" + (inputContent.example ? inputContent.example : "无") + "</div>\n\t\t\t\t\t\t\t\t<div class=\"inputType\">\u8F93\u5165\u7C7B\u578B\uFF08\u6309\u7167\u8F93\u5165\u987A\u5E8F\uFF09\uFF1A" + (inputType.length > 0 ? "" : "无") + "<span class=\"inputTypeContent\">" + inputType.join("、") + "</span></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"outputBlock\">\n\t\t\t\t\t\t\t\t<div class=\"description\">\u8F93\u51FA\u8981\u6C42\uFF1A" + (outputContent.description ? outputContent.description : "无") + "</div>\n\t\t\t\t\t\t\t\t<div class=\"example\">\u8F93\u51FA\u6837\u4F8B\uFF1A" + (outputContent.example ? outputContent.example : "无") + "</div>\n\t\t\t\t\t\t\t\t<div class=\"inputType\">\u8F93\u51FA\u7C7B\u578B\uFF08\u6309\u7167\u8F93\u51FA\u987A\u5E8F\uFF09\uFF1A" + (outputType.length > 0 ? "" : "无") + "<span class=\"inputTypeContent\">" + outputType.join("、") + "</span></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"programmingTypeMode\">\u7F16\u7A0B\u8BED\u8A00\uFF1A<span class=\"mode\">" + showMode + "</span><a href=\"help?mode=" + helpMode + "\" target=\"blank\" class=\"help\">\u5728\u7EBF\u5E2E\u52A9</a></div>\n\t\t\t\t\t\t <div class=\"longAnswer\">" + "<div><textarea id=\"" + addPraticeType + "Editor" + index + "\"></textarea></div></div>";
 
 			if (addPraticeType === "Programming") {
-				sec.innerHTML = sec.innerHTML + `<input type="button" value="调试" class="runningBtn">
-												<div class="runningResult">
-													<div class="runningTitle">调试结果：</div>
-													<div class="runningContent"></div>
-												</div>`;
+				sec.innerHTML = sec.innerHTML + "<input type=\"button\" value=\"\u8C03\u8BD5\" class=\"runningBtn\">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"runningResult\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"runningTitle\">\u8C03\u8BD5\u7ED3\u679C\uFF1A</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"runningContent\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>";
 			}
 
 			if (praticeType !== "examination") {
 				if (addPraticeType === "Programming") {
-					sec.innerHTML = sec.innerHTML + `<div class="answerBlock">
-											<div class="showAnswer">查看正确答案<span class="icon">︽</span></div>
-											<div class="answerContent"><textarea id="editor` + index + `">` + result.answer[0].content + `</textarea></div>
-										</div>`;
+					sec.innerHTML = sec.innerHTML + "<div class=\"answerBlock\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"showAnswer\">\u67E5\u770B\u6B63\u786E\u7B54\u6848<span class=\"icon\">\uFE3D</span></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"answerContent\"><textarea id=\"editor" + index + "\">" + result.answer[0].content + "</textarea></div>\n\t\t\t\t\t\t\t\t\t\t</div>";
 				}
-			}
-			else {
+			} else {
 				examinationCorrectAnswer[addPraticeType].push({
 					answer: result.answer,
 					score: result.score
@@ -353,31 +315,29 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
 
 			$(".answer").addClass("longAnswer");
 
-			let mode = "text/plain";
+			var mode = "text/plain";
 			if (addPraticeType === "Programming") {
 				mode = result.answer[0].programmingTypeMode;
 			}
 
-			let editor = editorStyle(addPraticeType + 'Editor' + index, mode);
+			var editor = editorStyle(addPraticeType + 'Editor' + index, mode);
 			programingEditorArray.push({
 				textareaId: addPraticeType + "Editor" + index,
-				editor:editor
+				editor: editor
 			});
 
-			editor.on("change", function() {
-				$(sec).find(".runningResult > .runningContent")[0].innerHTML
-				 = "";
+			editor.on("change", function () {
+				$(sec).find(".runningResult > .runningContent")[0].innerHTML = "";
 			});
 
 			if ($("#editor" + index).length) {
-				let editor1 = editorStyle("editor" + index, mode);
+				var editor1 = editorStyle("editor" + index, mode);
 				editor1.setSize("auto", "auto");
 				editor1.setOption("readOnly", true);
-				setTimeout(function() {
+				setTimeout(function () {
 					editor1.refresh();
 				}, 1);
 			}
-
 		}
 		$(sec).css("display", "none");
 	});
@@ -388,57 +348,53 @@ function addNotChoicePraticesContent(section, praticeId, index, addPraticeType) 
  * @param addPraticeType String 要添加的习题类型
 */
 function addNotChoicePratices(praticeIdArr, addPraticeType) {
-	let section = document.createElement("section");
+	var section = document.createElement("section");
 	section.className = addPraticeType;
 
 	if (praticeType === "random") {
-		let count = 0;
-		let length = praticeIdArr.length;
-		let tempArr = [];
-		for(let i=0, len=praticeIdArr.length; i<len; i++) {
+		var count = 0;
+		var length = praticeIdArr.length;
+		var tempArr = [];
+		for (var i = 0, len = praticeIdArr.length; i < len; i++) {
 			tempArr.push(praticeIdArr[i]);
 		}
-		while(count < length) {
-			let randomNum = parseInt(Math.random()*tempArr.length);
+		while (count < length) {
+			var randomNum = parseInt(Math.random() * tempArr.length);
 			addNotChoicePraticesContent(section, tempArr[randomNum], count, addPraticeType);
 			tempArr.splice(randomNum, 1);
 			count++;
 		}
-	}
-	else {
+	} else {
 		if (praticeType === "examination") {
 			if (addPraticeType === "FillInTheBlank") {
 				examinationCorrectAnswer[addPraticeType] = {
 					answer: [],
 					score: 0
-				}
-			}
-			else {
+				};
+			} else {
 				examinationCorrectAnswer[addPraticeType] = [];
 			}
 		}
-		praticeIdArr.forEach(function(praticeId, index, array) {
-			addNotChoicePraticesContent(section, praticeId, index, addPraticeType)
+		praticeIdArr.forEach(function (praticeId, index, array) {
+			addNotChoicePraticesContent(section, praticeId, index, addPraticeType);
 		});
 	}
 
-	$(".runningBtn").click(function(e) {});
+	$(".runningBtn").click(function (e) {});
 
-	$(".answerBlock > .showAnswer").click(function(e) {
-		let $shortAnswer;
+	$(".answerBlock > .showAnswer").click(function (e) {
+		var $shortAnswer = void 0;
 		if (getTarget(e).className === "icon") {
 			$showAnswer = $(getTarget(e)).parent();
-		}
-		else {
+		} else {
 			$showAnswer = $(getTarget(e));
 		}
-		let $answerBlock = $showAnswer.parent(".answerBlock");
-		let $answerContent = $answerBlock.find(".answerContent");
+		var $answerBlock = $showAnswer.parent(".answerBlock");
+		var $answerContent = $answerBlock.find(".answerContent");
 		if ($answerContent.css("display") === "none") {
 			$showAnswer.find(".icon")[0].innerHTML = "︾";
 			$answerContent.css("display", "block");
-		}
-		else {
+		} else {
 			$showAnswer.find(".icon")[0].innerHTML = "︽";
 			$answerContent.css("display", "none");
 		}
@@ -456,31 +412,28 @@ function changeTypeStyle() {
 */
 function changePraticeContent(index) {
 	// 修改对应索引的样式
-	let $allIndex = $(".showPraticeIndex > div");
+	var $allIndex = $(".showPraticeIndex > div");
 	$allIndex.css("background", "#eff0dc");
 	$($allIndex[index]).css("background", "#c9cabb");
 
 	// 显示对应题目
-	let $allContent = $("." + type + " > .content");
+	var $allContent = $("." + type + " > .content");
 	$(".content").css("display", "none");
 	$($allContent[index]).css("display", "block");
 
 	if (index === 0 && type === hasContentTypeArr[0]) {
 		$(".previous").addClass("disable");
-	}
-	else {
+	} else {
 		$(".previous").removeClass("disable");
 	}
 
-	if (index === currentIndexArray[type].length-1 && type === hasContentTypeArr[hasContentTypeArr.length-1]) {
+	if (index === currentIndexArray[type].length - 1 && type === hasContentTypeArr[hasContentTypeArr.length - 1]) {
 		if (praticeType === "examination") {
 			$(".next").val("提交");
-		}
-		else {
+		} else {
 			$(".next").addClass("disable");
 		}
-	}
-	else {
+	} else {
 		$(".next").val(">");
 		$(".next").removeClass("disable");
 	}
@@ -492,21 +445,22 @@ function changePraticeContent(index) {
 function getChoiceAnswer(getType) {
 	examinationStudentAnswer[getType] = [];
 
-	let inputType = "radio";
+	var inputType = "radio";
 	if (getType === "MultipleChoices") {
 		inputType = "checkbox";
 	}
 
-	let allContent = $("." + getType + " > .content");
-	for(let i=0, len=allContent.length; i<len; i++) {
+	var allContent = $("." + getType + " > .content");
+	for (var i = 0, len = allContent.length; i < len; i++) {
 		examinationStudentAnswer[getType].push([]);
-		let currentIndex = examinationStudentAnswer[getType].length-1;
+		var currentIndex = examinationStudentAnswer[getType].length - 1;
 
-		let allAnswer = $(allContent[i]).find(".answer input[type=" + inputType + "]"), hadSelected = false;
-		for(let j=0, len1=allAnswer.length; j<len1; j++) {
+		var allAnswer = $(allContent[i]).find(".answer input[type=" + inputType + "]"),
+		    hadSelected = false;
+		for (var j = 0, len1 = allAnswer.length; j < len1; j++) {
 			if (allAnswer[j].checked) {
 				hadSelected = true;
-				let label = $(allContent[i]).find(".answer .num")[j].innerHTML;
+				var label = $(allContent[i]).find(".answer .num")[j].innerHTML;
 				examinationStudentAnswer[getType][currentIndex].push(label);
 				if (getType !== "MultipleChoices") {
 					break;
@@ -527,33 +481,31 @@ function getNotChoiceAnswer(getType) {
 	examinationStudentAnswer[getType] = [];
 
 	if (getType === "FillInTheBlank") {
-		let allContent = $("." + getType + " > .content");
-		for(let i=0, len=allContent.length; i<len; i++) {
+		var allContent = $("." + getType + " > .content");
+		for (var i = 0, len = allContent.length; i < len; i++) {
 			examinationStudentAnswer[getType].push([]);
-			let currentIndex = examinationStudentAnswer[getType].length-1;
+			var currentIndex = examinationStudentAnswer[getType].length - 1;
 
-			let allAnswer = $(allContent[i]).find(".answer .textInput");
-			for(let j=0, len1=allAnswer.length; j<len1; j++) {
+			var allAnswer = $(allContent[i]).find(".answer .textInput");
+			for (var j = 0, len1 = allAnswer.length; j < len1; j++) {
 				examinationStudentAnswer[getType][currentIndex].push(allAnswer[j].value);
 			}
 		}
-	}
-	else if (getType === "ShortAnswer") {
-		let allContent = $("." + getType + " > .content");
-		for(let i=0, len=allContent.length; i<len; i++) {
-			console.log($(allContent[i]).find(".answer > textarea").val());
-			examinationStudentAnswer[getType].push($(allContent[i]).find(".answer > textarea").val());
+	} else if (getType === "ShortAnswer") {
+		var _allContent = $("." + getType + " > .content");
+		for (var _i4 = 0, _len4 = _allContent.length; _i4 < _len4; _i4++) {
+			console.log($(_allContent[_i4]).find(".answer > textarea").val());
+			examinationStudentAnswer[getType].push($(_allContent[_i4]).find(".answer > textarea").val());
 		}
-	}
-	else if (getType === "Programming") {
-		for(let i=0, len=programingEditorArray.length; i<len; i++) {
-			let allContent = $("." + getType + " > .content");
-			let showResult = $(allContent[i]).find(".runningResult > .runningContent")[0].innerHTML;
+	} else if (getType === "Programming") {
+		for (var _i5 = 0, _len5 = programingEditorArray.length; _i5 < _len5; _i5++) {
+			var _allContent2 = $("." + getType + " > .content");
+			var showResult = $(_allContent2[_i5]).find(".runningResult > .runningContent")[0].innerHTML;
 			console.log(showResult);
 			if (!showResult || showResult === '<pre><div class="loading"></div></pre>') {
 				return false;
 			}
-			examinationStudentAnswer[getType].push(programingEditorArray[i].editor.getValue());
+			examinationStudentAnswer[getType].push(programingEditorArray[_i5].editor.getValue());
 		}
 		return true;
 	}
@@ -578,14 +530,14 @@ function getAllAnswer() {
  * @param score Number 每题分值
 */
 function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score, type) {
-	let totalScore = 0;
-	outer: for(let i=0, len=choiceCorrectAnswer.length; i<len; i++) {
+	var totalScore = 0;
+	outer: for (var i = 0, len = choiceCorrectAnswer.length; i < len; i++) {
 		if (choiceCorrectAnswer[i].length !== choiceStudentAnswer[i].length) {
 			scoresObj[type].push(0);
 			totalScore += 0;
 			continue;
 		}
-		for(let j=0, len1=choiceCorrectAnswer[i].length; j<len1; j++) {
+		for (var j = 0, len1 = choiceCorrectAnswer[i].length; j < len1; j++) {
 			if (choiceCorrectAnswer[i][j] !== choiceStudentAnswer[i][j]) {
 				scoresObj[type].push(0);
 				totalScore += 0;
@@ -605,18 +557,18 @@ function checkChoiceAnswer(choiceCorrectAnswer, choiceStudentAnswer, score, type
  * @param score Number 每题分值
 */
 function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStudentAnswer, score) {
-	let totalScore = 0;
-	outer: for(let i=0, len=FillInTheBlankCorrectAnswer.length; i<len; i++) {
+	var totalScore = 0;
+	outer: for (var i = 0, len = FillInTheBlankCorrectAnswer.length; i < len; i++) {
 		scoresObj["FillInTheBlank"].push(0);
 
-		for(let j=0, len1=FillInTheBlankCorrectAnswer[i].length; j<len1; j++) {
-			for(let t=0, len2=FillInTheBlankCorrectAnswer[i][j].length; t<len2; t++) {
+		for (var j = 0, len1 = FillInTheBlankCorrectAnswer[i].length; j < len1; j++) {
+			for (var t = 0, len2 = FillInTheBlankCorrectAnswer[i][j].length; t < len2; t++) {
 				if (FillInTheBlankStudentAnswer[i][j] === FillInTheBlankCorrectAnswer[i][j][t]) {
-					let realScore = score/len1;
+					var realScore = score / len1;
 					console.log("realScore: " + realScore);
-					scoresObj["FillInTheBlank"][scoresObj["FillInTheBlank"].length-1] += realScore;
+					scoresObj["FillInTheBlank"][scoresObj["FillInTheBlank"].length - 1] += realScore;
 					totalScore += realScore;
-					console.log(i, j, score/len1);
+					console.log(i, j, score / len1);
 					break;
 				}
 			}
@@ -635,12 +587,15 @@ function checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer, FillInTheBlankStud
  }, {...}, ...]
 */
 function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, callback) {
-	let totalScore = 0, count = 0;
-	for(let i=0, len1=ShortAnswerCorrectAnswer.length; i<len1; i++) {
-		let answer = ShortAnswerCorrectAnswer[i].answer[0];
-		let correctAnswerContent = answer.content, professionalNounsArr = (answer.professionalNounsArr ? answer.professionalNounsArr : []), 
-			score = ShortAnswerCorrectAnswer[i].score,
-			studentAnswerContent = ShortAnswerStudentAnswer[i];
+	var totalScore = 0,
+	    count = 0;
+
+	var _loop = function _loop(i, len1) {
+		var answer = ShortAnswerCorrectAnswer[i].answer[0];
+		var correctAnswerContent = answer.content,
+		    professionalNounsArr = answer.professionalNounsArr ? answer.professionalNounsArr : [],
+		    score = ShortAnswerCorrectAnswer[i].score,
+		    studentAnswerContent = ShortAnswerStudentAnswer[i];
 
 		console.log(correctAnswerContent, professionalNounsArr, score, studentAnswerContent);
 
@@ -654,7 +609,7 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 					professionalNounsArr: professionalNounsArr,
 					score: score
 				},
-				success: function(result) {
+				success: function success(result) {
 					scoresObj["ShortAnswer"][i] = Number(result);
 					totalScore += Number(result);
 					count++;
@@ -664,8 +619,7 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 					}
 				}
 			});
-		}
-		else {
+		} else {
 			count++;
 
 			scoresObj["ShortAnswer"][i] = 0;
@@ -674,6 +628,10 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
 				callback(totalScore);
 			}
 		}
+	};
+
+	for (var i = 0, len1 = ShortAnswerCorrectAnswer.length; i < len1; i++) {
+		_loop(i, len1);
 	}
 }
 
@@ -687,18 +645,20 @@ function checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, ca
  }]
 */
 function checkProgrammingAnswer(ProgrammingCorrectAnswer) {
-	let allContent = $(".Programming > .content"), totalScore = 0;
-	for(let i=0, len=ProgrammingCorrectAnswer.length; i<len; i++) {
-		let realScore = 0;
+	var allContent = $(".Programming > .content"),
+	    totalScore = 0;
+	for (var i = 0, len = ProgrammingCorrectAnswer.length; i < len; i++) {
+		var realScore = 0;
 		try {
-			let result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML, 
-				score = ProgrammingCorrectAnswer[i].score, correctRate;
+			var result = $(allContent[i]).find(".runningResult > .runningContent > pre")[0].innerHTML,
+			    _score = ProgrammingCorrectAnswer[i].score,
+			    correctRate = void 0;
 
 			if (result.indexOf("编译通过率：") > -1) {
-				realScore = parseFloat(result.substr(6))/100*score;
+				realScore = parseFloat(result.substr(6)) / 100 * _score;
 				totalScore += realScore;
 			}
-		} catch(e) {}
+		} catch (e) {}
 
 		scoresObj["Programming"].push(realScore);
 	}
@@ -708,54 +668,54 @@ function checkProgrammingAnswer(ProgrammingCorrectAnswer) {
 function checkAnswer() {
 	getAllAnswer();
 
-	let SingleChoiceCorrectAnswer = examinationCorrectAnswer.SingleChoice,
-		SingleChoiceStudentAnswer = examinationStudentAnswer.SingleChoice,
-		MultipleChoicesCorrectAnswer = examinationCorrectAnswer.MultipleChoices,
-		MultipleChoicesStudentAnswer = examinationStudentAnswer.MultipleChoices,
-		TrueOrFalseCorrectAnswer = examinationCorrectAnswer.TrueOrFalse,
-		TrueOrFalseStudentAnswer = examinationStudentAnswer.TrueOrFalse,
-		FillInTheBlankCorrectAnswer = examinationCorrectAnswer.FillInTheBlank,
-		FillInTheBlankStudentAnswer = examinationStudentAnswer.FillInTheBlank,
-		ShortAnswerCorrectAnswer = examinationCorrectAnswer.ShortAnswer,
-		ShortAnswerStudentAnswer = examinationStudentAnswer.ShortAnswer,
-		ProgrammingCorrectAnswer = examinationCorrectAnswer.Programming,
-		ProgrammingStudentAnswer = examinationStudentAnswer.Programming,
-		totalScore = 0, 
-		scoresDetail = {
-			totalScore: 0,
-			details: {},
-			urlParam: encodeURIComponent(window.location.href.split("?")[1])
-		};
+	var SingleChoiceCorrectAnswer = examinationCorrectAnswer.SingleChoice,
+	    SingleChoiceStudentAnswer = examinationStudentAnswer.SingleChoice,
+	    MultipleChoicesCorrectAnswer = examinationCorrectAnswer.MultipleChoices,
+	    MultipleChoicesStudentAnswer = examinationStudentAnswer.MultipleChoices,
+	    TrueOrFalseCorrectAnswer = examinationCorrectAnswer.TrueOrFalse,
+	    TrueOrFalseStudentAnswer = examinationStudentAnswer.TrueOrFalse,
+	    FillInTheBlankCorrectAnswer = examinationCorrectAnswer.FillInTheBlank,
+	    FillInTheBlankStudentAnswer = examinationStudentAnswer.FillInTheBlank,
+	    ShortAnswerCorrectAnswer = examinationCorrectAnswer.ShortAnswer,
+	    ShortAnswerStudentAnswer = examinationStudentAnswer.ShortAnswer,
+	    ProgrammingCorrectAnswer = examinationCorrectAnswer.Programming,
+	    ProgrammingStudentAnswer = examinationStudentAnswer.Programming,
+	    totalScore = 0,
+	    scoresDetail = {
+		totalScore: 0,
+		details: {},
+		urlParam: encodeURIComponent(window.location.href.split("?")[1])
+	};
 
 	if (SingleChoiceCorrectAnswer) {
-		let SingleChoiceScore = checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score, "SingleChoice");
+		var SingleChoiceScore = checkChoiceAnswer(SingleChoiceCorrectAnswer.answer, SingleChoiceStudentAnswer, SingleChoiceCorrectAnswer.score, "SingleChoice");
 		scoresDetail.details[typeChiness.SingleChoice] = SingleChoiceScore;
 		totalScore += SingleChoiceScore;
 	}
 	if (MultipleChoicesCorrectAnswer) {
-		let MultipleChoicesScore = checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score, "MultipleChoices");
+		var MultipleChoicesScore = checkChoiceAnswer(MultipleChoicesCorrectAnswer.answer, MultipleChoicesStudentAnswer, MultipleChoicesCorrectAnswer.score, "MultipleChoices");
 		scoresDetail.details[typeChiness.MultipleChoices] = MultipleChoicesScore;
 		totalScore += MultipleChoicesScore;
 	}
 	if (TrueOrFalseCorrectAnswer) {
-		let TrueOrFalseScore = checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score, "TrueOrFalse");
+		var TrueOrFalseScore = checkChoiceAnswer(TrueOrFalseCorrectAnswer.answer, TrueOrFalseStudentAnswer, TrueOrFalseCorrectAnswer.score, "TrueOrFalse");
 		scoresDetail.details[typeChiness.TrueOrFalse] = TrueOrFalseScore;
 		totalScore += TrueOrFalseScore;
 	}
 	if (FillInTheBlankCorrectAnswer) {
-		let FillInTheBlankScore = checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer.answer, FillInTheBlankStudentAnswer, FillInTheBlankCorrectAnswer.score);
+		var FillInTheBlankScore = checkFillIneBlankAnswer(FillInTheBlankCorrectAnswer.answer, FillInTheBlankStudentAnswer, FillInTheBlankCorrectAnswer.score);
 		scoresDetail.details[typeChiness.FillInTheBlank] = FillInTheBlankScore;
 		totalScore += FillInTheBlankScore;
 	}
-	
+
 	if (ShortAnswerCorrectAnswer) {
-		checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, function(score) {
+		checkShortAnswer(ShortAnswerCorrectAnswer, ShortAnswerStudentAnswer, function (score) {
 			scoresDetail.details[typeChiness.ShortAnswer] = score;
 			console.log(scoresDetail);
 			totalScore += score;
 
 			if (ProgrammingCorrectAnswer) {
-				let ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
+				var ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
 				scoresDetail.details[typeChiness.Programming] = ProgrammingScore;
 				totalScore += ProgrammingScore;
 			}
@@ -772,15 +732,14 @@ function checkAnswer() {
 					scoresDetail: scoresDetail,
 					userId: $(".showUsername")[0].id
 				},
-				success: function() {
+				success: function success() {
 					window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 				}
 			});
 		});
-	}
-	else {
+	} else {
 		if (ProgrammingCorrectAnswer) {
-			let ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
+			var ProgrammingScore = checkProgrammingAnswer(ProgrammingCorrectAnswer);
 			scoresDetail.details[typeChiness.Programming] = ProgrammingScore;
 			totalScore += ProgrammingScore;
 		}
@@ -796,7 +755,7 @@ function checkAnswer() {
 				scoresDetail: scoresDetail,
 				userId: $(".showUsername")[0].id
 			},
-			success: function() {
+			success: function success() {
 				window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
 			}
 		});
@@ -808,19 +767,18 @@ function checkAnswer() {
 */
 function changeRunningBtnToDisableStatus($runningBtn, milltime) {
 	$runningBtn.addClass("disable");
-	let runningBtnInitValue = $runningBtn.val();
-	let time = milltime/1000;
+	var runningBtnInitValue = $runningBtn.val();
+	var time = milltime / 1000;
 	$runningBtn.val(runningBtnInitValue + "(" + time + ")");
 
-	let interval = setInterval(function() {
+	var interval = setInterval(function () {
 		time -= 1;
 
 		if (time === 0) {
 			clearInterval(interval);
 			$runningBtn.removeClass("disable");
 			$runningBtn.val(runningBtnInitValue);
-		}
-		else {
+		} else {
 			$runningBtn.val(runningBtnInitValue + "(" + time + ")");
 		}
 	}, 1000);
@@ -830,17 +788,18 @@ function changeRunningBtnToDisableStatus($runningBtn, milltime) {
  * @param $programmingContent jQuery Object 该编程题目块
 */
 function runningProgramming($programmingContent) {
-	let textareaId = $programmingContent.find(".longAnswer textarea")[0].id, editor;
-	for(let i=0, len=programingEditorArray.length; i<len; i++) {
+	var textareaId = $programmingContent.find(".longAnswer textarea")[0].id,
+	    editor = void 0;
+	for (var i = 0, len = programingEditorArray.length; i < len; i++) {
 		if (programingEditorArray[i].textareaId === textareaId) {
 			editor = programingEditorArray[i].editor;
 			break;
 		}
 	}
-	let editorContent = editor.getValue();
+	var editorContent = editor.getValue();
 
-	let inputType = $programmingContent.find(".inputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、"), 
-		outputType = $programmingContent.find(".outputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、");
+	var inputType = $programmingContent.find(".inputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、"),
+	    outputType = $programmingContent.find(".outputBlock > .inputType > .inputTypeContent")[0].innerHTML.split("、");
 
 	if (inputType.length === 1 && !inputType[0]) {
 		inputType = [];
@@ -850,46 +809,45 @@ function runningProgramming($programmingContent) {
 		outputType = [];
 	}
 
-	let inputTypeArray = [], outputTypeArray = [];
-	for(let i=0, len=inputType.length; i<len; i++) {
-		if (inputType[i].indexOf("(") > -1) {
-			let temp = inputType[i].split("(");
+	var inputTypeArray = [],
+	    outputTypeArray = [];
+	for (var _i6 = 0, _len6 = inputType.length; _i6 < _len6; _i6++) {
+		if (inputType[_i6].indexOf("(") > -1) {
+			var temp = inputType[_i6].split("(");
 			inputTypeArray.push({
 				thisType: temp[0],
-				childType: temp[1].substr(0, temp[1].length-1)
+				childType: temp[1].substr(0, temp[1].length - 1)
 			});
-		}
-		else {
+		} else {
 			inputTypeArray.push({
-				thisType: inputType[i]
+				thisType: inputType[_i6]
 			});
 		}
 	}
 
-	for(let i=0, len=outputType.length; i<len; i++) {
-		if (outputType[i].indexOf("(") > -1) {
-			let temp = outputType[i].split("(");
+	for (var _i7 = 0, _len7 = outputType.length; _i7 < _len7; _i7++) {
+		if (outputType[_i7].indexOf("(") > -1) {
+			var _temp = outputType[_i7].split("(");
 			outputTypeArray.push({
-				thisType: temp[0],
-				childType: temp[1].substr(0, temp[1].length-1)
+				thisType: _temp[0],
+				childType: _temp[1].substr(0, _temp[1].length - 1)
 			});
-		}
-		else {
+		} else {
 			outputTypeArray.push({
-				thisType: inputType[i]
+				thisType: inputType[_i7]
 			});
 		}
 	}
 
-	let programmingLanguage = $programmingContent.find("> .programmingTypeMode > .mode")[0].innerHTML;
+	var programmingLanguage = $programmingContent.find("> .programmingTypeMode > .mode")[0].innerHTML;
 
-	let answerCode;
-	let titleNum = $programmingContent.find(".title > .titleNum")[0].innerHTML;
-	findSubjectByName(subjectName, function(allUnits) {
-		let unitId = allUnits[praticeType + "Pratices"][selectIndex];
-		findUnitById(unitId, function(allTypePratices) {
-			let praticeId = allTypePratices[type][titleNum-1];
-			findPraticesById(praticeId, function(result) {
+	var answerCode = void 0;
+	var titleNum = $programmingContent.find(".title > .titleNum")[0].innerHTML;
+	findSubjectByName(subjectName, function (allUnits) {
+		var unitId = allUnits[praticeType + "Pratices"][selectIndex];
+		findUnitById(unitId, function (allTypePratices) {
+			var praticeId = allTypePratices[type][titleNum - 1];
+			findPraticesById(praticeId, function (result) {
 				answerCode = result.answer[0].content;
 			});
 		});
@@ -901,26 +859,24 @@ function runningProgramming($programmingContent) {
 		return;
 	}
 
-	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre><div class='loading'></div></pre>`;
+	$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "<pre><div class='loading'></div></pre>";
 
-	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function(result) {
-		let showResult;
+	runningCode(programmingLanguage, editorContent, inputTypeArray, outputTypeArray, function (result) {
+		var showResult = void 0;
 		console.log(result);
 		if (!result.error) {
-			if ((programmingLanguage !== "javascript") && result.inputCount !== inputTypeArray.length) {
+			if (programmingLanguage !== "javascript" && result.inputCount !== inputTypeArray.length) {
 				showResult = "编译不通过！";
 				$programmingContent.find(".runningBtn").removeClass("disable");
-			}
-			else {
-				let rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray, function(rightCount) {
+			} else {
+				var rightCount = runningCodeWithCorrectAnswer(programmingLanguage, answerCode, editorContent, inputTypeArray, outputTypeArray, function (rightCount) {
 					console.log(rightCount);
-					showResult = "编译通过率：" + rightCount/20*100 + "%";
-					$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+					showResult = "编译通过率：" + rightCount / 20 * 100 + "%";
+					$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "<pre>" + showResult + "</pre>";
 					$programmingContent.find(".runningBtn").removeClass("disable");
 				});
 			}
-		}
-		else {
+		} else {
 			showResult = result.error;
 			if (showResult === "选择的参数类型与实际不符！") {
 				showResult = "编译不通过！";
@@ -931,7 +887,7 @@ function runningProgramming($programmingContent) {
 		console.log($programmingContent[0]);
 
 		if (showResult) {
-			$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = `<pre>`+ showResult + `</pre>`;
+			$programmingContent.find(".runningResult > .runningContent")[0].innerHTML = "<pre>" + showResult + "</pre>";
 		}
 	});
 }
@@ -945,24 +901,24 @@ function init() {
 	type = getValueInUrl("type");
 
 	if (praticeType !== "examination") {
-		let name;
+		var name = void 0;
 		if (praticeType === "chapter") {
-			name = "章节" + (Number(selectIndex)+1);
+			name = "章节" + (Number(selectIndex) + 1);
 		}
 		if (name) {
 			$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + "—" + name + " — " + typeChiness[type];
-		}
-		else {
+		} else {
 			$(".time")[0].innerHTML = praticeTypeChiness[praticeType] + " — " + typeChiness[type];
 		}
-	}
-	else {
+	} else {
 		// 考试模拟，将导航栏盖上蒙层
 		$(".toolbarDisable").css("display", "block");
 
 		// 考试模拟时计时开始
-		var countdown = setInterval(function() {
-			let hours = $(".hours")[0].innerHTML, minutes = $(".minutes")[0].innerHTML, seconds = $(".seconds")[0].innerHTML;
+		var countdown = setInterval(function () {
+			var hours = $(".hours")[0].innerHTML,
+			    minutes = $(".minutes")[0].innerHTML,
+			    seconds = $(".seconds")[0].innerHTML;
 			if (seconds === "00" && minutes === "00" && hours === "00") {
 				clearInterval(countdown);
 				addLoadingInterface();
@@ -975,23 +931,21 @@ function init() {
 
 				if (minutes === "00") {
 					minutes = "59";
-					hours = Number(hours)-1;
+					hours = Number(hours) - 1;
 					if (hours < 10) {
 						hours = "0" + hours;
 					}
 					$(".hours")[0].innerHTML = hours;
-				}
-				else {
-					minutes = Number(minutes)-1;
+				} else {
+					minutes = Number(minutes) - 1;
 					if (minutes < 10) {
 						minutes = "0" + minutes;
 					}
 				}
 
 				$(".minutes")[0].innerHTML = minutes;
-			}
-			else {
-				seconds = Number(seconds)-1;
+			} else {
+				seconds = Number(seconds) - 1;
 				if (seconds < 10) {
 					seconds = "0" + seconds;
 				}
@@ -1001,16 +955,18 @@ function init() {
 		}, 1000);
 	}
 
-	findSubjectByName(subjectName, function(result) {
-		let unitId = result[praticeType+"Pratices"];
+	findSubjectByName(subjectName, function (result) {
+		var unitId = result[praticeType + "Pratices"];
 		if (selectIndex) {
 			unitId = unitId[selectIndex];
 		}
 
-		findUnitById(unitId, function(data) {
-			let time = data.time;
+		findUnitById(unitId, function (data) {
+			var time = data.time;
 			if (time) {
-				let hours = time.hours, minutes = time.minutes, seconds = time.seconds;
+				var hours = time.hours,
+				    minutes = time.minutes,
+				    seconds = time.seconds;
 				if (Number(hours) < 10) {
 					hours = "0" + hours;
 				}
@@ -1021,14 +977,13 @@ function init() {
 					seconds = "0" + seconds;
 				}
 
-				$(".time")[0].innerHTML = "<span class='hours'>" + hours + "</span>:<span class='minutes'>" 
-											+ minutes + "</span>:<span class='seconds'>" + seconds + "</span>";
+				$(".time")[0].innerHTML = "<span class='hours'>" + hours + "</span>:<span class='minutes'>" + minutes + "</span>:<span class='seconds'>" + seconds + "</span>";
 			}
 
 			if (type) {
 				allPraticeContent = data[type];
 
-				switch(type) {
+				switch (type) {
 					case "SingleChoice":
 					case "MultipleChoices":
 					case "TrueOrFalse":
@@ -1047,12 +1002,11 @@ function init() {
 					index: 0,
 					length: allPraticeContent.length
 				};
-			}
-			else {
-				for(let i=0, len=praticeTypeArr.length; i<len; i++) {
-					let length = data[praticeTypeArr[i]].length;
+			} else {
+				for (var i = 0, len = praticeTypeArr.length; i < len; i++) {
+					var length = data[praticeTypeArr[i]].length;
 					if (length > 0) {
-						switch(praticeTypeArr[i]) {
+						switch (praticeTypeArr[i]) {
 							case "SingleChoice":
 							case "MultipleChoices":
 							case "TrueOrFalse":
@@ -1068,7 +1022,7 @@ function init() {
 						currentIndexArray[praticeTypeArr[i]] = {
 							index: 0,
 							length: length
-						}
+						};
 						hasContentTypeArr.push(praticeTypeArr[i]);
 					}
 				}
@@ -1086,9 +1040,9 @@ function init() {
 }
 
 function showPraticeBlockIndexClick(e) {
-	let className = getTarget(e).className;
-	if ($("." + className.substr(0, className.length-5)).length > 0) {
-		type = className.substr(0, className.length-5);
+	var className = getTarget(e).className;
+	if ($("." + className.substr(0, className.length - 5)).length > 0) {
+		type = className.substr(0, className.length - 5);
 		changeTypeStyle();
 		addPraticeIndex(currentIndexArray[type].length);
 		changePraticeContent(currentIndexArray[type].index);
@@ -1097,7 +1051,7 @@ function showPraticeBlockIndexClick(e) {
 
 function showPraticeIndexClick(e) {
 	if (Number(getTarget(e).innerHTML)) {
-		let index = getTarget(e).innerHTML-1;
+		var index = getTarget(e).innerHTML - 1;
 		currentIndexArray[type].index = index;
 		changePraticeContent(index);
 	}
@@ -1112,13 +1066,13 @@ function previousClick(target) {
 	if ($(target).hasClass("disable")) return;
 
 	if (currentIndexArray[type].index === 0) {
-		for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
+		for (var i = 0, len = hasContentTypeArr.length; i < len; i++) {
 			if (hasContentTypeArr[i] === type) {
 				if (i !== 0) {
 					type = hasContentTypeArr[--i];
 					changeTypeStyle();
 					addPraticeIndex(currentIndexArray[type].length);
-					currentIndexArray[type].index = currentIndexArray[type].length-1;
+					currentIndexArray[type].index = currentIndexArray[type].length - 1;
 					changePraticeContent(currentIndexArray[type].index);
 				}
 				return;
@@ -1137,8 +1091,8 @@ function nextClick(target) {
 
 	if ($(this).hasClass("disable")) return;
 
-	if (currentIndexArray[type].index === currentIndexArray[type].length-1) {
-		for(let i=0, len=hasContentTypeArr.length; i<len; i++) {
+	if (currentIndexArray[type].index === currentIndexArray[type].length - 1) {
+		for (var i = 0, len = hasContentTypeArr.length; i < len; i++) {
 			if (hasContentTypeArr[i] === type) {
 				type = hasContentTypeArr[++i];
 				changeTypeStyle();
@@ -1154,7 +1108,7 @@ function nextClick(target) {
 }
 
 function runningBtnClick(e) {
-	let $target = $(getTarget(e));
+	var $target = $(getTarget(e));
 	if (!$target.hasClass("disable")) {
 		// changeRunningBtnToDisableStatus($target, 15000);
 		$target.addClass("disable");
@@ -1164,26 +1118,26 @@ function runningBtnClick(e) {
 
 function bindEvent() {
 	// 当为考试模拟时，点击练习类型事件
-	$(".showPraticeBlockIndex").click(function(e) {
+	$(".showPraticeBlockIndex").click(function (e) {
 		showPraticeBlockIndexClick(e);
 	});
 
 	// 点击题目编号事件
-	$(".showPraticeIndex").click(function(e) {
+	$(".showPraticeIndex").click(function (e) {
 		showPraticeIndexClick(e);
 	});
 
-	$(".previous").click(function() {
+	$(".previous").click(function () {
 		previousClick(this);
 	});
 
-	$(".next").click(function() {
+	$(".next").click(function () {
 		if (this.value === "提交") {
 			if (!getNotChoiceAnswer("Programming")) {
 				showTips("请确保所有编程题至少被运行一次！", 1500);
 				return;
 			}
-			showWin("是否确定提交答案？（提交后将不能修改）", function() {
+			showWin("是否确定提交答案？（提交后将不能修改）", function () {
 				addLoadingInterface();
 				checkAnswer();
 			});
@@ -1192,7 +1146,7 @@ function bindEvent() {
 		nextClick(this);
 	});
 
-	$(".runningBtn").click(function(e) {
+	$(".runningBtn").click(function (e) {
 		runningBtnClick(e);
 	});
 }

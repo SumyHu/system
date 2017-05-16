@@ -62,7 +62,20 @@ initInterface = {
 							</section>
 						</section>`,
 	usersManageInterface: `<section class="showUsersInfo body">
-								<table>
+								<section class="topBar">
+									<nav class="usersType">
+										<ul>
+											<li class="teacher">教师</li>
+											<li class="student">学生</li>
+										</ul>
+									</nav>
+									<form action="/importExcel" method="post" enctype="multipart/form-data">
+										<input type="file" class="excelFile" name="excelFile" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">（仅支持Excel文件的导出）
+										<input type="submit" class="importExcel">
+									<form>
+									<input type="button" value="导出"  class="importExcelBtn">
+								</section>
+								<table class="teacherTable">
 									<thead>
 										<tr>
 											<th>用户ID</th>
@@ -73,6 +86,8 @@ initInterface = {
 									</thead>
 									<tbody>
 									</tbody>
+								</table>
+								<table class="studentTable">
 								</table>
 								<section class="bottomSec">
 									<div class="btnDiv">

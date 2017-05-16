@@ -1,4 +1,8 @@
-let userId, dataGroupByDate = {}, allData = [];
+"use strict";
+
+var userId = void 0,
+    dataGroupByDate = {},
+    allData = [];
 
 function getUserTestHistoryId(callback) {
 	callDataProcessingFn({
@@ -9,15 +13,15 @@ function getUserTestHistoryId(callback) {
 				_id: userId
 			}
 		},
-		success: function(result) {
-			let testHistoryArray = result.testHistory;
+		success: function success(result) {
+			var testHistoryArray = result.testHistory;
 			callback(testHistoryArray);
 		}
 	});
 }
 
 function showUserTestHistory(testHistoryArray) {
-	for(let i=0, len=testHistoryArray.length; i<len; i++) {
+	var _loop = function _loop(i, len) {
 		callDataProcessingFn({
 			data: {
 				data: "testResults",
@@ -26,18 +30,23 @@ function showUserTestHistory(testHistoryArray) {
 					_id: testHistoryArray[i]
 				}
 			},
-			success: function(data) {
+			success: function success(data) {
 				historyProcess(data);
-				if (i === len-1) {
+				if (i === len - 1) {
 					addAllHistoryInTable(dataGroupByDate);
 				}
 			}
 		});
+	};
+
+	for (var i = 0, len = testHistoryArray.length; i < len; i++) {
+		_loop(i, len);
 	}
 }
 
 function historyProcess(data) {
-	let year = new Date(data.date).getFullYear(), month = (new Date(data.date).getMonth()+1);
+	var year = new Date(data.date).getFullYear(),
+	    month = new Date(data.date).getMonth() + 1;
 	if (!dataGroupByDate[year + "/" + month]) {
 		dataGroupByDate[year + "/" + month] = [];
 	}
@@ -46,52 +55,55 @@ function historyProcess(data) {
 }
 
 function addAllHistoryInTable(dataGroupByDateTarget) {
-	let tableTbody = $(".showtestHistoryInfo > table > tbody")[0], testTimeCount = 0, contentCount = 0;
+	var tableTbody = $(".showtestHistoryInfo > table > tbody")[0],
+	    testTimeCount = 0,
+	    contentCount = 0,
+	    allContentHtml = "";
 	tableTbody.innerHTML = "";
-	for(let date in dataGroupByDateTarget) {
-		let contentHtml = "<tr class='testTime' id='testTime" + testTimeCount + "'><td colspan=5>" + date + "<span class='icon'>︽</span></td></tr>", 
-			historyContentArray = dataGroupByDateTarget[date];
-		for(let i=0, len=historyContentArray.length; i<len; i++) {
-			let thisContent = historyContentArray[i], scoresDetail = thisContent.scoresDetail, details = scoresDetail.details;
-			contentHtml += "<tr class='testTime" + testTimeCount + "-content content' id='" 
-						+ contentCount + "''><td>"
-						+ thisContent.testName + "</td><td>"
-						+ scoresDetail.totalScore + "</td><td><table><thead>";
-			let childTbodyHtml = "<tbody><tr>";
-			for(let type in details) {
-				contentHtml += "<th>" + type + "</th>"
-				childTbodyHtml += "<td>" + details[type] + "</td>"
+	for (var date in dataGroupByDateTarget) {
+		var contentHtml = "<tr class='testTime' id='testTime" + testTimeCount + "'><td colspan=5>" + date + "<span class='icon'>︽</span></td></tr>",
+		    historyContentArray = dataGroupByDateTarget[date];
+		for (var i = 0, len = historyContentArray.length; i < len; i++) {
+			var thisContent = historyContentArray[i],
+			    scoresDetail = thisContent.scoresDetail,
+			    details = scoresDetail.details;
+			contentHtml += "<tr class='testTime" + testTimeCount + "-content content' id='" + contentCount + "''><td>" + thisContent.testName + "</td><td>" + scoresDetail.totalScore + "</td><td><table><thead>";
+			var childTbodyHtml = "<tbody><tr>";
+			for (var type in details) {
+				contentHtml += "<th>" + type + "</th>";
+				childTbodyHtml += "<td>" + details[type] + "</td>";
 			}
-			childTbodyHtml += "</tr></tbody>"
-			contentHtml += "</thead>" + childTbodyHtml + "</table>"
-						+ "<td>" + new Date(thisContent.date).toLocaleString() + "</td>"
-						+ "<td class='seeMore'>查看详情</td></tr>";
+			childTbodyHtml += "</tr></tbody>";
+			contentHtml += "</thead>" + childTbodyHtml + "</table>" + "<td>" + new Date(thisContent.date).toLocaleString() + "</td>" + "<td class='seeMore'>查看详情</td></tr>";
 
-			contentCount ++;
+			contentCount++;
 		}
-	    testTimeCount ++;
-		tableTbody.innerHTML += contentHtml;
+		testTimeCount++;
+		allContentHtml += contentHtml;
 	}
+	$(tableTbody).html(allContentHtml);
 }
 
 function testTimeClick($trTarget) {
-	let icon = $trTarget.find(".icon")[0].innerHTML, id = $trTarget[0].id, displayStyle;
-		if (icon === "︽") {
-			icon = "︾";
-			displayStyle = "table-row";
-		}
-		else {
-			icon = "︽";
-			displayStyle = "none";
-		}
-		$trTarget.find(".icon")[0].innerHTML = icon;
-		$("." + id + "-content").css("display", displayStyle);
+	var icon = $trTarget.find(".icon")[0].innerHTML,
+	    id = $trTarget[0].id,
+	    displayStyle = void 0;
+	if (icon === "︽") {
+		icon = "︾";
+		displayStyle = "table-row";
+	} else {
+		icon = "︽";
+		displayStyle = "none";
+	}
+	$trTarget.find(".icon")[0].innerHTML = icon;
+	$("." + id + "-content").css("display", displayStyle);
 }
 
 function seeMore($tdTarget) {
-	let index = $tdTarget.parent()[0].id, content = allData[index], 
-	scoresDetail = content.scoresDetail,
-	queryScoresDetail = {
+	var index = $tdTarget.parent()[0].id,
+	    content = allData[index],
+	    scoresDetail = content.scoresDetail,
+	    queryScoresDetail = {
 		correctAnswerContent: content.correctAnswerContent,
 		studentAnswerContent: content.studentAnswerContent,
 		scoresObj: content.scoresObj
@@ -106,15 +118,14 @@ function init() {
 }
 
 function bindEvent() {
-	$(".showtestHistoryInfo > table > tbody").click(function(e) {
-		let $target = $(getTarget(e)), classname = $target[0].className;
+	$(".showtestHistoryInfo > table > tbody").click(function (e) {
+		var $target = $(getTarget(e)),
+		    classname = $target[0].className;
 		if (classname === "seeMore") {
 			seeMore($target);
-		}
-		else if (classname === "icon") {
+		} else if (classname === "icon") {
 			testTimeClick($target.parent().parent());
-		}
-		else if ($target[0].colSpan === 5) {
+		} else if ($target[0].colSpan === 5) {
 			if ($target[0].innerHTML === "暂无记录") {
 				return;
 			}
@@ -122,23 +133,23 @@ function bindEvent() {
 		}
 	});
 
-	$(".searchBtn").click(function() {
-		let $dateSearch = $(this).parent(), 
-			yearString = $dateSearch.find(".year").val(),
-			monthString = $dateSearch.find(".month").val(),
-			year = Number(yearString),
-			month = Number(monthString);
-		if ((!year&&yearString) || (!month&&monthString)) {
+	$(".searchBtn").click(function () {
+		var $dateSearch = $(this).parent(),
+		    yearString = $dateSearch.find(".year").val(),
+		    monthString = $dateSearch.find(".month").val(),
+		    year = Number(yearString),
+		    month = Number(monthString);
+		if (!year && yearString || !month && monthString) {
 			showTips("请输入正确的日期！", 1000);
 			return;
 		}
 		if (!yearString && !monthString) {
 			addAllHistoryInTable(dataGroupByDate);
-		}
-		else {
-			let RegExpObject = new RegExp((year?year:"\\d+") + "\/" + (month?month:"\\d+"));
-			let addData = {}, flag = false;
-			for(let date in dataGroupByDate) {
+		} else {
+			var RegExpObject = new RegExp((year ? year : "\\d+") + "\/" + (month ? month : "\\d+"));
+			var addData = {},
+			    flag = false;
+			for (var date in dataGroupByDate) {
 				if (RegExpObject.test(date)) {
 					flag = true;
 					addData[date] = dataGroupByDate[date];
@@ -148,9 +159,8 @@ function bindEvent() {
 				addAllHistoryInTable(addData);
 				$(".content").css("display", "table-row");
 				$(".icon").html("︾");
-			}
-			else {
-				let tbody = $(".showtestHistoryInfo > table > tbody")[0];
+			} else {
+				var tbody = $(".showtestHistoryInfo > table > tbody")[0];
 				tbody.innerHTML = "<tr><td colspan=5>暂无记录</td><tr>";
 			}
 		}

@@ -1,17 +1,19 @@
-let praticeTypeChiness = {
+"use strict";
+
+var praticeTypeChiness = {
 	chapter: "章节练习",
 	examination: "考试模拟",
 	random: "随机练习"
-}
+};
 
-let typeChiness = {
+var typeChiness = {
 	SingleChoice: "单选题",
 	MultipleChoices: "多选题",
 	TrueOrFalse: "判断题",
 	FillInTheBlank: "填空题",
 	ShortAnswer: "简答题",
 	Programming: "编程题"
-}
+};
 
 /** 兼容ie浏览器
 */
@@ -28,34 +30,33 @@ function getTarget(e) {
 */
 function showTips(msg, millTime) {
 	if ($(".tips").length == 0) {
-		let div = document.createElement("div");
+		var div = document.createElement("div");
 		div.className = "tips";
 		document.getElementsByTagName("body")[0].appendChild(div);
 	}
-	let $tips = $(".tips");
+	var $tips = $(".tips");
 
 	if ($tips.css("height") == "0px") {
 		$tips[0].innerHTML = msg;
 		$tips.css("height", 70);
 
 		if (millTime) {
-			setTimeout(function() {
+			setTimeout(function () {
 				$tips.css("height", 0);
 			}, millTime);
 		}
-	}
-	else {
+	} else {
 		$tips.css("opacity", 0);
 
-		setTimeout(function() {
+		setTimeout(function () {
 			$tips[0].innerHTML = msg;
 			$tips.css("opacity", 1);
 		}, 500);
 
 		if (millTime) {
-			setTimeout(function() {
+			setTimeout(function () {
 				$tips.css("opacity", 0);
-			}, 500+millTime);
+			}, 500 + millTime);
 		}
 	}
 }
@@ -72,8 +73,7 @@ function hideTips() {
 function isEmpty($inputTatget) {
 	if (!$inputTatget.val()) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
@@ -88,61 +88,61 @@ function inputRest(type) {
 
 // 重置下拉列表的值
 function selectRest() {
-	for(let i=1, len=$("select").length; i<=len; i++) {
-		let select = $(".select" + i);
-		let options = select.find("option");
+	for (var i = 1, len = $("select").length; i <= len; i++) {
+		var select = $(".select" + i);
+		var options = select.find("option");
 		options[0].selected = true;
 	}
 }
 
 // 重置单选框的值
 function radioRest() {
-	let allRadio = $("input[type=radio]");
+	var allRadio = $("input[type=radio]");
 
 	/** 以radio的name值为键值
-	 * radioObj = {
-		"identity": [allRadio[0], allRadio[1]]
-	 }
-	*/
-	let radioObj = {};
+  * radioObj = {
+ 	"identity": [allRadio[0], allRadio[1]]
+  }
+ */
+	var radioObj = {};
 
-	for(let i=0, len=allRadio.length; i<len; i++) {
+	for (var i = 0, len = allRadio.length; i < len; i++) {
 		if (!radioObj[allRadio[i].name]) {
 			radioObj[allRadio[i].name] = [];
 		}
 		radioObj[allRadio[i].name].push(allRadio[i]);
 	}
 
-	for(var k in radioObj) {
+	for (var k in radioObj) {
 		radioObj[k][0].checked = true;
 	}
 }
 
 // 获取当前的导航栏内容并正确显示
 function getCurrentToolbar() {
-	let requireLocation = window.location.href.split("?")[0].substr(22);
+	var requireLocation = window.location.href.split("?")[0].substr(22);
 	if (requireLocation === "showScore") {
 		return;
 	}
 
-	let subjectName;
-	let location = "http://localhost:3000/pratice?";
+	var subjectName = void 0;
+	var location = "http://localhost:3000/pratice?";
 	if (window.location.href.split("?").length < 2) return;
-	let paramArray = window.location.href.split("?")[1].split("&");
-	
+	var paramArray = window.location.href.split("?")[1].split("&");
+
 	if (paramArray.length > 0) {
-		let keyValuePair = paramArray[0].split("=");
+		var keyValuePair = paramArray[0].split("=");
 		location = location + paramArray[0];
-		$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + decodeURIComponent(keyValuePair[1]) +"</a>";
+		$(".navigation")[0].innerHTML = $(".navigation")[0].innerHTML + ">>>>><a class='link' href='" + location + "'>" + decodeURIComponent(keyValuePair[1]) + "</a>";
 	}
 }
 
 // 绑定顶部导航栏事件
 function toobarEvent() {
 	//绑定导航目录事件
-	$(".naviSec").click(function(e) {
-		let className = getTarget(e).className;
-		switch(className) {
+	$(".naviSec").click(function (e) {
+		var className = getTarget(e).className;
+		switch (className) {
 			case "home":
 				window.location.href = "http://localhost:3000/";
 				break;
@@ -152,17 +152,11 @@ function toobarEvent() {
 
 // 新建弹出框
 function createWin() {
-	let div = document.createElement("div");
+	var div = document.createElement("div");
 	div.className = "winBg";
-	div.innerHTML = '<div class="win">'
-					+ '<div class="winContentBg"><div class="winContent"></div>'
-					+ '</div><div class="btnContent">'
-					+ '<input type="button" value="ok" class="okBtn">'
-					+ '<input type="button" value="cancel" class="cancelBtn">'
-					+ '</div>'
-					+ '</div>';
+	div.innerHTML = '<div class="win">' + '<div class="winContentBg"><div class="winContent"></div>' + '</div><div class="btnContent">' + '<input type="button" value="ok" class="okBtn">' + '<input type="button" value="cancel" class="cancelBtn">' + '</div>' + '</div>';
 
-	let body = document.getElementsByTagName("body")[0];
+	var body = document.getElementsByTagName("body")[0];
 	body.appendChild(div);
 }
 
@@ -171,14 +165,14 @@ function createWin() {
  * @param cancelCallback function 取消按钮事件
 */
 function bindWinEvent(okCallback, cancelCallback) {
-	$(".okBtn")[0].onclick = function() {
+	$(".okBtn")[0].onclick = function () {
 		hideWin();
 		if (okCallback) {
 			okCallback();
 		}
 	};
 
-	$(".cancelBtn")[0].onclick = function() {
+	$(".cancelBtn")[0].onclick = function () {
 		hideWin();
 		if (cancelCallback) {
 			cancelCallback();
@@ -199,7 +193,7 @@ function showWin(contentHTML, okCallback, cancelCallback, focusRefresh) {
 		$(".winContent")[0].innerHTML = contentHTML;
 		bindWinEvent(okCallback, cancelCallback);
 	}
-	
+
 	$(".winBg").css("display", "block");
 }
 
@@ -210,8 +204,8 @@ function hideWin() {
 
 // 为目录导航添加子目录
 function addDir(dirName, linkHref) {
-	let appenHtml = '>>>>> <a class="link" href="' + linkHref + '">' + dirName + '</div>';
-	let initHtml = $(".navigation").innerHtml;
+	var appenHtml = '>>>>> <a class="link" href="' + linkHref + '">' + dirName + '</div>';
+	var initHtml = $(".navigation").innerHtml;
 	$(".navigation").innerHtml = initHtml + appendHtml;
 }
 
@@ -219,9 +213,9 @@ function addDir(dirName, linkHref) {
  * @param key String 键名
 */
 function getValueInUrl(key) {
-	let queryParamArr = window.location.href.split("?")[1].split("&");
-	for(let i=0, len=queryParamArr.length; i<len; i++) {
-		let keyValuePair = queryParamArr[i].split("=");
+	var queryParamArr = window.location.href.split("?")[1].split("&");
+	for (var i = 0, len = queryParamArr.length; i < len; i++) {
+		var keyValuePair = queryParamArr[i].split("=");
 		if (keyValuePair[0] == key) {
 			return keyValuePair[1];
 		}
@@ -243,12 +237,12 @@ function callDataProcessingFn(param) {
 		type: "POST",
 		async: false,
 		data: param.data,
-		success: function(result) {
+		success: function success(result) {
 			param.success(result);
 		},
-		error: function(error) {
+		error: function error(_error) {
 			if (param.error) {
-				param.error(error);
+				param.error(_error);
 			}
 		}
 	});
@@ -268,13 +262,12 @@ function findSubjectByName(subjectName, findCallback, notFindCallback) {
 				subjectName: subjectName
 			}
 		},
-		success: function(data) {
+		success: function success(data) {
 			if (!data) {
 				if (notFindCallback) {
 					notFindCallback();
 				}
-			}
-			else {
+			} else {
 				findCallback(data);
 			}
 		}
@@ -323,8 +316,8 @@ function findPraticesByType(praticeType, callback) {
 				subjectName: subjectName
 			}
 		},
-		success: function(data) {
-			callback(data[praticeType+"Pratices"]);
+		success: function success(data) {
+			callback(data[praticeType + "Pratices"]);
 		}
 	});
 }
@@ -348,8 +341,8 @@ function findPraticesById(praticeId, callback) {
 
 // 在界面添加正在加载蒙层
 function addLoadingInterface() {
-	let div = document.createElement("div");
+	var div = document.createElement("div");
 	div.className = "showLoadingWin";
-	div.innerHTML = `<div class="loading"></div>`;
+	div.innerHTML = "<div class=\"loading\"></div>";
 	$("body").append(div);
 }

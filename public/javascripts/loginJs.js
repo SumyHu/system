@@ -1,17 +1,18 @@
-init = function() {
-	let query = window.location.href.split("?");
+"use strict";
+
+function init() {
+	var query = window.location.href.split("?");
 	if (query.length > 1) {
 		if (query[1].indexOf("register=success") > -1) {
 			showTips("注册成功！");
-		}
-		else if (query[1].indexOf("changeUser=success") > -1) {
+		} else if (query[1].indexOf("changeUser=success") > -1) {
 			showTips("修改密码成功！");
 		}
 	}
-}
+};
 
 function bindEvent() {
-	$(".login").click(function() {
+	$(".login").click(function () {
 		if (isEmpty($(".username"))) {
 			showTips("请输入账号！");
 			return;
@@ -28,12 +29,11 @@ function bindEvent() {
 				userId: $(".username").val(),
 				password: $(".password").val()
 			},
-			success: function(data) {
+			success: function success(data) {
 				if (data.error) {
 					$("." + data.error.reason).select();
 					showTips(data.error.message);
-				}
-				else {
+				} else {
 					window.location.href = "../";
 
 					hideTips();
@@ -46,16 +46,16 @@ function bindEvent() {
 		});
 	});
 
-	$(".register").click(function() {
+	$(".register").click(function () {
 		window.location.href = "../register";
 	});
 
-	$(".findPsw").click(function() {
+	$(".findPsw").click(function () {
 		window.location.href = "../findPsw";
 	});
 }
 
-$(function() {
+$(function () {
 	init();
 	bindEvent();
 });

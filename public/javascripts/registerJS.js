@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * registerVal = {
 	username: String,   // 用户ID
@@ -8,33 +10,32 @@
 	questionAndAnswer3: {question: String, answer: String},
  }
 */
-let registerVal = {};
+var registerVal = {};
 
 function judgeThePswIsConsistent() {
-	let password = $(".password").val();
-	let pswConfirm = $(".pswConfirm").val();
+	var password = $(".password").val();
+	var pswConfirm = $(".pswConfirm").val();
 	if (password == pswConfirm) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
 
 function bindEvent() {
-	$(".previousStep").click(function() {
+	$(".previousStep").click(function () {
 		$(".secondStep").css("height", 0);
 		$(".firstStep").css("height", 264);
 		$(".tips").css("height", 0);
 	});
 
-	$(".nextStep").click(function() {
+	$(".nextStep").click(function () {
 		if (isEmpty($(".username"))) {
 			showTips("账号不能为空！");
 			return;
 		}
-		let pattern = /^[0-9]{11}$/
-		if ($(".username").val().length != 11 || !(pattern.test($(".username").val()))) {
+		var pattern = /^[0-9]{11}$/;
+		if ($(".username").val().length != 11 || !pattern.test($(".username").val())) {
 			showTips("请输入正确的手机号！");
 			return;
 		}
@@ -61,19 +62,17 @@ function bindEvent() {
 					_id: registerVal.username
 				}
 			},
-			success: function(data) {
+			success: function success(data) {
 				console.log(data);
 				if (data) {
 					$(".username").select();
 					showTips("该用户名已经存在，请重新输入！");
-				}
-				else {
+				} else {
 					registerVal.password = $(".password").val();
 
 					if ($("#teacher")[0].checked) {
 						registerVal.identity = $("#teacher").val();
-					}
-					else {
+					} else {
 						registerVal.identity = $("#student").val();
 					}
 
@@ -85,20 +84,20 @@ function bindEvent() {
 		});
 	});
 
-	$(".registerConfirm").click(function() {
+	$(".registerConfirm").click(function () {
 		if (isEmpty($(".answer1")) || isEmpty($(".answer2")) || isEmpty($(".answer3"))) {
 			showTips("请将答案填写完整！");
 			return;
 		}
 
-		for(let i=1, len=$("select").length; i<=len; i++) {
-			let select = $(".select" + i);
-			let options = select.find("option");
+		for (var i = 1, len = $("select").length; i <= len; i++) {
+			var select = $(".select" + i);
+			var options = select.find("option");
 			selectIndex = select[0].selectedIndex;
-			registerVal["questionAndAnswer"+ i] = {
+			registerVal["questionAndAnswer" + i] = {
 				question: options[selectIndex].value,
 				answer: $(".answer" + i).val()
-			}
+			};
 		}
 
 		callDataProcessingFn({
@@ -109,11 +108,11 @@ function bindEvent() {
 					password: registerVal.password,
 					imageSrc: "upload/default.jpg",
 					identity: registerVal.identity,
-					checkContent: [registerVal.questionAndAnswer1, registerVal.questionAndAnswer2, registerVal.questionAndAnswer3],
+					checkContent: [registerVal.questionAndAnswer1, registerVal.questionAndAnswer2, registerVal.questionAndAnswer3]
 				},
 				callFunction: "save"
 			},
-			success: function(result) {
+			success: function success(result) {
 				if (!result.err) {
 					$(".tips").css("height", 0);
 					selectRest();
@@ -124,13 +123,13 @@ function bindEvent() {
 					window.location.href = "../login?register=success";
 				}
 			},
-			error: function() {
+			error: function error() {
 				showTips("注册失败，请重新注册！");
 			}
 		});
 	});
 }
 
-$(function() {
+$(function () {
 	bindEvent();
 });

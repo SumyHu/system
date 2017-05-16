@@ -1,11 +1,13 @@
-let changeUser = {
+"use strict";
+
+var changeUser = {
 	username: "",
 	checkContent: []
-}
+};
 
 function bindevent() {
-	$(".findPswBtn").click(function(e) {
-		let className = getTarget(e).className;
+	$(".findPswBtn").click(function (e) {
+		var className = getTarget(e).className;
 
 		if (className.indexOf("firstStepBtn") > -1) {
 			if (isEmpty($(".username"))) {
@@ -16,15 +18,14 @@ function bindevent() {
 			callDataProcessingFn({
 				data: {
 					data: "users",
-					findOpt: {_id: $(".username").val()},
+					findOpt: { _id: $(".username").val() },
 					callFunction: "find"
 				},
-				success: function(data) {
+				success: function success(data) {
 					if (!data) {
 						showTips("该用户名不存在！");
 						$(".username").select();
-					}
-					else {
+					} else {
 						hideTips();
 						changeUser.username = $(".username").val();
 						changeUser.checkContent = data.checkContent;
@@ -33,38 +34,38 @@ function bindevent() {
 					}
 				}
 			});
-		}
-		else if (className.indexOf("secondStepBtn") > -1) {
+		} else if (className.indexOf("secondStepBtn") > -1) {
 			if (isEmpty($(".answer1")) || isEmpty($(".answer2")) || isEmpty($(".answer3"))) {
 				showTips("请将答案填写完整！");
 				return;
 			}
 
-			let flag = true;
-			for(let i=0, len=changeUser.checkContent.length; i<len; i++) {
-				let options = $(".select" + (i+1)).find("option");
-				let question;
-				for(let j=0, len1=options.length; j<len1; j++) {
-					if (options[j].selected) {
-						question = options[j].innerHTML;
+			var flag = false;
+			if (changeUser.checkContent.length) {
+				flag = true;
+				for (var i = 0, len = changeUser.checkContent.length; i < len; i++) {
+					var options = $(".select" + (i + 1)).find("option");
+					var question = void 0;
+					for (var j = 0, len1 = options.length; j < len1; j++) {
+						if (options[j].selected) {
+							question = options[j].innerHTML;
+						}
 					}
-				}
-				if (changeUser.checkContent[i].question != question || changeUser.checkContent[i].answer != $(".answer" + (i+1)).val()) {
-					flag = false;
-					break;
+					if (changeUser.checkContent[i].question != question || changeUser.checkContent[i].answer != $(".answer" + (i + 1)).val()) {
+						flag = false;
+						break;
+					}
 				}
 			}
 
 			if (!flag) {
 				showTips("答案有误，请重新填写！");
-			}
-			else {
+			} else {
 				hideTips();
 				$(".secondStep").css("height", 0);
 				$(".thirdStep").css("height", "181px");
 			}
-		}
-		else if (className.indexOf("thirdStepBtn") > -1) {
+		} else if (className.indexOf("thirdStepBtn") > -1) {
 			if (isEmpty($(".newPasswd")) || isEmpty($(".passwdConfirm"))) {
 				showTips("密码不能为空！");
 				return;
@@ -72,22 +73,21 @@ function bindevent() {
 
 			if ($(".newPasswd").val() != $(".passwdConfirm").val()) {
 				showTips("密码不一致，请重新输入！");
-			}
-			else {
+			} else {
 				hideTips();
 				callDataProcessingFn({
 					data: {
 						data: "users",
-						updateOpt: {_id: changeUser.username},
+						updateOpt: { _id: changeUser.username },
 						operation: "set",
 						update: {
 							password: $(".newPasswd").val()
 						},
 						callFunction: "update"
 					},
-					success: function(data) {
+					success: function success(data) {
 						if (data) {
-							window.location.href  = "../login?changeUser=success";
+							window.location.href = "../login?changeUser=success";
 						}
 					}
 				});
@@ -101,6 +101,6 @@ function bindevent() {
 	});
 }
 
-$(function() {
+$(function () {
 	bindevent();
 });

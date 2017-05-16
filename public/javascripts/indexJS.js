@@ -1,19 +1,18 @@
-let identity;
+'use strict';
+
+var identity = void 0;
 
 /** 在界面中添加某个科目
  * @param subjectName String 科目名称
 */
 function addSubjectInView(subjectName, updateTime) {
-	let section = document.createElement("section");
+	var section = document.createElement("section");
 	// section.innerHTML = '<div><div class="subjectName" title="' + subjectName + '">' + subjectName 
 	// 					+ '</div><input type="button" value="X" class="remove">'
 	// 					+ '<input type="button" class="modify"></div>';
-	section.innerHTML = '<div class="main"><div class="subjectName" title="' + subjectName + '">' + subjectName 
-						+ '</div><input type="button" value="X" class="remove">'
-						+ '<input type="button" class="modify"></div>'
-						+ '<div class="updateTime">更新至' + updateTime + '</div>';
+	section.innerHTML = '<div class="main"><div class="subjectName" title="' + subjectName + '">' + subjectName + '</div><input type="button" value="X" class="remove">' + '<input type="button" class="modify"></div>' + '<div class="updateTime">更新至' + updateTime + '</div>';
 
-	let addSubject = $(".addSubject");
+	var addSubject = $(".addSubject");
 	addSubject.before(section);
 
 	if (identity === "student") {
@@ -21,11 +20,11 @@ function addSubjectInView(subjectName, updateTime) {
 		$(".modify").css("display", "none");
 	}
 
-	$(section).hover(function(e) {
+	$(section).hover(function (e) {
 		$(this).find(".remove").css("opacity", 1);
 		$(this).find(".modify").css("opacity", 1);
 		$(this).css("font-size", "35px");
-	}, function(e) {
+	}, function (e) {
 		$(this).find(".remove").css("opacity", 0);
 		$(this).find(".modify").css("opacity", 0);
 		$(this).css("font-size", "25px");
@@ -36,17 +35,17 @@ function addSubjectInView(subjectName, updateTime) {
  * @param subjectName String 科目名称
 */
 function addSubject(subjectName) {
-	findSubjectByName(subjectName, function() {
+	findSubjectByName(subjectName, function () {
 		showTips("该科目已存在！", 2000);
-	}, function() {
+	}, function () {
 		callDataProcessingFn({
 			data: {
 				data: "units",
 				callFunction: "save"
 			},
-			success: function(result) {
+			success: function success(result) {
 				if (!result.err) {
-					let updateTime = new Date().toLocaleString();
+					var updateTime = new Date().toLocaleString();
 					callDataProcessingFn({
 						data: {
 							data: "subjects",
@@ -57,7 +56,7 @@ function addSubject(subjectName) {
 								updateTime: updateTime
 							}
 						},
-						success: function(result) {
+						success: function success(result) {
 							if (!result.err) {
 								showTips("新建科目成功！", 2000);
 
@@ -67,23 +66,20 @@ function addSubject(subjectName) {
 					});
 				}
 			}
-		})
+		});
 	});
 }
 
 // 弹出新建科目的输入框，并绑定该弹出框的按钮事件
 function newSubjectName() {
-	let contentHTML = `<div>请输入科目名称：</div>
-						<div><input class="textInput" type="text" autofocus=true 
-						 style="color: #000; border-bottom-color: #000; margin: 20px 0;" maxLength=20>
-						 </div>`;
-	showWin(contentHTML, function() {
-		let subjectName = decodeURIComponent($(".textInput").val());
+	var contentHTML = '<div>\u8BF7\u8F93\u5165\u79D1\u76EE\u540D\u79F0\uFF1A</div>\n\t\t\t\t\t\t<div><input class="textInput" type="text" autofocus=true \n\t\t\t\t\t\t style="color: #000; border-bottom-color: #000; margin: 20px 0;" maxLength=20>\n\t\t\t\t\t\t </div>';
+	showWin(contentHTML, function () {
+		var subjectName = decodeURIComponent($(".textInput").val());
 		if (subjectName) {
 			addSubject($(".textInput").val());
 		}
 		inputRest("text");
-	}, function() {
+	}, function () {
 		inputRest("text");
 	});
 }
@@ -137,46 +133,46 @@ function removeSubject(subjectName, callback) {
 		data: {
 			data: "subjects",
 			callFunction: "remove",
-			removeOpt: {subjectName: subjectName}
+			removeOpt: { subjectName: subjectName }
 		},
 		success: callback
 	});
 }
 
 function removeOneUnitAllContent(unitId) {
-	findUnitById(unitId, function(result) {
-		removeUnit(unitId, function() {});
+	findUnitById(unitId, function (result) {
+		removeUnit(unitId, function () {});
 
 		console.log('find unit result', unitId, result);
 		if (!result) return;
 
 		console.log(result);
 
-		let SingleChoice = result.SingleChoice,
-			MultipleChoices = result.MultipleChoices,
-			TrueOrFalse = result.TrueOrFalse,
-			FillInTheBlank = result.FillInTheBlank,
-			ShortAnswer = result.ShortAnswer,
-			Programming = result.Programming;
+		var SingleChoice = result.SingleChoice,
+		    MultipleChoices = result.MultipleChoices,
+		    TrueOrFalse = result.TrueOrFalse,
+		    FillInTheBlank = result.FillInTheBlank,
+		    ShortAnswer = result.ShortAnswer,
+		    Programming = result.Programming;
 
-		SingleChoice.forEach(function(praticeId, index, array) {
-			removePratice(praticeId, function() {});
+		SingleChoice.forEach(function (praticeId, index, array) {
+			removePratice(praticeId, function () {});
 		});
-		MultipleChoices.forEach(function(praticeId, index, array) {
-			removePratice(praticeId, function() {});
+		MultipleChoices.forEach(function (praticeId, index, array) {
+			removePratice(praticeId, function () {});
 		});
-		TrueOrFalse.forEach(function(praticeId, index, array) {
-			removePratice(praticeId, function() {});
+		TrueOrFalse.forEach(function (praticeId, index, array) {
+			removePratice(praticeId, function () {});
 		});
-		FillInTheBlank.forEach(function(praticeId, index, array) {
-			removePratice(praticeId, function() {});
+		FillInTheBlank.forEach(function (praticeId, index, array) {
+			removePratice(praticeId, function () {});
 		});
-		ShortAnswer.forEach(function(praticeId, index, array) {
-			removePratice(praticeId, function() {});
+		ShortAnswer.forEach(function (praticeId, index, array) {
+			removePratice(praticeId, function () {});
 		});
-		Programming.forEach(function(praticeId, index, array) {
+		Programming.forEach(function (praticeId, index, array) {
 			console.log(praticeId);
-			removePratice(praticeId, function() {});
+			removePratice(praticeId, function () {});
 		});
 	});
 }
@@ -185,22 +181,22 @@ function removeOneUnitAllContent(unitId) {
  * @param $removeTarget Object 删除的对象（jq对象）
 */
 function removeOneSubjectAllContent($removeTarget) {
-	let subjectName = decodeURIComponent($removeTarget.find(".subjectName")[0].innerHTML);
-	findSubjectByName(subjectName, function(result) {
+	var subjectName = decodeURIComponent($removeTarget.find(".subjectName")[0].innerHTML);
+	findSubjectByName(subjectName, function (result) {
 		console.log('subject result', result);
-		let chapterPratices = result.chapterPratices,
-			examinationPratices = result.examinationPratices,
-			randomPratices = result.randomPratices;
+		var chapterPratices = result.chapterPratices,
+		    examinationPratices = result.examinationPratices,
+		    randomPratices = result.randomPratices;
 
-		removeSubject(subjectName, function() {
+		removeSubject(subjectName, function () {
 			$removeTarget.parent().remove();
 			showTips("删除成功！", 2000);
 		});
 
-		chapterPratices.forEach(function(unitId, index, array) {
+		chapterPratices.forEach(function (unitId, index, array) {
 			removeOneUnitAllContent(unitId);
 		});
-		examinationPratices.forEach(function(unitId, index, array) {
+		examinationPratices.forEach(function (unitId, index, array) {
 			removeOneUnitAllContent(unitId);
 		});
 		removeOneUnitAllContent(randomPratices);
@@ -211,30 +207,27 @@ function removeOneSubjectAllContent($removeTarget) {
  * @param $modifyTarget Object 修改对象（jq对象）
 */
 function modifySubjectName($modifyTarget) {
-	let oldSubjectName = decodeURIComponent($modifyTarget.find(".subjectName")[0].innerHTML);
-	let contentHTML = '<div>请输入新的科目名称：</div>'
-						+ '<div><input class="textInput" type="text" autofocus=true value="'
-						+ oldSubjectName 
-						+ '" style="color: #000; border-bottom-color: #000; margin: 20px 0;"></div>';
-	showWin(contentHTML, function() {
-		let newSubjectName = decodeURIComponent($(".textInput").val());
+	var oldSubjectName = decodeURIComponent($modifyTarget.find(".subjectName")[0].innerHTML);
+	var contentHTML = '<div>请输入新的科目名称：</div>' + '<div><input class="textInput" type="text" autofocus=true value="' + oldSubjectName + '" style="color: #000; border-bottom-color: #000; margin: 20px 0;"></div>';
+	showWin(contentHTML, function () {
+		var newSubjectName = decodeURIComponent($(".textInput").val());
 		if (newSubjectName && newSubjectName != oldSubjectName) {
-			findSubjectByName(newSubjectName, function() {
+			findSubjectByName(newSubjectName, function () {
 				showTips("该科目已存在！", 2000);
-			}, function() {
+			}, function () {
 				$.ajax({
 					url: "../callDataProcessing",
 					type: "POST",
 					data: {
 						data: "subjects",
 						callFunction: "update",
-						updateOpt: {subjectName: oldSubjectName},
+						updateOpt: { subjectName: oldSubjectName },
 						operation: "set",
-						update: {subjectName: newSubjectName}
+						update: { subjectName: newSubjectName }
 					},
-					success: function(result) {
+					success: function success(result) {
 						if (result) {
-							let updateTime = new Date().toLocaleDateString();
+							var updateTime = new Date().toLocaleDateString();
 							callDataProcessingFn({
 								data: {
 									data: "subjects",
@@ -247,7 +240,7 @@ function modifySubjectName($modifyTarget) {
 										updateTime: updateTime
 									}
 								},
-								success: function() {
+								success: function success() {
 									$modifyTarget.find(".subjectName")[0].innerHTML = newSubjectName;
 									$modifyTarget.parent().find(".updateTime")[0].innerHTML = "更新至" + updateTime;
 									showTips("科目名称修改成功！", 2000);
@@ -272,7 +265,7 @@ function init() {
 			data: "users",
 			callFunction: "findAll"
 		},
-		success: function(result) {
+		success: function success(result) {
 			console.log(result);
 		}
 	});
@@ -288,10 +281,10 @@ function init() {
 	// });
 
 	$(".time").css("display", "none");
-	
-	findAllSubject(function(result) {
+
+	findAllSubject(function (result) {
 		console.log(result);
-		for(let i=0, len=result.length; i<len; i++) {
+		for (var i = 0, len = result.length; i < len; i++) {
 			addSubjectInView(result[i].subjectName, result[i].updateTime);
 		}
 	});
@@ -301,7 +294,7 @@ function init() {
 			data: "units",
 			callFunction: "findAll"
 		},
-		success: function(result) {
+		success: function success(result) {
 			console.log("units", result);
 			// for(let i=0, len=result.length; i<len; i++) {
 			// 	removeUnit(result[i]._id, function() {});
@@ -314,7 +307,7 @@ function init() {
 			data: "pratices",
 			callFunction: "findAll"
 		},
-		success: function(result) {
+		success: function success(result) {
 			console.log("pratices", result);
 			// for(let i=result.length-1, len=result.length; i<len; i++) {
 			// 	console.log(result[i]._id);
@@ -328,16 +321,16 @@ function init() {
 
 function bindEvent() {
 	// 绑定添加科目事件
-	$(".addSubject")[0].onclick = function() {
+	$(".addSubject")[0].onclick = function () {
 		newSubjectName();
 	};
 
-	$(".subject").click(function(e) {
-		let target = getTarget(e);
-		let className = target.className;
+	$(".subject").click(function (e) {
+		var target = getTarget(e);
+		var className = target.className;
 		console.log(className);
 
-		switch(className) {
+		switch (className) {
 			case "main":
 				enterSubjectExercise($(target).find(".subjectName")[0].innerHTML);
 				break;
@@ -347,10 +340,11 @@ function bindEvent() {
 			case "updateTime":
 				enterSubjectExercise($(target).parent().find(".subjectName")[0].innerHTML);
 				break;
-			case "remove":   // 绑定删除科目事件
-				showWin("确定删除该科目吗？（连同该科目的所有题库都删除）", function() {
+			case "remove":
+				// 绑定删除科目事件
+				showWin("确定删除该科目吗？（连同该科目的所有题库都删除）", function () {
 					removeOneSubjectAllContent($(target).parent());
-				}, function() {}, true);
+				}, function () {}, true);
 				break;
 			case "modify":
 				modifySubjectName($(target).parent());

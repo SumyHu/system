@@ -5,6 +5,8 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const iconv = require('iconv-lite');
 
+var xlsx = require('node-xlsx');
+
 // 文件上传插件
 var multer = require('multer');
 
@@ -90,8 +92,7 @@ module.exports = function(app) {
 	});
 
 	app.post('/uploadImage',uploadImage.single('uploadImage'), function (req, res) {
-		console.log(req.file.path);
-		if (req.file == undefined) {
+		if (!req.file) {
 			res.redirect('/');
 		}
 		else {
@@ -187,7 +188,7 @@ module.exports = function(app) {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
-				cssFilePath: ["stylesheets/usersManageStyle.css"],
+				cssFilePath: ["stylesheets/showTableCommentStyle.css", "stylesheets/usersManageStyle.css"],
 				scriptFilePath: ["javascripts/usersManageJS.js"],
 				innerHtml: initInterface.usersManageInterface
 			});
@@ -201,7 +202,7 @@ module.exports = function(app) {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
-				cssFilePath: ["stylesheets/usersManageStyle.css", "stylesheets/testResultsManageStyle.css"],
+				cssFilePath: ["stylesheets/showTableCommentStyle.css", "stylesheets/testResultsManageStyle.css"],
 				scriptFilePath: ["javascripts/testResultsManageJS.js"],
 				innerHtml: initInterface.testResultsManageInterface
 			});
@@ -215,7 +216,7 @@ module.exports = function(app) {
 				username: req.session.userId.substr(req.session.userId.length-5, 5),
 				identity: req.session.identity,
 				imageSrc: req.session.imageSrc,
-				cssFilePath: ["stylesheets/usersManageStyle.css", "stylesheets/testHistoryStyle.css"],
+				cssFilePath: ["stylesheets/showTableCommentStyle.css", "stylesheets/testHistoryStyle.css"],
 				scriptFilePath: ["javascripts/testHistoryJS.js"],
 				innerHtml: initInterface.testHistoryInterface
 			});
@@ -744,4 +745,24 @@ module.exports = function(app) {
 		}
 		res.send(result);
 	});
+
+	app.post('/importExcel', uploadImage.single('excelFile'), function(req, res, next) {  
+		if (req.file) {
+			var filename = req.file.path;  
+			console.log("filename", filename)
+			// read from a file  
+			var obj = xlsx.parse(filename); 
+			console.log("obj", obj); 
+		}
+		res.redirect("../usersManage");
+	});  
+		/* GET export excel test. */  
+	app.get('/exportExcel', function(req, res, next) {  
+		// write  
+		var data = [[1,2,3],[true, false, null, 'sheetjs'],['foo','bar',new Date('2014-02-19T14:30Z'), '0.3'], ['baz', null, 'qux']];  
+		var buffer = xlsx.build([{name: "mySheetName", data: data}]);  
+		fs.writeFileSync('b.xlsx', buffer, 'binary');  
+		res.send('export successfully!');  
+		  
+	});  
 }
