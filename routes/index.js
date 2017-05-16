@@ -80,6 +80,21 @@ module.exports = function(app) {
 		storage: storage
 	});
 
+	var usersInfoStorage = multer.diskStorage({
+		destination: function(req, file, cb) {
+			cb(null, './public/upload');
+		},
+		filename: function(req, file, cb) {
+			let postfix = file.originalname.split(".");
+			postfix = postfix[postfix.length-1];
+			cb(null, "usersInfo."+postfix);
+		}
+	});
+
+	var uploadUsersInfo = multer({
+		storage: usersInfoStorage
+	});
+
 	// 解决跨域问题
 	app.all("*", function(req, res, next) {
 	    res.header("Access-Control-Allow-Origin", "*");
@@ -746,7 +761,7 @@ module.exports = function(app) {
 		res.send(result);
 	});
 
-	app.post('/importExcel', uploadImage.single('excelFile'), function(req, res, next) {  
+	app.post('/importExcel', uploadUsersInfo.single('excelFile'), function(req, res, next) {  
 		if (req.file) {
 			var filename = req.file.path;  
 			console.log("filename", filename)
