@@ -31,9 +31,9 @@ ul > li.teacher {
 	background: #fff;
 }
 
-ul > li:hover {
-	color: #000;
-	background: #fff;
+.usersType > ul > li:hover {
+	color: #000 !important;
+	background: #fff !important;
 }
 
 .importExcel {
@@ -52,6 +52,15 @@ ul > li:hover {
 
 .importExcel:hover {
 	background: rgba(67, 135, 253, 0.8);
+}
+
+tbody > tr:hover {
+	background: #C9CABB;
+}
+
+.className td {
+    border-left: none;
+    border-right: none;
 }
 
 .flip {
@@ -121,11 +130,11 @@ ul > li:hover {
 }
 
 .win {
-	height: 360px;
+	height: 425px;
 }
 
 .winContentBg {
-	height: 310px;
+	height: 350px;
 	margin: 0;
 }
 
@@ -134,13 +143,13 @@ ul > li:hover {
 	transform: translateY(0);
 }
 
-.userIdInWin, .passwordInWin, .identityInWin {
+.userIdInWin, .nameInWin, .passwordInWin, .classInWin {
 	margin: 20px;
 	font-size: 18px;
 }
 
-table {
-	display: none;
+.winContent .textInput {
+	margin-top: 5px;
 }
 
 table.teacherTable {

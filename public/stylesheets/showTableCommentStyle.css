@@ -21,7 +21,7 @@ tr {
 	line-height: 30px;
 }
 
-.testName:hover, .testTime:hover {
+.testName:hover, .testTime:hover, .className:hover {
 	background: #C9CABB;
 }
 
@@ -78,7 +78,7 @@ label {
 	margin: 0 20px 0 0;
 }
 
-.testName, .testTime {
+.testName, .testTime, .className {
 	background: #f5f6eb;
 	cursor: pointer;
 }

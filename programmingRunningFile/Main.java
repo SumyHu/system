@@ -4,7 +4,7 @@ public class Main {
 		return a+b;
 	}
 	public static void main(String[] args) {
-      Scanner scan = new Scanner(System.in).useDelimiter("\\D");
+		 Scanner scan = new Scanner(System.in).useDelimiter("\\D");
 		 int n1 = scan.nextInt();
 		 int n2 = scan.nextInt();
       scan.close();

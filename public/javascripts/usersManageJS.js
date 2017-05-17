@@ -1,83 +1,11 @@
 "use strict";
 
-var allUsersInfo = void 0; // 存储所有用户信息的数组
+var allUsersInfo = void 0,    // 存储所有用户信息的数组
+	currentShowIdentity = "teacher",    // 存储当前用户身份
+	teacherTableCurrentPage = 1,   // 切换为学生信息时，教师信息的当前页数
+	studentTableCurrentPage = 1;   // 切换为教师信息时，学生信息的当前页数
 
-var tableKey = ["_id", "password", "identity"];
-
-/** 导入Excel表
- * @fileName input[type=file]的value值
-*/
-// function ReadExcel(filePath) {  
-//     var tempStr = "";  
-//     //创建操作EXCEL应用程序的实例  
-//     var oXL = new ActiveXObject("Excel.application");  
-//     //打开指定路径的excel文件  
-//     var oWB = oXL.Workbooks.open(filePath);  
-//     //操作第一个sheet(从一开始，而非零)  
-//     oWB.worksheets(1).select();  
-//     var oSheet = oWB.ActiveSheet;  
-//     //使用的行数  
-// 	var rows =  oSheet.usedrange.rows.count;   
-//     try {  
-//         for (var i = 2; i <= rows; i++) {  
-// 	        if (oSheet.Cells(i, 2).value == "null" || oSheet.Cells(i, 3).value == "null") break;  
-// 	        var a = oSheet.Cells(i, 2).value.toString() == "undefined" ? "": oSheet.Cells(i, 2).value;  
-// 	        tempStr += (" " + oSheet.Cells(i, 2).value + " " + oSheet.Cells(i, 3).value + " " + oSheet.Cells(i, 4).value + " " + oSheet.Cells(i, 5).value + " " + oSheet.Cells(i, 6).value + "\n");  
-// 	    }  
-// 	} catch(e) {  
-// 	    // document.getElementById("txtArea").value = tempStr;  
-// 	}  
-//     console.log(tempStr);
-// 	// document.getElementById("txtArea").value = tempStr;  
-//     //退出操作excel的实例对象  
-//     oXL.Application.Quit();  
-//     //手动调用垃圾收集器  
-//     CollectGarbage();  
-// }
-
-// function importXLS(fileName) {
-// 	var objCon = new ActiveXObject("ADODB.Connection");
-// 	objCon.Provider = "Microsoft.Jet.OLEDB.4.0";
-// 	objCon.ConnectionString = "Data Source=" + fileName + ";Extended Properties=Excel 8.0;";
-// 	objCon.CursorLocation = 1;
-// 	objCon.Open;
-// 	var strQuery;
-// 	//Get the SheetName
-// 	var strSheetName = "Sheet1$";
-// 	var rsTemp = new ActiveXObject("ADODB.Recordset");
-// 	rsTemp = objCon.OpenSchema(20);
-// 	if (!rsTemp.EOF) {
-// 		strSheetName = rsTemp.Fields("Table_Name").Value;
-// 	}
-// 	rsTemp = null;
-// 	rsExcel = new ActiveXObject("ADODB.Recordset");
-// 	strQuery = "SELECT * FROM [" + strSheetName + "]";
-// 	rsExcel.ActiveConnection = objCon;
-// 	rsExcel.Open(strQuery);
-// 	while (!rsExcel.EOF) {
-// 		for (i = 0; i < rsExcel.Fields.Count; ++i) {
-// 			alert(rsExcel.Fields(i).value);
-// 		}
-// 		rsExcel.MoveNext;
-// 	}
-// 	// Close the connection and dispose the file
-// 	objCon.Close;
-// 	objCon = null;
-// 	rsExcel = null;
-// }
-
-function importExcel(filename) {
-	$.ajax({
-		url: "../importExcel",
-		type: "post",
-		data: {
-			excelFile: filename
-		},
-		success: function(result) {
-			console.log(result);
-		}
-	});
-}
+var tableKey = ["_id", "name", "password"];
 
 /** 获取所有用户信息
  * @param callback Function 回调函数
@@ -89,13 +17,46 @@ function getAllUsersInfo(callback) {
 			callFunction: "findAll"
 		},
 		success: function success(result) {
-			allUsersInfo = [];
+			allUsersInfo = {
+				teacher: [],
+				student: {
+					class: [],
+					info: {}
+				}
+			};
 			for (var _i = 0, len = result.length; _i < len; _i++) {
-				if (result[_i].identity !== "manager") {
-					allUsersInfo.push(result[_i]);
+				var thisUserIdentity = result[_i].identity;
+				if (thisUserIdentity !== "manager") {
+					if (thisUserIdentity === "teacher") {
+						allUsersInfo.teacher.push(result[_i]);
+					}
+					else {
+						var classValue = result[_i].class, studentObj = allUsersInfo.student;
+						if (!studentObj.info[classValue]) {
+							studentObj.class.push(classValue);
+							studentObj.info[classValue] = [];
+						}
+						studentObj.info[classValue].push(result[_i]);
+					}
 				}
 			}
-			$(".totalPage")[0].innerHTML = Math.ceil(result.length / 10);
+			console.log(allUsersInfo);
+			allUsersInfo.teacher.sort(function(a, b) {
+				return parseInt(a._id)-parseInt(b._id);
+			});
+
+			allUsersInfo.student.class.sort(function(a, b) {
+				console.log(a, b);
+				return a>b;
+			});
+
+			var allStudentClass = allUsersInfo.student.class;
+			for(let i=0, len=allStudentClass.length; i<len; i++) {
+				allUsersInfo.student.info[allStudentClass[i]].sort(function(a, b) {
+					return parseInt(a._id)-parseInt(b._id);
+				});
+			}
+
 			callback(result);
 		}
 	});
@@ -120,96 +81,220 @@ function removeUser(userId, callback) {
 	});
 }
 
+/** 在表格中添加一行班级分类标题
+ * @param classValue String 班级名称
+*/
+function addClassTitle(classValue, idNum) {
+	var tr = document.createElement("tr");
+	tr.className = "className";
+	tr.id = "className" + idNum;
+    $(tr).html("<td colspan=3><span class='classValue'>" + classValue + "</span><span class='icon'>︽</span></td><td><input type='button' class='remove'></td>");
+    $(".showUsersInfo > table > tbody").append(tr);
+
+    $(tr).click(function(e) {
+    	if (getTarget(e).className !== "remove") {
+    		var $icon = $(this).find(".icon"), id = this.id;
+    		if ($icon.html() === "︽") {
+    			$icon.html("︾");
+    			$("." + id + "-content").css("display", "table-row");
+    		}
+    		else {
+    			$icon.html("︽");
+    			$("." + id + "-content").css("display", "none");
+    		}
+    	}
+    	else {
+    		var allRemoveTarget = $("." + tr.id + "-content");
+    		for(var i=0, len=allRemoveTarget.length; i<len; i++) {
+    			var thisUserId = $(allRemoveTarget[i]).find("td")[0].innerHTML;
+    			callDataProcessingFn({
+    				data: {
+    					data: "users",
+    					callFunction: "remove",
+    					removeOpt: {
+    						_id: thisUserId
+    					}
+    				},
+    				success: function() {
+    					if (i === len-1) {
+    						showTips("删除成功！", 1000);
+    						changeUserInfoWhenAllUsersInfoChange();
+    					}
+    				}
+    			});
+    		}
+    	}
+    });
+}
+
 /** 在表格中添加一行用户信息
  * @param contentObj Object 每个用户具体信息的对象 
 */
-function addRow(contentObj) {
+function addRow(contentObj, idNum) {
 	var tr = document.createElement("tr"),
 	    innerHtml = "";
 	for (var _i2 = 0, len = tableKey.length; _i2 < len; _i2++) {
 		innerHtml += "<td>" + contentObj[tableKey[_i2]] + "</td>";
 	}
-	innerHtml += "<td>\n\t\t\t\t\t\t<input type=\"button\" class=\"modify\">\n\t\t\t\t\t\t<input type=\"button\" class=\"remove\">\n\t\t\t\t\t</td>";
+	innerHtml += "<td><input type=\"button\" class=\"modify\"><input type=\"button\" class=\"remove\"></td>";
 	tr.innerHTML = innerHtml;
+
+	if (currentShowIdentity === "student") {
+		tr.className = "className" + idNum + "-content content";
+	}
+
 	$(".showUsersInfo > table > tbody").append(tr);
 
 	$(tr).find(".modify").click(function (e) {
-		console.log($(this).parent().parent().find("td")[0].innerHTML);
 		var tr = $(this).parent().parent();
 		var userId = tr.find("td")[0].innerHTML,
-		    identity = tr.find("td")[2].innerHTML;
-		createWinToModifyUserInfo(userId, identity);
+		    name = tr.find("td")[1].innerHTML;
+
+		if (currentShowIdentity === "student") {
+			var classValue = $("#" + tr[0].className.split(" ")[0].split("-")[0]).find(".classValue").html();
+			createWinToModifyUserInfo(userId, name, classValue);
+		}
+		else {
+			createWinToModifyUserInfo(userId, name);
+		}
 	});
 
 	$(tr).find(".remove").click(function (e) {
 		var userId = $(this).parent().parent().find("td")[0].innerHTML;
 		removeUser(userId, function () {
-			getAllUsersInfo(showUserInfoByPage);
+			changeUserInfoWhenAllUsersInfoChange();
 		});
 	});
 }
 
-/** 显示特定的用户信息
- * @param startIndex Number 开始下标
- * @param endIndex Number 结束下标
+/** 显示教师信息
+ * @param startIndex Number 教师信息数组开始下标
+ * @param endIndex Number 教师信息数组结束下标
 */
-function showUsersInfo(startIndex, endIndex) {
+function showTeacherInfo(startIndex, endIndex) {
+	var usersInfoArr = allUsersInfo.teacher;
 	$(".showUsersInfo > table > tbody")[0].innerHTML = "";
 	for (var _i3 = startIndex; _i3 <= endIndex; _i3++) {
-		if (!allUsersInfo[_i3]) {
+		if (!usersInfoArr[_i3]) {
 			return;
 		}
-		addRow(allUsersInfo[_i3]);
+		addRow(usersInfoArr[_i3]);
+	}
+}
+
+/** 显示教师信息
+ * @param startIndex Number 班级数组开始下标
+ * @param endIndex Number 班级数组结束下标
+*/
+function showStudentInfo(startIndex, endIndex) {
+	$(".showUsersInfo > table > tbody")[0].innerHTML = "";
+
+	var studentObj = allUsersInfo.student, allClassValue = studentObj.class, 
+			allStudentInfo = studentObj.info;
+	for(let i=startIndex; i<=endIndex; i++) {
+		var thisClassValue = allClassValue[i],
+			studentInfoArr = allStudentInfo[thisClassValue];
+		if (!thisClassValue) {
+			return;
+		}
+		addClassTitle(thisClassValue, i);
+		for(let j=0, len=studentInfoArr.length; j<len; j++) {
+			addRow(studentInfoArr[j], i);
+		}
 	}
 }
 
 // 根据当前页数显示特定的用户信息
 function showUserInfoByPage() {
-	var currentPage = $(".currentPage").val();
-	var startIndex = (currentPage - 1) * 10;
-	var endIndex = startIndex + 9;
-	showUsersInfo(startIndex, endIndex);
+	var currentPage = $(".currentPage").val(), startIndex, endIndex;
+
+	if (currentShowIdentity === "teacher") {
+		startIndex = (currentPage - 1) * 10;
+		endIndex = startIndex + 9;
+		showTeacherInfo(startIndex, endIndex);
+	}
+	else {		
+		startIndex = (currentPage - 1) * 4;
+		endIndex = startIndex + 3;
+		showStudentInfo(startIndex, endIndex);
+	}
+
+	checkPreviousStatus();
+	checkNextStatus();
 }
 
 // 当当前页数发生改变时，显示的用户信息跟着改变
 function changeUserInfoWhenPageChange() {
 	var currentPage = $(".currentPage").val(),
 	    totalPage = $(".totalPage")[0].innerHTML;
-	if (currentPage <= 0 || currentPage > totalPage) {
-		currentPage = 1;
+	if (currentPage <= 0) {
 		$(".currentPage").val(1);
 	}
+	else if (currentPage > totalPage) {
+		$(".currentPage").val(totalPage);
+	}
+
 	showUserInfoByPage();
+}
+
+// 当存储的用户信息发生改变时，显示的用户信息跟着改变
+function changeUserInfoWhenAllUsersInfoChange() {
+	getAllUsersInfo(function() {
+		var $totalPage = $(".totalPage"), totalPageCount;
+		if (currentShowIdentity === "teacher") {
+			totalPageCount = Math.ceil(allUsersInfo.teacher.length/10);
+		}
+		else {
+			totalPageCount = Math.ceil(allUsersInfo.student.class.length/4);
+		}
+		$totalPage.html(totalPageCount);
+		var currentPage = Number($(".currentPage").val());
+		if (currentPage > totalPageCount) {
+			$(".currentPage").val(totalPageCount);
+		}
+		showUserInfoByPage();
+	});
 }
 
 // 创建一个添加用户的窗口
 function createWinToAddUser(callback) {
-	var contentHtml = "<div class=\"title\">\u7528\u6237\u4FE1\u606F\u6DFB\u52A0</div>\n\t\t\t\t\t\t<div class=\"userIdInWin\">\u7528\u6237\u540D\uFF1A<br><input type=\"text\" class=\"textInput\"></div>\n\t\t\t\t\t\t<div class=\"passwordInWin\">\u5BC6\u7801\uFF1A<br><input type=\"text\" class=\"textInput\"></div>\n\t\t\t\t\t\t<div class=\"identityInWin\">\u7528\u6237\u8EAB\u4EFD\uFF1A<br>\n\t\t\t\t\t\t\t<input type=\"radio\" value=\"teacher\" id=\"teacherRadio\" name=\"identityName\">\n\t\t\t\t\t\t\t<label for=\"teacherRadio\">teacher</label>\n\t\t\t\t\t\t\t<input type=\"radio\" value=\"student\" id=\"studentRadio\" name=\"identityName\" checked>\n\t\t\t\t\t\t\t<label for=\"studentRadio\">student</label>\n\t\t\t\t\t\t</div>";
+	var contentHtml = "<div class=\"title\">用户信息添加</div><div class=\"userIdInWin\">用户ID：<br><input type=\"text\" class=\"textInput\"></div><div class=\"nameInWin\">姓名：<br><input type=\"text\" class=\"textInput\"></div><div class=\"passwordInWin\">密码（md5加密前）：<br><input type=\"text\" class=\"textInput\"></div>";
+
+	if (currentShowIdentity === "student") {
+		contentHtml += "<div class=\"classInWin\">班级：<br><input type=\"text\" class=\"textInput\"></div>"
+	}
+
 	showWin(contentHtml, function () {
 		if (!$(".userIdInWin .textInput").val() || !$(".passwordInWin .textInput").val()) {
 			showTips("信息不完整，添加失败！", 1000);
 			return;
 		}
 
-		var identity = $("#teacherRadio")[0].checked ? "teacher" : "student";
+		var saveData = {
+				_id: $(".userIdInWin .textInput").val(),
+				name: $(".nameInWin .textInput").val(),
+				password: $(".passwordInWin .textInput").val(),
+				identity: currentShowIdentity,
+				imageSrc: "upload/default.jpg"
+			};
+
+		if (currentShowIdentity === "student") {
+			saveData.class = $(".classInWin .textInput").val();
+		}
 
 		callDataProcessingFn({
 			data: {
 				data: "users",
 				callFunction: "save",
-				saveData: {
-					_id: $(".userIdInWin .textInput").val(),
-					password: $(".passwordInWin .textInput").val(),
-					identity: identity,
-					imageSrc: "upload/default.jpg"
-				}
+				saveData: saveData
 			},
 			success: function success(result) {
 				if (result.err) {
 					showTips("该用户已存在，添加失败！", 1000);
 				} else {
 					showTips("添加成功！", 1000);
-					getAllUsersInfo(showUserInfoByPage);
+
+					changeUserInfoWhenAllUsersInfoChange();
 				}
 			}
 		});
@@ -220,38 +305,65 @@ function createWinToAddUser(callback) {
  * @param userId String 用户id
  * @param identity String 用户身份
 */
-function createWinToModifyUserInfo(userId, identity) {
-	var contentHtml = "<div class=\"title\">\u7528\u6237\u4FE1\u606F\u4FEE\u6539</div>\n\t\t\t\t\t\t<div class=\"userIdInWin\">\n\t\t\t\t\t\t\t\u7528\u6237\u540D\uFF1A" + userId + "\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"passwordInWin\">\u5BC6\u7801\uFF08md5\u52A0\u5BC6\u524D\uFF09\uFF1A<br>\n\t\t\t\t\t\t\t<input type=\"text\" class=\"textInput\">\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"identityInWin\">\u7528\u6237\u8EAB\u4EFD\uFF1A<br>\n\t\t\t\t\t\t\t<input type=\"radio\" value=\"teacher\" id=\"teacherRadio\" name=\"identityName\" " + (identity === "teacher" ? "checked" : "") + ">\n\t\t\t\t\t\t\t<label for=\"teacherRadio\">teacher</label>\n\t\t\t\t\t\t\t<input type=\"radio\" value=\"student\" id=\"studentRadio\" name=\"identityName\" " + (identity === "student" ? "checked" : "") + ">\n\t\t\t\t\t\t\t<label for=\"studentRadio\">student</label>\n\t\t\t\t\t\t</div>";
-	showWin(contentHtml, function () {
-		var updateObj = {
-			identity: $("#teacherRadio")[0].checked ? "teacher" : "student"
-		};
+function createWinToModifyUserInfo(userId, name, classValue) {
+	var contentHtml = "<div class=\"title\">用户信息修改</div><div class=\"userIdInWin\">用户ID：" + userId + "</div><div class=\"nameInWin\">姓名：<br><input type=\"text\" class=\"textInput\" value=\"" + name + "\"></div><div class=\"passwordInWin\">密码（md5加密前）：<br><input type=\"text\" class=\"textInput\"></div>";
 
-		if ($(".passwordInWin .textInput").val()) {
-			updateObj.password = $(".passwordInWin .textInput").val();
+	if (currentShowIdentity === "student") {
+		contentHtml += "</div><div class=\"classInWin\">班级：<br><input type=\"text\" class=\"textInput\" value=\"" + classValue + "\"></div>";
+	}
+
+	showWin(contentHtml, function () {
+		var updateObj = {}, updateFlag = false, 
+		newName = $(".nameInWin .textInput").val(),
+		newPassword = $(".passwordInWin .textInput").val(),
+		newClassValue = $(".classInWin .textInput").val();
+
+		if (newName && newName !== name) {
+			updateFlag = true;
+			updateObj.name = newName;
 		}
 
-		callDataProcessingFn({
-			data: {
-				data: "users",
-				callFunction: "update",
-				updateOpt: {
-					_id: userId
-				},
-				operation: "set",
-				update: updateObj
-			},
-			success: function success() {
-				showTips("修改成功！", 1000);
-				getAllUsersInfo(showUserInfoByPage);
+		if (newPassword) {
+			updateFlag = true;
+			updateObj.password = newPassword;
+		}
+
+		if (classValue) {
+			if (newClassValue && newClassValue !== classValue) {
+				updateFlag = true;
+				updateObj.class = newClassValue;
 			}
-		});
+		}
+
+		if (updateFlag) {
+			callDataProcessingFn({
+				data: {
+					data: "users",
+					callFunction: "update",
+					updateOpt: {
+						_id: userId
+					},
+					operation: "set",
+					update: updateObj
+				},
+				success: function success() {
+					showTips("修改成功！", 1000);
+					if (currentShowIdentity === "teacher") {
+						getAllUsersInfo(showUserInfoByPage);
+					}
+					else {
+						changeUserInfoWhenAllUsersInfoChange();
+					}
+				}
+			});
+		}
 	}, function () {}, true);
 }
 
 // 检查向前翻页按钮状态
 function checkPreviousStatus() {
 	var currentPage = $(".currentPage").val();
+	console.log(currentPage);
 	if (currentPage == 1) {
 		$(".previous").addClass("disable");
 	} else {
@@ -275,15 +387,43 @@ function checkNextStatus() {
 }
 
 function init() {
-	// getAllUsersInfo(function(result) {
-	// 	showUsersInfo(0, 9);
-
-	// 	checkPreviousStatus();
-	// 	checkNextStatus();
-	// });
+	getAllUsersInfo(function() {
+		$(".totalPage").html(Math.ceil(allUsersInfo.teacher.length/10));
+		showUserInfoByPage();
+	});
 }
 
 function bindEvent() {
+	$(".usersType > ul > li").click(function(e) {
+		var classname = this.className;
+		if (classname === currentShowIdentity) {
+			return;
+		}
+
+		var $allLi = $(".usersType > ul >li");
+		$allLi.css("color", "#8c8c8c");
+		$allLi.css("background", "rgba(255, 255, 255, 0.3)");
+
+		$(this).css("color", "#000");
+		$(this).css("background", "#fff");
+
+		if (currentShowIdentity === "teacher") {
+			teacherTableCurrentPage = Number($(".currentPage").val());
+			$(".currentPage").val(studentTableCurrentPage);
+			$(".totalPage").html(Math.ceil(allUsersInfo.student.class.length/4));
+		}
+		else {
+			studentTableCurrentPage = Number($(".currentPage").val());
+			$(".currentPage").val(teacherTableCurrentPage);
+			$(".totalPage").html(Math.ceil(allUsersInfo.teacher.length/10));
+		}
+
+		$(".userIdentity").val(classname);
+		currentShowIdentity = classname;
+
+		showUserInfoByPage();
+	});
+
 	$(".importExcelBtn").click(function () {
 		var filename = $(".excelFile").val();
 		if (!filename) {
@@ -328,7 +468,6 @@ function bindEvent() {
 		}
 		var prevPage = $(".currentPage").val();
 		$(".currentPage").val(prevPage - 1);
-		checkPreviousStatus();
 		showUserInfoByPage();
 	});
 
@@ -336,9 +475,8 @@ function bindEvent() {
 		if ($(this).hasClass("disable")) {
 			return;
 		}
-		var prevPage = $(".currentPage").val();
+		var prevPage = Number($(".currentPage").val());
 		$(".currentPage").val(prevPage + 1);
-		checkNextStatus();
 		showUserInfoByPage();
 	});
 }

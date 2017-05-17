@@ -14,6 +14,8 @@ var usersSchema = new Schema ({
 	password: String,   // 用户密码
 	identity: String,   // 用户身份
 	imageSrc: String,   // 用户头像
+	name: String,   // 用户姓名
+	class: String,   // 用户所在的班级
 	checkContent: [],   // 用户忘记密码验证内容
 	errorExercise: [],   // 用户存储的错题
 	testHistory: []   // 用户考试模拟的历史记录，存储的是testResults的id数组
@@ -71,7 +73,9 @@ buildData.praticesObj = commentDataProcessing(pratices);
 
 // 建立存储用户考试模拟结果的二维表
 var testResultsSchema = new Schema({
-	userId: String,
+	userId: String,   // 用户id
+	name: String,   // 用户姓名
+	class: String,   // 用户所在班级
 	testName: String,   // 测试试卷名称
 	testUnitId: String,   // 试卷的unitId
 	date: Date,   // 提交试卷的时间

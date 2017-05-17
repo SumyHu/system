@@ -599,7 +599,9 @@ module.exports = function(app) {
 
 			buildData.testResultsObj.save({
 				userId: userId,
-				testName: decodeURIComponent(subjectName) + " | 试卷" + Number(examIndex+1),   // 测试试卷名称
+				name: req.body.name,
+				class: (req.body.class ? req.body.class : "无"),
+				testName: decodeURIComponent(subjectName) + " | 试卷" + (Number(examIndex)+1),   // 测试试卷名称
 				testUnitId: unitId,   // 试卷的unitId
 				date: new Date(),   // 提交试卷的时间
 				correctAnswerContent: correctAnswerContent,   // 正确答案
@@ -761,13 +763,32 @@ module.exports = function(app) {
 		res.send(result);
 	});
 
+	// 导入Excel表格
 	app.post('/importExcel', uploadUsersInfo.single('excelFile'), function(req, res, next) {  
 		if (req.file) {
-			var filename = req.file.path;  
-			console.log("filename", filename)
-			// read from a file  
-			var obj = xlsx.parse(filename); 
-			console.log("obj", obj); 
+			var alias = {
+				"学号": "_id",
+				"教工号": "_id",
+				"姓名": "name",
+				"班级": "class"
+			};
+
+			var filename = req.file.path, obj = xlsx.parse(filename), userIdentity = req.body.userIdentity; 
+
+			for(let i=0, len1=obj.length; i<len1; i++) {
+				let allData = obj[i].data, keyArray = allData[0];
+				for(let j=1, len2=allData.length; j<len2; j++) {
+					let thisData = allData[j], saveData = {};
+					for(let t=0, len3=thisData.length; t<len3; t++) {
+						saveData[alias[keyArray[t]]] = thisData[t];
+					}
+					saveData.password = saveData._id+"";
+					saveData.identity = userIdentity;
+					saveData.imageSrc = "upload/default.jpg";
+					console.log(saveData);
+					buildData.usersObj.save(saveData, function() {});
+				}
+			}
 		}
 		res.redirect("../usersManage");
 	});  

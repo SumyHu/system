@@ -70,24 +70,24 @@ initInterface = {
 										</ul>
 									</nav>
 									<form action="/importExcel" method="post" enctype="multipart/form-data">
-										<input type="file" class="excelFile" name="excelFile" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">（仅支持Excel文件的导出）
+										<input type="file" class="excelFile" name="excelFile" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+										<input type="hidden" class="userIdentity" name="userIdentity" value="teacher">
 										<input type="submit" class="importExcel">
 									<form>
 									<input type="button" value="导出"  class="importExcelBtn">
+									（仅支持Excel文件的导出）
 								</section>
-								<table class="teacherTable">
+								<table>
 									<thead>
 										<tr>
 											<th>用户ID</th>
+											<th>姓名</th>
 											<th>用户密码（md5加密后）</th>
-											<th>用户身份</th>
 											<th>操作</th>
 										</tr>
 									</thead>
 									<tbody>
 									</tbody>
-								</table>
-								<table class="studentTable">
 								</table>
 								<section class="bottomSec">
 									<div class="btnDiv">
