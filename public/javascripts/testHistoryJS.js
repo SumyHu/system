@@ -15,6 +15,7 @@ function getUserTestHistoryId(callback) {
 		},
 		success: function success(result) {
 			var testHistoryArray = result.testHistory;
+			console.log(testHistoryArray);
 			callback(testHistoryArray);
 		}
 	});

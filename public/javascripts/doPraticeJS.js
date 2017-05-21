@@ -722,18 +722,32 @@ function checkAnswer() {
 
 			scoresDetail.totalScore = totalScore.toFixed(1);
 
-			$.ajax({
-				url: "../showScore",
-				type: "POST",
+			var userId = $(".showUsername")[0].id;
+			callDataProcessingFn({
 				data: {
-					correctAnswerContent: examinationCorrectAnswer,
-					studentAnswerContent: examinationStudentAnswer,
-					scoresObj: scoresObj,
-					scoresDetail: scoresDetail,
-					userId: $(".showUsername")[0].id
+					data: "users",
+					callFunction: "find",
+					findOpt: {
+						_id: userId
+					}
 				},
-				success: function success() {
-					window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+				success: function(result) {
+					$.ajax({
+						url: "../showScore",
+						type: "POST",
+						data: {
+							correctAnswerContent: examinationCorrectAnswer,
+							studentAnswerContent: examinationStudentAnswer,
+							scoresObj: scoresObj,
+							scoresDetail: scoresDetail,
+							userId: userId,
+							name: result.name,
+							class: result.class
+						},
+						success: function success() {
+							window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+						}
+					});
 				}
 			});
 		});
@@ -745,18 +759,32 @@ function checkAnswer() {
 		}
 		scoresDetail.totalScore = totalScore.toFixed(1);
 
-		$.ajax({
-			url: "../showScore",
-			type: "POST",
+		var userId = $(".showUsername")[0].id;
+		callDataProcessingFn({
 			data: {
-				correctAnswerContent: examinationCorrectAnswer,
-				studentAnswerContent: examinationStudentAnswer,
-				scoresObj: scoresObj,
-				scoresDetail: scoresDetail,
-				userId: $(".showUsername")[0].id
+				data: "users",
+				callFunction: "find",
+				findOpt: {
+					_id: userId
+				}
 			},
-			success: function success() {
-				window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+			success: function(result) {
+				$.ajax({
+					url: "../showScore",
+					type: "POST",
+					data: {
+						correctAnswerContent: examinationCorrectAnswer,
+						studentAnswerContent: examinationStudentAnswer,
+						scoresObj: scoresObj,
+						scoresDetail: scoresDetail,
+						userId: userId,
+						name: result.name,
+						class: result.class
+					},
+					success: function success() {
+						window.location.href = "../showScore?scoresDetail=" + JSON.stringify(scoresDetail);
+					}
+				});
 			}
 		});
 	}

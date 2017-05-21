@@ -1,4 +1,4 @@
-.modify {
+.modify, .excel {
 	margin: 0;
 	margin-left: 10px;
 }
@@ -6,4 +6,31 @@
 .testName td{
 	border-left: none;
 	border-right: none;
+}
+
+.win {
+	height: 325px;
+}
+
+.winContentBg {
+	height: 250px;
+	margin: 0;
+}
+
+.winContent {
+	top: 0;
+	transform: translateY(0);
+}
+
+.filenameInWin, .filePathInWin, .passwordInWin, .classInWin {
+	margin: 20px;
+	font-size: 18px;
+}
+
+.winContent .textInput {
+	margin-top: 5px;
+}
+
+.defaultPath {
+	font-size: 14px;
 }

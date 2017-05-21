@@ -34,7 +34,7 @@ td+td {
 	border-left: 1px dashed #8c8c8c;
 }
 
-.modify, .remove {
+.modify, .remove, .export {
 	display: inline-block;
 	position: relative;
 	width: 25px;
@@ -58,8 +58,17 @@ td+td {
 	background-image: url("../image/error.png");
 }
 
+.export {
+	/*background-image: url("../image/export.png");*/
+	background-image: url("../image/excel.png");
+}
+
 .remove:hover, .modify:hover {
 	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.export:hover {
+	background-color: #fff;
 }
 
 .title {
@@ -130,4 +139,53 @@ tr.content {
 
 .dateSearch input[type=text] {
 	border: 1px solid #d0d0d0;
+}
+
+.flip {
+	/*width: 70%;*/
+	margin-top: 20px;
+}
+
+.previous {
+	float: left;
+}
+
+.showPage {
+	position: absolute;
+	display: inline-block;
+	width: 85px;
+	left: 50%;
+	transform: translateX(-50%);
+	line-height: 25px;
+}
+
+.currentPage {
+	display: inline-block;
+	width: 50px;
+	height: 25px;
+	float: left;
+	margin: 0 5px 0 0;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.totalPage {
+	padding: 0 0 0 5px;
+}
+
+.next {
+	float: right;
+}
+
+.previous, .next {
+	width: 50px;
+	height: 30px !important;
+	border-radius: 5px;
+	background: rgba(67, 135, 253, 0.6);
+	line-height: 30px !important;
+}
+
+.previous:hover, .next:hover {
+	background: rgba(67, 135, 253, 0.8);
 }

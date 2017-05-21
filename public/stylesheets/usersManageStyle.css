@@ -63,55 +63,6 @@ tbody > tr:hover {
     border-right: none;
 }
 
-.flip {
-	/*width: 70%;*/
-	margin-top: 20px;
-}
-
-.previous {
-	float: left;
-}
-
-.showPage {
-	position: absolute;
-	display: inline-block;
-	width: 85px;
-	left: 50%;
-	transform: translateX(-50%);
-	line-height: 25px;
-}
-
-.currentPage {
-	display: inline-block;
-	width: 50px;
-	height: 25px;
-	float: left;
-	margin: 0 5px 0 0;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	text-align: center;
-}
-
-.totalPage {
-	padding: 0 0 0 5px;
-}
-
-.next {
-	float: right;
-}
-
-.previous, .next {
-	width: 50px;
-	height: 30px !important;
-	border-radius: 5px;
-	background: rgba(67, 135, 253, 0.6);
-	line-height: 30px !important;
-}
-
-.previous:hover, .next:hover {
-	background: rgba(67, 135, 253, 0.8);
-}
-
 .btnDiv > .addBtn {
 	width: 100%;
 	margin: 20px 0 0;

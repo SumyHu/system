@@ -113,7 +113,9 @@ initInterface = {
 								<table>
 									<thead>
 										<tr>
+											<th>班级</th>
 											<th>用户账号</th>
+											<th>姓名</th>
 											<th>总得分</th>
 											<th>具体得分</th>
 											<th>提交时间</th>
@@ -123,6 +125,16 @@ initInterface = {
 									<tbody>
 									</tbody>
 								</table>
+								<section class="bottomSec">
+									<div class="flip">
+										<input type="button" value="<" class="previous">
+										<div class="showPage">
+											<input type="text" value=1 class="currentPage">/
+											<span class="totalPage"></span>
+										</div>
+										<input type="button" value=">" class="next">
+									</div>
+								</section>
 							</section>`,
 	testHistoryInterface: `<section class="showtestHistoryInfo body">
 								<section class="dateSearch">

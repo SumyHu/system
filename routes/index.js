@@ -793,12 +793,14 @@ module.exports = function(app) {
 		res.redirect("../usersManage");
 	});  
 		/* GET export excel test. */  
-	app.get('/exportExcel', function(req, res, next) {  
+	app.post('/exportExcel', function(req, res, next) {  
+		var dirPath = req.body.dirPath;
+		if (!fs.existsSync(dirPath)) {
+			res.send({error: "保存文件的路径不存在！"});
+		}
 		// write  
-		var data = [[1,2,3],[true, false, null, 'sheetjs'],['foo','bar',new Date('2014-02-19T14:30Z'), '0.3'], ['baz', null, 'qux']];  
-		var buffer = xlsx.build([{name: "mySheetName", data: data}]);  
-		fs.writeFileSync('b.xlsx', buffer, 'binary');  
-		res.send('export successfully!');  
-		  
+		var buffer = xlsx.build([{name: "sheet1", data: req.body.exportData}]);  
+		fs.writeFileSync(dirPath + '/' + req.body.filename + '.xlsx', buffer, 'binary');  
+		res.send({success: 'export successfully!'});  
 	});  
 }

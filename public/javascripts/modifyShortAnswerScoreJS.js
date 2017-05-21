@@ -174,7 +174,7 @@ function bindEvent() {
 				success: function success(result) {
 					var scoresObj = result.scoresObj,
 					    scoresDetail = result.scoresDetail;
-					oldShortAnswerTotalScores = scoresDetail.details["简答题"], totalScores = scoresDetail.totalScore;
+					var oldShortAnswerTotalScores = scoresDetail.details["简答题"], totalScores = scoresDetail.totalScore;
 					scoresObj.ShortAnswer = scoresArray;
 					scoresDetail.details["简答题"] = ShortAnswerTotalScores;
 					scoresDetail.totalScore = totalScores - oldShortAnswerTotalScores + Number(ShortAnswerTotalScores);
